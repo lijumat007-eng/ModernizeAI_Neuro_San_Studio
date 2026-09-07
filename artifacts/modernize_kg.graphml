@@ -1,0 +1,488 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d14" for="edge" attr.name="evidence_snippet" attr.type="string"/>
+<key id="d13" for="edge" attr.name="extractor" attr.type="string"/>
+<key id="d12" for="edge" attr.name="confidence" attr.type="double"/>
+<key id="d11" for="edge" attr.name="line_end" attr.type="long"/>
+<key id="d10" for="edge" attr.name="line_start" attr.type="long"/>
+<key id="d9" for="edge" attr.name="source_file" attr.type="string"/>
+<key id="d8" for="edge" attr.name="edge_type" attr.type="string"/>
+<key id="d7" for="node" attr.name="evidence_snippet" attr.type="string"/>
+<key id="d6" for="node" attr.name="extractor" attr.type="string"/>
+<key id="d5" for="node" attr.name="confidence" attr.type="double"/>
+<key id="d4" for="node" attr.name="line_end" attr.type="long"/>
+<key id="d3" for="node" attr.name="line_start" attr.type="long"/>
+<key id="d2" for="node" attr.name="source_file" attr.type="string"/>
+<key id="d1" for="node" attr.name="label" attr.type="string"/>
+<key id="d0" for="node" attr.name="node_type" attr.type="string"/>
+<graph edgedefault="directed"><node id="ClaimCore_App">
+  <data key="d0">Application</data>
+  <data key="d1">ClaimCore Monolith v2.4</data>
+  <data key="d2">data/insurance_claims_app</data>
+  <data key="d3">1</data>
+  <data key="d4">100</data>
+  <data key="d5">1.0</data>
+  <data key="d6">manifest</data>
+  <data key="d7">Core insurance legacy application adjudicating claims.</data>
+</node>
+<node id="CUSTOMER_ACCOUNT">
+  <data key="d0">DatabaseTable</data>
+  <data key="d1">Table: CUSTOMER_ACCOUNT</data>
+  <data key="d2">schema.ddl</data>
+  <data key="d3">4</data>
+  <data key="d4">12</data>
+  <data key="d5">1.0</data>
+  <data key="d6">ddl_parser</data>
+  <data key="d7">CREATE TABLE CUSTOMER_ACCOUNT with primary key customer_id</data>
+</node>
+<node id="POLICY_MASTER">
+  <data key="d0">DatabaseTable</data>
+  <data key="d1">Table: POLICY_MASTER</data>
+  <data key="d2">schema.ddl</data>
+  <data key="d3">14</data>
+  <data key="d4">25</data>
+  <data key="d5">1.0</data>
+  <data key="d6">ddl_parser</data>
+  <data key="d7">CREATE TABLE POLICY_MASTER with primary key policy_number</data>
+</node>
+<node id="CLAIMS_RECORD">
+  <data key="d0">DatabaseTable</data>
+  <data key="d1">Table: CLAIMS_RECORD</data>
+  <data key="d2">schema.ddl</data>
+  <data key="d3">27</data>
+  <data key="d4">38</data>
+  <data key="d5">1.0</data>
+  <data key="d6">ddl_parser</data>
+  <data key="d7">CREATE TABLE CLAIMS_RECORD with primary key claim_id</data>
+</node>
+<node id="CLAIM_AUDIT_LOG">
+  <data key="d0">DatabaseTable</data>
+  <data key="d1">Table: CLAIM_AUDIT_LOG</data>
+  <data key="d2">schema.ddl</data>
+  <data key="d3">40</data>
+  <data key="d4">47</data>
+  <data key="d5">1.0</data>
+  <data key="d6">ddl_parser</data>
+  <data key="d7">CREATE TABLE CLAIM_AUDIT_LOG with primary key log_id</data>
+</node>
+<node id="SP_PROCESS_CLAIM">
+  <data key="d0">StoredProcedure</data>
+  <data key="d1">Procedure: SP_PROCESS_CLAIM</data>
+  <data key="d2">process_claim_sp.sql</data>
+  <data key="d3">4</data>
+  <data key="d4">56</data>
+  <data key="d5">1.0</data>
+  <data key="d6">ddl_parser</data>
+  <data key="d7">CREATE PROCEDURE SP_PROCESS_CLAIM updating deductible and payout balances</data>
+</node>
+<node id="Claim">
+  <data key="d0">Module</data>
+  <data key="d1">Class: Claim</data>
+  <data key="d2">Claim.java</data>
+  <data key="d3">10</data>
+  <data key="d4">53</data>
+  <data key="d5">1.0</data>
+  <data key="d6">java_ast_parser</data>
+  <data key="d7">Java component Claim with 21 methods</data>
+</node>
+<node id="ClaimService">
+  <data key="d0">Service</data>
+  <data key="d1">Class: ClaimService</data>
+  <data key="d2">ClaimService.java</data>
+  <data key="d3">19</data>
+  <data key="d4">139</data>
+  <data key="d5">1.0</data>
+  <data key="d6">java_ast_parser</data>
+  <data key="d7">Java component ClaimService with 6 methods</data>
+</node>
+<node id="Customer">
+  <data key="d0">Module</data>
+  <data key="d1">Class: Customer</data>
+  <data key="d2">Customer.java</data>
+  <data key="d3">9</data>
+  <data key="d4">40</data>
+  <data key="d5">1.0</data>
+  <data key="d6">java_ast_parser</data>
+  <data key="d7">Java component Customer with 15 methods</data>
+</node>
+<node id="Policy">
+  <data key="d0">Module</data>
+  <data key="d1">Class: Policy</data>
+  <data key="d2">Policy.java</data>
+  <data key="d3">10</data>
+  <data key="d4">49</data>
+  <data key="d5">1.0</data>
+  <data key="d6">java_ast_parser</data>
+  <data key="d7">Java component Policy with 19 methods</data>
+</node>
+<node id="PolicyValidationService">
+  <data key="d0">Service</data>
+  <data key="d1">Class: PolicyValidationService</data>
+  <data key="d2">PolicyValidationService.java</data>
+  <data key="d3">14</data>
+  <data key="d4">93</data>
+  <data key="d5">1.0</data>
+  <data key="d6">java_ast_parser</data>
+  <data key="d7">Java component PolicyValidationService with 6 methods</data>
+</node>
+<node id="BR-01">
+  <data key="d0">BusinessRule</data>
+  <data key="d1">BR-01: Policy Status Check</data>
+  <data key="d2">data/insurance_claims_app/PolicyValidationService.java</data>
+  <data key="d3">21</data>
+  <data key="d4">29</data>
+  <data key="d5">1.0</data>
+  <data key="d6">deterministic_rule_extractor</data>
+  <data key="d7">Policy must have ACTIVE or GRACE_PERIOD status to adjudicate claims.</data>
+</node>
+<node id="BR-02">
+  <data key="d0">BusinessRule</data>
+  <data key="d1">BR-02: Date Range Eligibility</data>
+  <data key="d2">data/insurance_claims_app/PolicyValidationService.java</data>
+  <data key="d3">32</data>
+  <data key="d4">40</data>
+  <data key="d5">1.0</data>
+  <data key="d6">deterministic_rule_extractor</data>
+  <data key="d7">Incident date must fall within policy start and end dates.</data>
+</node>
+<node id="BR-03">
+  <data key="d0">BusinessRule</data>
+  <data key="d1">BR-03: Coverage Limit Adjudication</data>
+  <data key="d2">data/insurance_claims_app/PolicyValidationService.java</data>
+  <data key="d3">43</data>
+  <data key="d4">51</data>
+  <data key="d5">1.0</data>
+  <data key="d6">deterministic_rule_extractor</data>
+  <data key="d7">Claim amount cannot exceed remaining policy coverage balance.</data>
+</node>
+<node id="BR-04">
+  <data key="d0">BusinessRule</data>
+  <data key="d1">BR-04: High-Risk Fraud Escalation</data>
+  <data key="d2">data/insurance_claims_app/PolicyValidationService.java</data>
+  <data key="d3">54</data>
+  <data key="d4">62</data>
+  <data key="d5">1.0</data>
+  <data key="d6">deterministic_rule_extractor</data>
+  <data key="d7">Claims exceeding $50k or filed within 7 days of inception require fraud review.</data>
+</node>
+<node id="BR-05">
+  <data key="d0">BusinessRule</data>
+  <data key="d1">BR-05: Auto-Approval Limit ($2.5k)</data>
+  <data key="d2">data/insurance_claims_app/PolicyValidationService.java</data>
+  <data key="d3">66</data>
+  <data key="d4">74</data>
+  <data key="d5">1.0</data>
+  <data key="d6">deterministic_rule_extractor</data>
+  <data key="d7">Clean claims under $2,500 on active policies are eligible for straight-through approval.</data>
+</node>
+<node id="Claims_Architecture_Spec">
+  <data key="d0">RequirementDocument</data>
+  <data key="d1">Doc: Claims Architecture Spec</data>
+  <data key="d2">data/insurance_claims_app/Claims_Architecture_Spec.md</data>
+  <data key="d3">1</data>
+  <data key="d4">25</data>
+  <data key="d5">1.0</data>
+  <data key="d6">doc_parser</data>
+  <data key="d7">Monolith overview, SLA requirements, and deductible calculation workflows.</data>
+</node>
+<node id="SME_Tribal_Notes">
+  <data key="d0">SMEInsight</data>
+  <data key="d1">SME: Bob Vance Interview</data>
+  <data key="d2">data/insurance_claims_app/SME_Interview_Notes.txt</data>
+  <data key="d3">1</data>
+  <data key="d4">15</data>
+  <data key="d5">1.0</data>
+  <data key="d6">doc_parser</data>
+  <data key="d7">Grace period mismatch, row locking in SP_PROCESS_CLAIM, and CUSTOMER_ACCOUNT sharing.</data>
+</node>
+<node id="Risk_Row_Locking">
+  <data key="d0">Risk</data>
+  <data key="d1">Risk: Database Row Locking Contention</data>
+  <data key="d2">process_claim_sp.sql</data>
+  <data key="d3">1</data>
+  <data key="d4">1</data>
+  <data key="d5">1.0</data>
+  <data key="d6">architectural_analyzer</data>
+  <data key="d7">SP_PROCESS_CLAIM locks POLICY_MASTER rows during claim surges.</data>
+</node>
+<node id="Risk_Shared_Database">
+  <data key="d0">Risk</data>
+  <data key="d1">Risk: Shared Database Anti-Pattern</data>
+  <data key="d2">schema.ddl</data>
+  <data key="d3">1</data>
+  <data key="d4">1</data>
+  <data key="d5">1.0</data>
+  <data key="d6">architectural_analyzer</data>
+  <data key="d7">CUSTOMER_ACCOUNT table is shared across 3 other legacy systems.</data>
+</node>
+<node id="Risk_Hardcoded_Rule">
+  <data key="d0">Risk</data>
+  <data key="d1">Risk: Hardcoded Auto-Approval Threshold</data>
+  <data key="d2">PolicyValidationService.java</data>
+  <data key="d3">1</data>
+  <data key="d4">1</data>
+  <data key="d5">1.0</data>
+  <data key="d6">architectural_analyzer</data>
+  <data key="d7">$2,500 approval limit is hardcoded as constant in PolicyValidationService.</data>
+</node>
+<edge source="ClaimCore_App" target="CUSTOMER_ACCOUNT" id="DEPENDS_ON">
+  <data key="d8">DEPENDS_ON</data>
+  <data key="d9">schema.ddl</data>
+  <data key="d10">4</data>
+  <data key="d11">12</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="ClaimCore_App" target="POLICY_MASTER" id="DEPENDS_ON">
+  <data key="d8">DEPENDS_ON</data>
+  <data key="d9">schema.ddl</data>
+  <data key="d10">14</data>
+  <data key="d11">25</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="ClaimCore_App" target="CLAIMS_RECORD" id="DEPENDS_ON">
+  <data key="d8">DEPENDS_ON</data>
+  <data key="d9">schema.ddl</data>
+  <data key="d10">27</data>
+  <data key="d11">38</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="ClaimCore_App" target="CLAIM_AUDIT_LOG" id="DEPENDS_ON">
+  <data key="d8">DEPENDS_ON</data>
+  <data key="d9">schema.ddl</data>
+  <data key="d10">40</data>
+  <data key="d11">47</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="ClaimCore_App" target="Claim" id="DEPENDS_ON">
+  <data key="d8">DEPENDS_ON</data>
+  <data key="d9">Claim.java</data>
+  <data key="d10">1</data>
+  <data key="d11">1</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="ClaimCore_App" target="ClaimService" id="DEPENDS_ON">
+  <data key="d8">DEPENDS_ON</data>
+  <data key="d9">ClaimService.java</data>
+  <data key="d10">1</data>
+  <data key="d11">1</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="ClaimCore_App" target="Customer" id="DEPENDS_ON">
+  <data key="d8">DEPENDS_ON</data>
+  <data key="d9">Customer.java</data>
+  <data key="d10">1</data>
+  <data key="d11">1</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="ClaimCore_App" target="Policy" id="DEPENDS_ON">
+  <data key="d8">DEPENDS_ON</data>
+  <data key="d9">Policy.java</data>
+  <data key="d10">1</data>
+  <data key="d11">1</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="ClaimCore_App" target="PolicyValidationService" id="DEPENDS_ON">
+  <data key="d8">DEPENDS_ON</data>
+  <data key="d9">PolicyValidationService.java</data>
+  <data key="d10">1</data>
+  <data key="d11">1</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="CUSTOMER_ACCOUNT" target="Risk_Shared_Database" id="IMPACTS">
+  <data key="d8">IMPACTS</data>
+  <data key="d9"></data>
+  <data key="d10">1</data>
+  <data key="d11">1</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="POLICY_MASTER" target="CUSTOMER_ACCOUNT" id="DEPENDS_ON">
+  <data key="d8">DEPENDS_ON</data>
+  <data key="d9">schema.ddl</data>
+  <data key="d10">14</data>
+  <data key="d11">25</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14">CONSTRAINT fk_policy_customer REFERENCES CUSTOMER_ACCOUNT</data>
+</edge>
+<edge source="CLAIMS_RECORD" target="POLICY_MASTER" id="DEPENDS_ON">
+  <data key="d8">DEPENDS_ON</data>
+  <data key="d9">schema.ddl</data>
+  <data key="d10">27</data>
+  <data key="d11">38</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14">CONSTRAINT fk_claim_policy REFERENCES POLICY_MASTER</data>
+</edge>
+<edge source="CLAIMS_RECORD" target="CUSTOMER_ACCOUNT" id="DEPENDS_ON">
+  <data key="d8">DEPENDS_ON</data>
+  <data key="d9">schema.ddl</data>
+  <data key="d10">27</data>
+  <data key="d11">38</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14">CONSTRAINT fk_claim_customer REFERENCES CUSTOMER_ACCOUNT</data>
+</edge>
+<edge source="CLAIM_AUDIT_LOG" target="CLAIMS_RECORD" id="DEPENDS_ON">
+  <data key="d8">DEPENDS_ON</data>
+  <data key="d9">schema.ddl</data>
+  <data key="d10">40</data>
+  <data key="d11">47</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14">CONSTRAINT fk_audit_claim REFERENCES CLAIMS_RECORD</data>
+</edge>
+<edge source="SP_PROCESS_CLAIM" target="POLICY_MASTER" id="READS_FROM">
+  <data key="d8">READS_FROM</data>
+  <data key="d9">process_claim_sp.sql</data>
+  <data key="d10">4</data>
+  <data key="d11">56</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="SP_PROCESS_CLAIM" target="POLICY_MASTER" id="WRITES_TO">
+  <data key="d8">WRITES_TO</data>
+  <data key="d9">process_claim_sp.sql</data>
+  <data key="d10">4</data>
+  <data key="d11">56</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="SP_PROCESS_CLAIM" target="CLAIM_AUDIT_LOG" id="WRITES_TO">
+  <data key="d8">WRITES_TO</data>
+  <data key="d9">process_claim_sp.sql</data>
+  <data key="d10">4</data>
+  <data key="d11">56</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="SP_PROCESS_CLAIM" target="CLAIMS_RECORD" id="WRITES_TO">
+  <data key="d8">WRITES_TO</data>
+  <data key="d9">process_claim_sp.sql</data>
+  <data key="d10">4</data>
+  <data key="d11">56</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="SP_PROCESS_CLAIM" target="Risk_Row_Locking" id="IMPACTS">
+  <data key="d8">IMPACTS</data>
+  <data key="d9"></data>
+  <data key="d10">1</data>
+  <data key="d11">1</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="ClaimService" target="POLICY_MASTER" id="READS_FROM">
+  <data key="d8">READS_FROM</data>
+  <data key="d9">ClaimService.java</data>
+  <data key="d10">75</data>
+  <data key="d11">75</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14">SELECT policy_number, customer_id, policy_type, coverage_amount, deductible, remaining_coverage, start_date, end_date, status FROM POLICY_MASTER WHERE policy_number = ?</data>
+</edge>
+<edge source="ClaimService" target="CUSTOMER_ACCOUNT" id="READS_FROM">
+  <data key="d8">READS_FROM</data>
+  <data key="d9">ClaimService.java</data>
+  <data key="d10">98</data>
+  <data key="d11">98</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14">SELECT customer_id, first_name, last_name, ssn, email, status FROM CUSTOMER_ACCOUNT WHERE customer_id = ?</data>
+</edge>
+<edge source="ClaimService" target="CLAIMS_RECORD" id="WRITES_TO">
+  <data key="d8">WRITES_TO</data>
+  <data key="d9">ClaimService.java</data>
+  <data key="d10">116</data>
+  <data key="d11">116</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14">INSERT INTO CLAIMS_RECORD (claim_id, policy_number, customer_id, claim_amount, approved_amount, status, incident_description, filing_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)</data>
+</edge>
+<edge source="ClaimService" target="SP_PROCESS_CLAIM" id="CALLS">
+  <data key="d8">CALLS</data>
+  <data key="d9">ClaimService.java</data>
+  <data key="d10">131</data>
+  <data key="d11">131</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14">{call SP_PROCESS_CLAIM(?, ?, ?)}</data>
+</edge>
+<edge source="PolicyValidationService" target="BR-01" id="IMPLEMENTS_RULE">
+  <data key="d8">IMPLEMENTS_RULE</data>
+  <data key="d9">data/insurance_claims_app/PolicyValidationService.java</data>
+  <data key="d10">21</data>
+  <data key="d11">29</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="PolicyValidationService" target="BR-02" id="IMPLEMENTS_RULE">
+  <data key="d8">IMPLEMENTS_RULE</data>
+  <data key="d9">data/insurance_claims_app/PolicyValidationService.java</data>
+  <data key="d10">32</data>
+  <data key="d11">40</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="PolicyValidationService" target="BR-03" id="IMPLEMENTS_RULE">
+  <data key="d8">IMPLEMENTS_RULE</data>
+  <data key="d9">data/insurance_claims_app/PolicyValidationService.java</data>
+  <data key="d10">43</data>
+  <data key="d11">51</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="PolicyValidationService" target="BR-04" id="IMPLEMENTS_RULE">
+  <data key="d8">IMPLEMENTS_RULE</data>
+  <data key="d9">data/insurance_claims_app/PolicyValidationService.java</data>
+  <data key="d10">54</data>
+  <data key="d11">62</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="PolicyValidationService" target="BR-05" id="IMPLEMENTS_RULE">
+  <data key="d8">IMPLEMENTS_RULE</data>
+  <data key="d9">data/insurance_claims_app/PolicyValidationService.java</data>
+  <data key="d10">66</data>
+  <data key="d11">74</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="BR-05" target="Risk_Hardcoded_Rule" id="IMPACTS">
+  <data key="d8">IMPACTS</data>
+  <data key="d9"></data>
+  <data key="d10">1</data>
+  <data key="d11">1</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+</graph></graphml>

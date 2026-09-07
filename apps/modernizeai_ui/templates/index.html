@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModernizeAI | Hybrid Agentic Graph-RAG Knowledge Fabric</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Top Header -->
+    <header class="app-header">
+        <div class="header-left">
+            <div class="logo-badge">
+                <span class="logo-icon">⚡</span>
+                <div class="logo-text">
+                    <h1>ModernizeAI</h1>
+                    <span class="subtitle">Hybrid Agentic Graph-RAG Knowledge Fabric</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="status-chip" id="system-status-chip">
+                <span class="pulse-dot"></span>
+                <span id="status-text">Knowledge Fabric Active</span>
+            </div>
+            <button id="rescan-btn" class="btn btn-primary">
+                <span class="btn-icon">🚀</span> Ingest & Rebuild Fabric
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-container">
+        <!-- Metric Cards Row -->
+        <section class="metrics-row">
+            <div class="metric-card glass-card">
+                <div class="metric-icon cyan">🧠</div>
+                <div class="metric-info">
+                    <span class="metric-value" id="stat-memory">5 / 5</span>
+                    <span class="metric-label">Memory Tiers Active</span>
+                </div>
+            </div>
+            <div class="metric-card glass-card">
+                <div class="metric-icon blue">🕸️</div>
+                <div class="metric-info">
+                    <span class="metric-value" id="stat-nodes">21</span>
+                    <span class="metric-label">Knowledge Nodes</span>
+                </div>
+            </div>
+            <div class="metric-card glass-card">
+                <div class="metric-icon purple">🔗</div>
+                <div class="metric-info">
+                    <span class="metric-value" id="stat-edges">29</span>
+                    <span class="metric-label">Structural Edges</span>
+                </div>
+            </div>
+            <div class="metric-card glass-card">
+                <div class="metric-icon amber">📜</div>
+                <div class="metric-info">
+                    <span class="metric-value" id="stat-rules">5</span>
+                    <span class="metric-label">Formalized Rules</span>
+                </div>
+            </div>
+            <div class="metric-card glass-card">
+                <div class="metric-icon green">🧩</div>
+                <div class="metric-info">
+                    <span class="metric-value" id="stat-domains">5</span>
+                    <span class="metric-label">Candidate Domains</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Multi-Agent Swarm Live Visualizer -->
+        <section class="swarm-section glass-card">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>Multi-Agent Swarm Orchestration (Neuro SAN Studio)</h2>
+                    <span class="badge badge-subtle">11 Mixture-of-Experts Agents</span>
+                </div>
+                <div class="ratio-badge">80% Deterministic / 20% LLM Reasoning</div>
+            </div>
+            <div class="swarm-grid" id="swarm-grid">
+                <!-- Agent Cards Dynamically Populated / Pre-rendered -->
+                <div class="agent-chip active" data-agent="frontman">
+                    <span class="agent-icon">👑</span>
+                    <div class="agent-details">
+                        <span class="agent-name">Frontman</span>
+                        <span class="agent-role">Orchestrator</span>
+                    </div>
+                </div>
+                <div class="agent-chip active" data-agent="discovery">
+                    <span class="agent-icon">🔍</span>
+                    <div class="agent-details">
+                        <span class="agent-name">Discovery</span>
+                        <span class="agent-role">Asset Ingestion</span>
+                    </div>
+                </div>
+                <div class="agent-chip active" data-agent="code_intel">
+                    <span class="agent-icon">☕</span>
+                    <div class="agent-details">
+                        <span class="agent-name">Code Intel</span>
+                        <span class="agent-role">Java/SQL AST</span>
+                    </div>
+                </div>
+                <div class="agent-chip active" data-agent="database_intel">
+                    <span class="agent-icon">🗄️</span>
+                    <div class="agent-details">
+                        <span class="agent-name">DB Intel</span>
+                        <span class="agent-role">DDL & Lineage</span>
+                    </div>
+                </div>
+                <div class="agent-chip active" data-agent="doc_intel">
+                    <span class="agent-icon">📄</span>
+                    <div class="agent-details">
+                        <span class="agent-name">Doc Intel</span>
+                        <span class="agent-role">Specs & Notes</span>
+                    </div>
+                </div>
+                <div class="agent-chip active" data-agent="business_rules">
+                    <span class="agent-icon">⚖️</span>
+                    <div class="agent-details">
+                        <span class="agent-name">Business Rules</span>
+                        <span class="agent-role">Logic Extraction</span>
+                    </div>
+                </div>
+                <div class="agent-chip active" data-agent="validation">
+                    <span class="agent-icon">🛡️</span>
+                    <div class="agent-details">
+                        <span class="agent-name">Validation</span>
+                        <span class="agent-role">Anti-Hallucination</span>
+                    </div>
+                </div>
+                <div class="agent-chip active highlight-chip" data-agent="knowledge_graph">
+                    <span class="agent-icon">🌐</span>
+                    <div class="agent-details">
+                        <span class="agent-name">Knowledge Graph</span>
+                        <span class="agent-role">MultiDiGraph Engine</span>
+                    </div>
+                </div>
+                <div class="agent-chip active highlight-chip" data-agent="memory_manager">
+                    <span class="agent-icon">💾</span>
+                    <div class="agent-details">
+                        <span class="agent-name">Memory Manager</span>
+                        <span class="agent-role">5-Tier Memory</span>
+                    </div>
+                </div>
+                <div class="agent-chip active" data-agent="impact_analysis">
+                    <span class="agent-icon">💥</span>
+                    <div class="agent-details">
+                        <span class="agent-name">Impact Analysis</span>
+                        <span class="agent-role">Blast-Radius BFS</span>
+                    </div>
+                </div>
+                <div class="agent-chip active" data-agent="modernization_advisor">
+                    <span class="agent-icon">🧭</span>
+                    <div class="agent-details">
+                        <span class="agent-name">Modernize Advisor</span>
+                        <span class="agent-role">6R Roadmap</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Workspace Tabs -->
+        <section class="workspace-section">
+            <div class="workspace-tabs">
+                <button class="tab-btn active" data-tab="tab-graph">
+                    <span class="tab-icon">🌐</span> Interactive Knowledge Graph
+                </button>
+                <button class="tab-btn" data-tab="tab-query">
+                    <span class="tab-icon">🔎</span> Hybrid Graph-RAG Query
+                </button>
+                <button class="tab-btn" data-tab="tab-readiness">
+                    <span class="tab-icon">📊</span> Modernization Readiness Report
+                </button>
+                <button class="tab-btn" data-tab="tab-blast">
+                    <span class="tab-icon">💥</span> Blast-Radius Matrix
+                </button>
+                <button class="tab-btn" data-tab="tab-rules">
+                    <span class="tab-icon">📋</span> Business Rules Catalog
+                </button>
+                <button class="tab-btn" data-tab="tab-json">
+                    <span class="tab-icon">💾</span> Graph Exports (JSON / GraphML)
+                </button>
+            </div>
+
+            <!-- Tab 1: Interactive Knowledge Graph Explorer -->
+            <div class="tab-pane active" id="tab-graph">
+                <div class="graph-card glass-card">
+                    <div class="graph-toolbar">
+                        <div class="legend-items">
+                            <span class="legend-dot" style="background:#00a896;"></span> Service
+                            <span class="legend-dot" style="background:#3a86ff;"></span> Table
+                            <span class="legend-dot" style="background:#06d6a0;"></span> StoredProc
+                            <span class="legend-dot" style="background:#ffb703;"></span> BusinessRule
+                            <span class="legend-dot" style="background:#e63946;"></span> Risk
+                            <span class="legend-dot" style="background:#f72585;"></span> SME Note
+                        </div>
+                        <div class="toolbar-actions">
+                            <a href="/artifacts/modernize_graph.html" target="_blank" class="btn btn-secondary btn-sm">
+                                ↗ Open Fullscreen
+                            </a>
+                        </div>
+                    </div>
+                    <div class="iframe-container">
+                        <iframe id="graph-iframe" src="/artifacts/modernize_graph.html" title="Interactive Knowledge Graph"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Hybrid Graph-RAG Query Console -->
+            <div class="tab-pane" id="tab-query">
+                <div class="query-container glass-card">
+                    <div class="query-header">
+                        <h3>Ask ModernizeAI Knowledge Fabric</h3>
+                        <p>Queries fuse dense semantic search over documentation with Personalized PageRank (PPR) across the Knowledge Graph.</p>
+                    </div>
+
+                    <div class="query-bar-container">
+                        <input type="text" id="query-input" placeholder="e.g. What breaks if ClaimsService or POLICY_MASTER changes?" value="What modules and business rules are impacted if POLICY_MASTER changes?">
+                        <button id="run-query-btn" class="btn btn-primary">
+                            <span>Execute Graph-RAG</span>
+                        </button>
+                    </div>
+
+                    <div class="query-chips">
+                        <span class="query-chip" data-q="What business rules govern claim validation and deductible calculation?">Claims & Deductibles Logic</span>
+                        <span class="query-chip" data-q="What tables and procedures are affected if POLICY_MASTER is modified?">POLICY_MASTER Blast Radius</span>
+                        <span class="query-chip" data-q="Which services call SP_PROCESS_CLAIM and what tables are modified?">SP_PROCESS_CLAIM Lineage</span>
+                        <span class="query-chip" data-q="What are the architectural risks and hardcoded thresholds in the codebase?">Architectural Risks</span>
+                    </div>
+
+                    <!-- Query Results -->
+                    <div id="query-results" class="query-results-panel">
+                        <div class="results-placeholder">
+                            <span class="placeholder-icon">💡</span>
+                            <p>Click a suggested chip or type a question above to execute Hybrid Agentic Graph-RAG.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Modernization Readiness Report -->
+            <div class="tab-pane" id="tab-readiness">
+                <div class="markdown-preview-card glass-card">
+                    <div class="report-header">
+                        <div class="report-title">
+                            <h3>Modernization Readiness & 6R Architecture Report</h3>
+                            <span class="badge badge-success">Artifact: modernization_readiness_report.md</span>
+                        </div>
+                        <a href="/artifacts/modernization_readiness_report.md" download class="btn btn-secondary btn-sm">⬇ Download Markdown</a>
+                    </div>
+                    <div class="markdown-body" id="readiness-report-body">
+                        <!-- Populated via API -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Impact & Blast-Radius Matrix -->
+            <div class="tab-pane" id="tab-blast">
+                <div class="markdown-preview-card glass-card">
+                    <div class="report-header">
+                        <div class="report-title">
+                            <h3>Impact & Blast-Radius Traversal Matrix</h3>
+                            <span class="badge badge-warning">Artifact: impact_blast_radius_matrix.md</span>
+                        </div>
+                        <a href="/artifacts/impact_blast_radius_matrix.md" download class="btn btn-secondary btn-sm">⬇ Download Markdown</a>
+                    </div>
+                    <div class="markdown-body" id="blast-matrix-body">
+                        <!-- Populated via API -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 5: Business Rules Catalog -->
+            <div class="tab-pane" id="tab-rules">
+                <div class="markdown-preview-card glass-card">
+                    <div class="report-header">
+                        <div class="report-title">
+                            <h3>Business Rules Traceability Matrix</h3>
+                            <span class="badge badge-info">Artifact: business_rules_catalog.md</span>
+                        </div>
+                        <a href="/artifacts/business_rules_catalog.md" download class="btn btn-secondary btn-sm">⬇ Download Markdown</a>
+                    </div>
+                    <div class="markdown-body" id="rules-catalog-body">
+                        <!-- Populated via API -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 6: JSON Knowledge Graph & GraphML Export -->
+            <div class="tab-pane" id="tab-json">
+                <div class="json-export-card glass-card">
+                    <div class="report-header">
+                        <div class="report-title">
+                            <h3>Machine-Readable Knowledge Fabric Exports</h3>
+                            <span class="badge badge-subtle">Ready for Neo4j, Gephi, & AWS Neptune</span>
+                        </div>
+                        <div class="export-actions">
+                            <a href="/artifacts/modernize_kg.json" download class="btn btn-secondary btn-sm">⬇ Download JSON-LD</a>
+                            <a href="/artifacts/modernize_kg.graphml" download class="btn btn-secondary btn-sm">⬇ Download GraphML</a>
+                        </div>
+                    </div>
+                    <pre class="json-viewer" id="json-viewer-content">Loading knowledge graph JSON...</pre>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Ingestion Modal -->
+    <div id="ingest-modal" class="modal-backdrop">
+        <div class="modal-card glass-card">
+            <div class="modal-header">
+                <h3>Ingest Legacy Codebase</h3>
+                <button class="close-modal-btn" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Specify the local repository or synthetic application path to scan, parse, and rebuild the 5-Tier Memory & Knowledge Fabric:</p>
+                <div class="input-group">
+                    <label for="repo-input">Repository Path:</label>
+                    <input type="text" id="repo-input" value="data/insurance_claims_app" class="text-input">
+                </div>
+                <div class="progress-bar-container" id="ingest-progress-container" style="display:none;">
+                    <div class="progress-bar" id="ingest-progress-bar"></div>
+                    <span class="progress-label" id="ingest-progress-label">Parsing ASTs and Building Knowledge Fabric...</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-modal-btn">Cancel</button>
+                <button class="btn btn-primary" id="start-ingest-btn">Run Discovery & Fabric Build</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="/static/app.js"></script>
+</body>
+</html>

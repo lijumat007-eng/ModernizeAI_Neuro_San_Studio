@@ -1,0 +1,9 @@
+Interview with Claims SME & Lead Architect (Bob Vance, 12 years with ClaimCore)
+Date: 2026-02-14
+
+Key Takeaways & Tribal Knowledge:
+1. "The official spec says policy grace period is 30 days after missed premium, but in the Java code, PolicyValidationService actually allows claims if status is literally 'GRACE_PERIOD', which the batch billing job only sets for 15 days. So there is a mismatch between marketing documents and the code."
+2. "Do NOT drop or modify the remaining_coverage column in POLICY_MASTER! The overnight reinsurance feed reads that column directly using an unindexed batch query, and modifying its type or name will break the nightly ledger."
+3. "SP_PROCESS_CLAIM uses row-level locking on POLICY_MASTER. If two claims for the same policy hit simultaneously, they will queue up. During hurricane season, we saw database lock timeouts because of this."
+4. "The auto-approval limit of $2,500 was hardcoded in PolicyValidationService back in 2018. Management wants to raise it to $5,000 in the new microservice, but currently it's a fixed constant in the class."
+5. "CUSTOMER_ACCOUNT table is shared across 3 other legacy applications (Billing, CRM, and Portal). Any schema migration must treat CUSTOMER_ACCOUNT as read-only or use an Anti-Corruption Layer."

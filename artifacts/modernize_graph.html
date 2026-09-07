@@ -1,0 +1,127 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #0f172a;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#2b5c8f", "font": {"color": "#f8fafc"}, "id": "ClaimCore_App", "label": "ClaimCore Monolith v2.4", "shape": "dot", "size": 28, "title": "[Application] ClaimCore_App\nFile: data/insurance_claims_app:1-100\n\nSnippet: Core insurance legacy application adjudicating claims...."}, {"color": "#3a86ff", "font": {"color": "#f8fafc"}, "id": "CUSTOMER_ACCOUNT", "label": "Table: CUSTOMER_ACCOUNT", "shape": "dot", "size": 24, "title": "[DatabaseTable] CUSTOMER_ACCOUNT\nFile: schema.ddl:4-12\n\nSnippet: CREATE TABLE CUSTOMER_ACCOUNT with primary key customer_id..."}, {"color": "#3a86ff", "font": {"color": "#f8fafc"}, "id": "POLICY_MASTER", "label": "Table: POLICY_MASTER", "shape": "dot", "size": 24, "title": "[DatabaseTable] POLICY_MASTER\nFile: schema.ddl:14-25\n\nSnippet: CREATE TABLE POLICY_MASTER with primary key policy_number..."}, {"color": "#3a86ff", "font": {"color": "#f8fafc"}, "id": "CLAIMS_RECORD", "label": "Table: CLAIMS_RECORD", "shape": "dot", "size": 24, "title": "[DatabaseTable] CLAIMS_RECORD\nFile: schema.ddl:27-38\n\nSnippet: CREATE TABLE CLAIMS_RECORD with primary key claim_id..."}, {"color": "#3a86ff", "font": {"color": "#f8fafc"}, "id": "CLAIM_AUDIT_LOG", "label": "Table: CLAIM_AUDIT_LOG", "shape": "dot", "size": 24, "title": "[DatabaseTable] CLAIM_AUDIT_LOG\nFile: schema.ddl:40-47\n\nSnippet: CREATE TABLE CLAIM_AUDIT_LOG with primary key log_id..."}, {"color": "#06d6a0", "font": {"color": "#f8fafc"}, "id": "SP_PROCESS_CLAIM", "label": "Procedure: SP_PROCESS_CLAIM", "shape": "dot", "size": 20, "title": "[StoredProcedure] SP_PROCESS_CLAIM\nFile: process_claim_sp.sql:4-56\n\nSnippet: CREATE PROCEDURE SP_PROCESS_CLAIM updating deductible and payout balances..."}, {"color": "#028090", "font": {"color": "#f8fafc"}, "id": "Claim", "label": "Class: Claim", "shape": "dot", "size": 20, "title": "[Module] Claim\nFile: Claim.java:10-53\n\nSnippet: Java component Claim with 21 methods..."}, {"color": "#00a896", "font": {"color": "#f8fafc"}, "id": "ClaimService", "label": "Class: ClaimService", "shape": "dot", "size": 28, "title": "[Service] ClaimService\nFile: ClaimService.java:19-139\n\nSnippet: Java component ClaimService with 6 methods..."}, {"color": "#028090", "font": {"color": "#f8fafc"}, "id": "Customer", "label": "Class: Customer", "shape": "dot", "size": 20, "title": "[Module] Customer\nFile: Customer.java:9-40\n\nSnippet: Java component Customer with 15 methods..."}, {"color": "#028090", "font": {"color": "#f8fafc"}, "id": "Policy", "label": "Class: Policy", "shape": "dot", "size": 20, "title": "[Module] Policy\nFile: Policy.java:10-49\n\nSnippet: Java component Policy with 19 methods..."}, {"color": "#00a896", "font": {"color": "#f8fafc"}, "id": "PolicyValidationService", "label": "Class: PolicyValidationService", "shape": "dot", "size": 28, "title": "[Service] PolicyValidationService\nFile: PolicyValidationService.java:14-93\n\nSnippet: Java component PolicyValidationService with 6 methods..."}, {"color": "#ffb703", "font": {"color": "#f8fafc"}, "id": "BR-01", "label": "BR-01: Policy Status Check", "shape": "dot", "size": 22, "title": "[BusinessRule] BR-01\nFile: data/insurance_claims_app/PolicyValidationService.java:21-29\n\nSnippet: Policy must have ACTIVE or GRACE_PERIOD status to adjudicate claims...."}, {"color": "#ffb703", "font": {"color": "#f8fafc"}, "id": "BR-02", "label": "BR-02: Date Range Eligibility", "shape": "dot", "size": 22, "title": "[BusinessRule] BR-02\nFile: data/insurance_claims_app/PolicyValidationService.java:32-40\n\nSnippet: Incident date must fall within policy start and end dates...."}, {"color": "#ffb703", "font": {"color": "#f8fafc"}, "id": "BR-03", "label": "BR-03: Coverage Limit Adjudication", "shape": "dot", "size": 22, "title": "[BusinessRule] BR-03\nFile: data/insurance_claims_app/PolicyValidationService.java:43-51\n\nSnippet: Claim amount cannot exceed remaining policy coverage balance...."}, {"color": "#ffb703", "font": {"color": "#f8fafc"}, "id": "BR-04", "label": "BR-04: High-Risk Fraud Escalation", "shape": "dot", "size": 22, "title": "[BusinessRule] BR-04\nFile: data/insurance_claims_app/PolicyValidationService.java:54-62\n\nSnippet: Claims exceeding $50k or filed within 7 days of inception require fraud review...."}, {"color": "#ffb703", "font": {"color": "#f8fafc"}, "id": "BR-05", "label": "BR-05: Auto-Approval Limit ($2.5k)", "shape": "dot", "size": 22, "title": "[BusinessRule] BR-05\nFile: data/insurance_claims_app/PolicyValidationService.java:66-74\n\nSnippet: Clean claims under $2,500 on active policies are eligible for straight-through approval...."}, {"color": "#fb5607", "font": {"color": "#f8fafc"}, "id": "Claims_Architecture_Spec", "label": "Doc: Claims Architecture Spec", "shape": "dot", "size": 20, "title": "[RequirementDocument] Claims_Architecture_Spec\nFile: data/insurance_claims_app/Claims_Architecture_Spec.md:1-25\n\nSnippet: Monolith overview, SLA requirements, and deductible calculation workflows...."}, {"color": "#f72585", "font": {"color": "#f8fafc"}, "id": "SME_Tribal_Notes", "label": "SME: Bob Vance Interview", "shape": "dot", "size": 20, "title": "[SMEInsight] SME_Tribal_Notes\nFile: data/insurance_claims_app/SME_Interview_Notes.txt:1-15\n\nSnippet: Grace period mismatch, row locking in SP_PROCESS_CLAIM, and CUSTOMER_ACCOUNT sharing...."}, {"color": "#e63946", "font": {"color": "#f8fafc"}, "id": "Risk_Row_Locking", "label": "Risk: Database Row Locking Contention", "shape": "dot", "size": 20, "title": "[Risk] Risk_Row_Locking\nFile: process_claim_sp.sql:1-1\n\nSnippet: SP_PROCESS_CLAIM locks POLICY_MASTER rows during claim surges...."}, {"color": "#e63946", "font": {"color": "#f8fafc"}, "id": "Risk_Shared_Database", "label": "Risk: Shared Database Anti-Pattern", "shape": "dot", "size": 20, "title": "[Risk] Risk_Shared_Database\nFile: schema.ddl:1-1\n\nSnippet: CUSTOMER_ACCOUNT table is shared across 3 other legacy systems...."}, {"color": "#e63946", "font": {"color": "#f8fafc"}, "id": "Risk_Hardcoded_Rule", "label": "Risk: Hardcoded Auto-Approval Threshold", "shape": "dot", "size": 20, "title": "[Risk] Risk_Hardcoded_Rule\nFile: PolicyValidationService.java:1-1\n\nSnippet: $2,500 approval limit is hardcoded as constant in PolicyValidationService...."}]);
+                  edges = new vis.DataSet([{"arrows": "to", "color": "#6c757d", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "ClaimCore_App", "label": "DEPENDS_ON", "title": "ClaimCore_App --[DEPENDS_ON]--\u003e CUSTOMER_ACCOUNT (schema.ddl:4)", "to": "CUSTOMER_ACCOUNT", "width": 1}, {"arrows": "to", "color": "#6c757d", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "ClaimCore_App", "label": "DEPENDS_ON", "title": "ClaimCore_App --[DEPENDS_ON]--\u003e POLICY_MASTER (schema.ddl:14)", "to": "POLICY_MASTER", "width": 1}, {"arrows": "to", "color": "#6c757d", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "ClaimCore_App", "label": "DEPENDS_ON", "title": "ClaimCore_App --[DEPENDS_ON]--\u003e CLAIMS_RECORD (schema.ddl:27)", "to": "CLAIMS_RECORD", "width": 1}, {"arrows": "to", "color": "#6c757d", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "ClaimCore_App", "label": "DEPENDS_ON", "title": "ClaimCore_App --[DEPENDS_ON]--\u003e CLAIM_AUDIT_LOG (schema.ddl:40)", "to": "CLAIM_AUDIT_LOG", "width": 1}, {"arrows": "to", "color": "#6c757d", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "ClaimCore_App", "label": "DEPENDS_ON", "title": "ClaimCore_App --[DEPENDS_ON]--\u003e Claim (Claim.java:1)", "to": "Claim", "width": 1}, {"arrows": "to", "color": "#6c757d", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "ClaimCore_App", "label": "DEPENDS_ON", "title": "ClaimCore_App --[DEPENDS_ON]--\u003e ClaimService (ClaimService.java:1)", "to": "ClaimService", "width": 1}, {"arrows": "to", "color": "#6c757d", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "ClaimCore_App", "label": "DEPENDS_ON", "title": "ClaimCore_App --[DEPENDS_ON]--\u003e Customer (Customer.java:1)", "to": "Customer", "width": 1}, {"arrows": "to", "color": "#6c757d", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "ClaimCore_App", "label": "DEPENDS_ON", "title": "ClaimCore_App --[DEPENDS_ON]--\u003e Policy (Policy.java:1)", "to": "Policy", "width": 1}, {"arrows": "to", "color": "#6c757d", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "ClaimCore_App", "label": "DEPENDS_ON", "title": "ClaimCore_App --[DEPENDS_ON]--\u003e PolicyValidationService (PolicyValidationService.java:1)", "to": "PolicyValidationService", "width": 1}, {"arrows": "to", "color": "#d90429", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "CUSTOMER_ACCOUNT", "label": "IMPACTS", "title": "CUSTOMER_ACCOUNT --[IMPACTS]--\u003e Risk_Shared_Database", "to": "Risk_Shared_Database", "width": 1}, {"arrows": "to", "color": "#6c757d", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "POLICY_MASTER", "label": "DEPENDS_ON", "title": "POLICY_MASTER --[DEPENDS_ON]--\u003e CUSTOMER_ACCOUNT (schema.ddl:14)", "to": "CUSTOMER_ACCOUNT", "width": 1}, {"arrows": "to", "color": "#6c757d", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "CLAIMS_RECORD", "label": "DEPENDS_ON", "title": "CLAIMS_RECORD --[DEPENDS_ON]--\u003e POLICY_MASTER (schema.ddl:27)", "to": "POLICY_MASTER", "width": 1}, {"arrows": "to", "color": "#6c757d", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "CLAIMS_RECORD", "label": "DEPENDS_ON", "title": "CLAIMS_RECORD --[DEPENDS_ON]--\u003e CUSTOMER_ACCOUNT (schema.ddl:27)", "to": "CUSTOMER_ACCOUNT", "width": 1}, {"arrows": "to", "color": "#6c757d", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "CLAIM_AUDIT_LOG", "label": "DEPENDS_ON", "title": "CLAIM_AUDIT_LOG --[DEPENDS_ON]--\u003e CLAIMS_RECORD (schema.ddl:40)", "to": "CLAIMS_RECORD", "width": 1}, {"arrows": "to", "color": "#3a86ff", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "SP_PROCESS_CLAIM", "label": "READS_FROM", "title": "SP_PROCESS_CLAIM --[READS_FROM]--\u003e POLICY_MASTER (process_claim_sp.sql:4)", "to": "POLICY_MASTER", "width": 1}, {"arrows": "to", "color": "#e63946", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "SP_PROCESS_CLAIM", "label": "WRITES_TO", "title": "SP_PROCESS_CLAIM --[WRITES_TO]--\u003e POLICY_MASTER (process_claim_sp.sql:4)", "to": "POLICY_MASTER", "width": 2}, {"arrows": "to", "color": "#e63946", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "SP_PROCESS_CLAIM", "label": "WRITES_TO", "title": "SP_PROCESS_CLAIM --[WRITES_TO]--\u003e CLAIM_AUDIT_LOG (process_claim_sp.sql:4)", "to": "CLAIM_AUDIT_LOG", "width": 2}, {"arrows": "to", "color": "#e63946", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "SP_PROCESS_CLAIM", "label": "WRITES_TO", "title": "SP_PROCESS_CLAIM --[WRITES_TO]--\u003e CLAIMS_RECORD (process_claim_sp.sql:4)", "to": "CLAIMS_RECORD", "width": 2}, {"arrows": "to", "color": "#d90429", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "SP_PROCESS_CLAIM", "label": "IMPACTS", "title": "SP_PROCESS_CLAIM --[IMPACTS]--\u003e Risk_Row_Locking", "to": "Risk_Row_Locking", "width": 1}, {"arrows": "to", "color": "#3a86ff", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "ClaimService", "label": "READS_FROM", "title": "ClaimService --[READS_FROM]--\u003e POLICY_MASTER (ClaimService.java:75)", "to": "POLICY_MASTER", "width": 1}, {"arrows": "to", "color": "#3a86ff", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "ClaimService", "label": "READS_FROM", "title": "ClaimService --[READS_FROM]--\u003e CUSTOMER_ACCOUNT (ClaimService.java:98)", "to": "CUSTOMER_ACCOUNT", "width": 1}, {"arrows": "to", "color": "#e63946", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "ClaimService", "label": "WRITES_TO", "title": "ClaimService --[WRITES_TO]--\u003e CLAIMS_RECORD (ClaimService.java:116)", "to": "CLAIMS_RECORD", "width": 2}, {"arrows": "to", "color": "#00a896", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "ClaimService", "label": "CALLS", "title": "ClaimService --[CALLS]--\u003e SP_PROCESS_CLAIM (ClaimService.java:131)", "to": "SP_PROCESS_CLAIM", "width": 2}, {"arrows": "to", "color": "#ffb703", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "PolicyValidationService", "label": "IMPLEMENTS_RULE", "title": "PolicyValidationService --[IMPLEMENTS_RULE]--\u003e BR-01 (data/insurance_claims_app/PolicyValidationService.java:21)", "to": "BR-01", "width": 1}, {"arrows": "to", "color": "#ffb703", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "PolicyValidationService", "label": "IMPLEMENTS_RULE", "title": "PolicyValidationService --[IMPLEMENTS_RULE]--\u003e BR-02 (data/insurance_claims_app/PolicyValidationService.java:32)", "to": "BR-02", "width": 1}, {"arrows": "to", "color": "#ffb703", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "PolicyValidationService", "label": "IMPLEMENTS_RULE", "title": "PolicyValidationService --[IMPLEMENTS_RULE]--\u003e BR-03 (data/insurance_claims_app/PolicyValidationService.java:43)", "to": "BR-03", "width": 1}, {"arrows": "to", "color": "#ffb703", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "PolicyValidationService", "label": "IMPLEMENTS_RULE", "title": "PolicyValidationService --[IMPLEMENTS_RULE]--\u003e BR-04 (data/insurance_claims_app/PolicyValidationService.java:54)", "to": "BR-04", "width": 1}, {"arrows": "to", "color": "#ffb703", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "PolicyValidationService", "label": "IMPLEMENTS_RULE", "title": "PolicyValidationService --[IMPLEMENTS_RULE]--\u003e BR-05 (data/insurance_claims_app/PolicyValidationService.java:66)", "to": "BR-05", "width": 1}, {"arrows": "to", "color": "#d90429", "font": {"align": "middle", "color": "#94a3b8", "size": 10}, "from": "BR-05", "label": "IMPACTS", "title": "BR-05 --[IMPACTS]--\u003e Risk_Hardcoded_Rule", "to": "Risk_Hardcoded_Rule", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"nodes": {"borderWidth": 2, "borderWidthSelected": 4, "shadow": true, "font": {"size": 14, "face": "Inter,sans-serif", "color": "#f8fafc"}}, "edges": {"arrows": {"to": {"enabled": true, "scaleFactor": 0.8}}, "smooth": {"type": "continuous"}, "shadow": true}, "physics": {"barnesHut": {"gravitationalConstant": -6000, "centralGravity": 0.3, "springLength": 120, "springConstant": 0.04, "damping": 0.09}, "minVelocity": 0.75}, "interaction": {"hover": true, "tooltipDelay": 200, "navigationButtons": true, "keyboard": true}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

@@ -1,444 +1,246 @@
-# Neuro SAN Studio
+# ModernizeAI: Enterprise Legacy Modernization Platform
+### *Powered by Neuro SAN Studio (Cognizant Neuro® AI Multi-Agent Accelerator)*
 
-**Your launchpad for building intelligent multi-agent systems.** Neuro SAN Studio is a hands-on playground for the
-[Neuro SAN](https://github.com/cognizant-ai-lab/neuro-san) framework, featuring ready-to-run examples, tutorials, and
-tools that let you design, test, and deploy sophisticated agent networks in minutes—not months. Whether you're a
-researcher exploring adaptive AI systems, a developer prototyping production solutions, or a domain expert configuring
-agents without code, this studio handles the orchestration complexity so you can focus on solving real problems.
-
----
-
-<!-- pyml disable-next-line no-inline-html -->
-<p align="center">
-  Neuro SAN is the open-source library powering the Cognizant Neuro® AI Multi-Agent Accelerator, allowing domain experts,
-  researchers and developers to immediately start prototyping and building agent networks across any industry vertical.
-</p>
+[![Built with Neuro SAN Studio](https://img.shields.io/badge/Built%20with-Neuro%20SAN%20Studio-blue.svg)](https://github.com/cognizant-ai-lab/neuro-san-studio)
+[![Python Version](https://img.shields.io/badge/python-3.11%2B-brightgreen.svg)](https://www.python.org/)
+[![Swarm Architecture](https://img.shields.io/badge/Swarm-11%20Agents%20%7C%205%20Coded%20Tools-orange.svg)](docs/generated/MODERNIZE_AI_GUIDE.md)
+[![Memory Architecture](https://img.shields.io/badge/Memory-5--Tier%20Fabric-purple.svg)](docs/generated/MODERNIZE_AI_GUIDE.md)
+[![License](https://img.shields.io/badge/license-Apache%202.0-lightgrey.svg)](LICENSE.txt)
 
 ---
 
-<!-- pyml disable-next-line no-inline-html -->
-<p align="center">
-  <!-- GitHub Stats -->
-  <img src="https://img.shields.io/github/stars/cognizant-ai-lab/neuro-san-studio?style=social" alt="GitHub stars">
-  <img src="https://img.shields.io/github/forks/cognizant-ai-lab/neuro-san-studio?style=social" alt="GitHub forks">
-  <img src="https://img.shields.io/github/watchers/cognizant-ai-lab/neuro-san-studio?style=social" alt="GitHub watchers">
-</p>
-<p align="center">
-  <!-- GitHub Info -->
-  <img src="https://img.shields.io/github/last-commit/cognizant-ai-lab/neuro-san-studio" alt="Last Commit">
-  <img src="https://img.shields.io/github/issues/cognizant-ai-lab/neuro-san-studio" alt="Issues">
-  <img src="https://img.shields.io/github/issues-pr/cognizant-ai-lab/neuro-san-studio" alt="Pull Requests">
-  <a href="https://pepy.tech/projects/neuro-san-studio"><img alt="PyPI Downloads"
-  src="https://static.pepy.tech/badge/neuro-san-studio" /></a>
-  <a href="https://pypi.org/project/neuro-san-studio/">
-  <img alt="neuro-san-studio@PyPI" src="https://img.shields.io/pypi/v/neuro-san-studio.svg?style=flat-square"></a>
-  <a href="https://deepwiki.com/cognizant-ai-lab/neuro-san-studio">
-  <img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki: Neuro SAN Studio" /></a>
+## 🌟 What is ModernizeAI?
 
-</p>
+**ModernizeAI** is an enterprise-grade **Agentic Knowledge Factory** and **Hybrid Agentic Graph-RAG platform** built on the **Neuro SAN Studio** multi-agent orchestration framework. It is specifically engineered to solve the complexity, risk, and high failure rates associated with enterprise legacy application reverse-engineering and cloud migration.
 
-<!-- pyml disable-next-line no-inline-html -->
-<p align="center">
-  <!-- Neuro SAN Stats -->
-  Neuro SAN library <br>
-  <a href="https://github.com/cognizant-ai-lab/neuro-san"><img alt="GitHub Repo"
-  src="https://img.shields.io/badge/GitHub-Repo-green.svg" /></a>
-  <img src="https://img.shields.io/github/commit-activity/m/cognizant-ai-lab/neuro-san" alt="commit activity">
-  <a href="https://pepy.tech/projects/neuro-san"><img alt="PyPI Downloads"
-  src="https://static.pepy.tech/badge/neuro-san" /></a>
-  <a href="https://pypi.org/project/neuro-san/">
-  <img alt="neuro-san@PyPI" src="https://img.shields.io/pypi/v/neuro-san.svg?style=flat-square"></a>
-  <a href="https://deepwiki.com/cognizant-ai-lab/neuro-san">
-  <img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki: Neuro SAN" /></a>
-</p>
+Traditional legacy modernization projects experience a **70%+ failure or delay rate** because organizations attempt code migration before deeply understanding legacy business logic, transitive database locks, and hidden side effects. ModernizeAI solves this by strictly enforcing the **80/20 Principle**:
 
-## What is Neuro SAN?
-
-[**Neuro AI system of agent networks (Neuro SAN)**](https://github.com/cognizant-ai-lab/neuro-san) is an open-source,
-data-driven multi-agent orchestration framework designed to simplify and accelerate the development of collaborative AI
-systems. It allows users—from machine learning engineers to business domain experts—to quickly build sophisticated
-multi-agent applications without extensive coding, using declarative configuration files (in HOCON format).
-
-Neuro SAN enables multiple large language model (LLM)-powered agents to collaboratively solve complex tasks, dynamically
-delegating subtasks through adaptive inter-agent communication protocols. This approach addresses the limitations inherent
-to single-agent systems, where no single model has all the expertise or context necessary for multifaceted problems.
-
-<!-- pyml disable line-length -->
-| Build a multi-agent network in minutes                                              | Neuro SAN overview                                                                     | Quick start                                                              |
-|-------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
-| [![Build](./docs/images/designer.png)](https://www.youtube.com/watch?v=wGxvPBN34Mk) | [![Overview](./docs/images/overview.png)](https://www.youtube.com/watch?v=NmniQWQT6vI) | [![Start](./docs/images/nsflow_thumb.png)](https://youtu.be/gfem8ylphWA) |
-
-<!-- pyml enable line-length -->
----
-
-### ✨ Key Features
-
-* **🗂️ Data-Driven Configuration**: Entire agent networks are defined declaratively via simple HOCON files, empowering
-technical and non-technical stakeholders to design agent interactions intuitively.
-* **🔀 Adaptive Communication ([AAOSA Protocol](https://arxiv.org/abs/cs/9812015))**: Agents autonomously determine how
-to delegate tasks, making interactions fluid and dynamic with decentralized decision-making.
-* **🔒 Sly-Data**: Sly Data facilitates safe handling and transfer of sensitive data between agents without exposing it
-directly to any language models.
-* **🧩 Dynamic Agent Network Designer**: Includes a meta-agent called the Agent Network Designer – essentially, an agent
-that creates other agent networks. Provided as an example with Neuro SAN, it can take a high-level description of a
-use-case as input and generate a new custom agent network for it.
-* **🛠️ Flexible Tool Integration**: Integrate custom Python-based "coded tools," APIs, databases, and even external
-agent ecosystems (Agentforce, Agentspace, CrewAI, MCP, A2A agents, LangChain tools and more) seamlessly into your agent workflows.
-* **📈 Robust Traceability**: Detailed logging, tracing, and session-level metrics enhance transparency, debugging, and
-operational monitoring.
-* **🌐 Extensible and Cloud-Agnostic**: Compatible with a wide variety of LLM providers (OpenAI, Anthropic, Azure, Ollama,
-etc.) and deployable in diverse environments (local machines, containers, or cloud infrastructures).
+* **80% Deterministic Extraction**: Abstract Syntax Tree (AST) code parsers, regex symbol extractors, SQL/DDL interpreters, and database schema analyzers extract concrete facts, method signatures, foreign keys, and line-level provenance **without LLM hallucination**.
+* **20% LLM Agent Reasoning**: Large Language Models orchestrated via Neuro SAN are applied strictly where semantic disambiguation is required—interpreting legacy documentation and SME notes, discovering implicit business rules, calculating blast radiuses, formulating 6R cloud migration strategies, and answering natural language architecture queries.
 
 ---
 
-### Use Cases
+## 🧩 How ModernizeAI is Built from Neuro SAN Studio
 
-Here are a few examples of use-cases that have been implemented with Neuro SAN.
-For more examples, check out [docs/examples.md](docs/examples.md).
-<!-- pyml disable no-inline-html -->
-<table>
-  <thead>
-    <tr>
-      <th>Agent Network</th>
-      <th>Use-Case</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>🧬 <strong>Agent Network Designer</strong></td>
-      <td>Automated generation of multi-agent HOCON configurations.</td>
-      <td>Generates complex multi-agent configurations from natural language input, simplifying the creation of intricate
-      agent workflows.</td>
-    </tr>
-    <tr>
-      <td>🛫 <strong>Airline Policy Assistance</strong></td>
-      <td>Customer support for airline policies.</td>
-      <td>Agents interpret and explain airline policies, assisting customers with inquiries about baggage allowances, cancellations,
-      and travel-related concerns.</td>
-    </tr>
-    <tr>
-      <td>🏦 <strong>Banking Operations & Compliance</strong></td>
-      <td>Automated financial operations and regulatory compliance.</td>
-      <td>Automates tasks such as transaction monitoring, fraud detection, and compliance reporting, ensuring adherence to
-      regulations and efficient routine operations.</td>
-    </tr>
-    <tr>
-      <td>🛍️ <strong>Consumer Packaged Goods (CPG)</strong></td>
-      <td>Market analysis and product development in CPG.</td>
-      <td>Gathers and analyzes market trends, customer feedback, and sales data to support product development and strategic
-      marketing.</td>
-    </tr>
-    <tr>
-      <td>🛡️ <strong>Insurance Agents</strong></td>
-      <td>Claims processing and risk assessment.</td>
-      <td>Automates claims evaluation, assesses risk factors, ensures policy compliance, and improves claim-handling efficiency
-      and customer satisfaction.</td>
-    </tr>
-    <tr>
-      <td>🏢 <strong>Intranet Agents</strong></td>
-      <td>Internal knowledge management and employee support.</td>
-      <td>Provides employees with quick access to policies, HR, and IT support, enhancing internal communications and resource
-      accessibility.</td>
-    </tr>
-    <tr>
-      <td>🛒 <strong>Retail Operations & Customer Service</strong></td>
-      <td>Enhancing retail customer experience and operational efficiency.</td>
-      <td>Handles customer inquiries, inventory management, and supports sales processes to optimize operations and service
-      quality.</td>
-    </tr>
-    <tr>
-      <td>📞 <strong>Telco Network Support</strong></td>
-      <td>Technical support and network issue resolution.</td>
-      <td>Diagnoses network problems, guides troubleshooting, and escalates complex issues, reducing downtime and enhancing
-      customer service.</td>
-    </tr>
-    <tr>
-      <td>📞 <strong>Therapy Vignette Supervision</strong></td>
-      <td>Generates treatment plan for a given therapy vignette.</td>
-      <td>A good example of using multiple different expert agents working together to come up with a single plan.</td>
-    </tr>
-  </tbody>
-</table>
-<!-- pyml enable no-inline-html -->
+ModernizeAI serves as a production-grade showcase of what can be built using **Neuro SAN Studio**:
 
-And many more: check out [docs/examples.md](docs/examples.md).
+1. **Declarative Multi-Agent Configuration**: ModernizeAI's entire 11-agent network is defined declaratively using HOCON in [`registries/generated/modernizeai.hocon`](registries/generated/modernizeai.hocon).
+2. **Autonomous Agent Coordination ([AAOSA Protocol](https://arxiv.org/abs/cs/9812015))**: Agents dynamically collaborate, hand off subtasks, and route intelligence through an autonomous conversational network led by the `Frontman` agent.
+3. **Custom Coded Tools Ecosystem**: Equipped with 5 high-speed deterministic tools located in [`coded_tools/modernize/`](coded_tools/modernize/) that execute AST parsing, DDL parsing, document NLP, NetworkX graph modeling, and 5-tier memory persistence.
+4. **Sly-Data Protection**: Utilizes Neuro SAN's Sly-Data capabilities to safely handle sensitive database credentials, enterprise schemas, and source code without exposing raw proprietary data directly to LLM context windows.
 
 ---
 
-## High level Architecture
+## 🏛️ ModernizeAI Swarm Architecture
 
-<!-- pyml disable no-inline-html -->
-<p align="left">
-  <img src="./docs/images/neuroai_arch_diagram.png" alt="neuro-san architecture" width="800"/>
-</p>
-<!-- pyml enable no-inline-html -->
+ModernizeAI coordinates an **11-Agent Mixture-of-Experts Swarm** supported by **5 Coded Tools** and a **5-Tier Memory Fabric**:
+
+```mermaid
+flowchart TD
+    User([Enterprise Architect / Developer]) <--> Frontman[Frontman: Swarm Router]
+    
+    subgraph Ingestion & Intelligence Pipeline
+        Frontman --> Discovery[Discovery Agent]
+        Discovery --> CodeIntel[Code Intel Agent]
+        Discovery --> DBIntel[Database Intel Agent]
+        Discovery --> DocIntel[Doc Intel Agent]
+        
+        CodeIntel --> CodeTool[(CodeIntelTool: AST Parser)]
+        DBIntel --> DBTool[(DatabaseIntelTool: DDL Parser)]
+        DocIntel --> DocTool[(DocIntelTool: NLP Parser)]
+        
+        CodeIntel --> BusinessRules[Business Rules Agent]
+        DBIntel --> BusinessRules
+        DocIntel --> BusinessRules
+    end
+
+    subgraph Validation & Knowledge Assembly
+        BusinessRules --> Validation[Validation QA Agent]
+        Validation --> KG[Knowledge Graph Agent]
+        KG --> KGTool[(KnowledgeGraphTool: NetworkX MultiDiGraph)]
+        KG --> MemoryMgr[Memory Manager Agent]
+        MemoryMgr --> MemTool[(MemoryManagerTool: 5-Tier Store)]
+    end
+
+    subgraph Strategy & Analysis Pipeline
+        Frontman --> Impact[Impact Analysis Agent]
+        Frontman --> Advisor[Modernization Advisor Agent]
+        Frontman --> KG
+        
+        Impact --> KG
+        Impact --> KGTool
+        Advisor --> KG
+        Advisor --> MemoryMgr
+    end
+```
+
+### Swarm Agent Specification
+
+| Agent Name | Role & Responsibility | Neuro SAN Tools & Downstream Agents |
+| :--- | :--- | :--- |
+| **`frontman`** | Main entry point; parses user intents and coordinates swarm workflows. | `discovery_agent`, `impact_analysis_agent`, `knowledge_graph_agent`, `modernization_advisor_agent` |
+| **`discovery_agent`** | Catalogs file trees across code, SQL, and documentation directories. | `code_intel_agent`, `database_intel_agent`, `doc_intel_agent` |
+| **`code_intel_agent`** | Deterministic AST parsing of Java and application source code. | `code_intel_tool`, `business_rules_agent` |
+| **`database_intel_agent`** | Schema parsing of SQL DDLs, tables, constraints, and stored procedures. | `database_intel_tool`, `business_rules_agent` |
+| **`doc_intel_agent`** | Semantic and structural extraction of architectural specs and SME notes. | `doc_intel_tool`, `business_rules_agent` |
+| **`business_rules_agent`**| Formalizes and cataloges cross-system enterprise business logic. | `validation_agent` |
+| **`validation_agent`** | Quality assurance agent verifying source provenance and eliminating hallucinations. | `knowledge_graph_agent` |
+| **`knowledge_graph_agent`**| Traverses and enriches the schema-enforced MultiDiGraph knowledge fabric. | `knowledge_graph_tool`, `memory_manager_agent` |
+| **`memory_manager_agent`**| Manages 5-tier memory persistence, vector search, and BM25 index retrieval. | `memory_manager_tool` |
+| **`impact_analysis_agent`**| Computes dependency blast radiuses and risk-classified ripple effects. | `knowledge_graph_agent`, `knowledge_graph_tool` |
+| **`modernization_advisor_agent`** | Analyzes system coupling ($C_a, C_e, I$) and recommends 6R cloud migration strategies. | `knowledge_graph_agent`, `memory_manager_agent` |
 
 ---
 
-## Install
+## 🧠 5-Tier Memory Fabric
 
-These instructions are for Linux and macOS systems. Please adjust the commands accordingly for Windows.
+ModernizeAI replaces standard single-prompt RAG with a structured five-tier memory fabric:
 
-### Install `uv`
+| Tier | Tier Name | Purpose & Persistence | Key Capabilities |
+| :---: | :--- | :--- | :--- |
+| **1** | **Raw Memory** | Ingested source files with SHA-256 hashes and line-offset indices. | 100% verifiable citations down to exact source line numbers. |
+| **2** | **Structural Memory** | Deterministic symbol tables, AST nodes, DDL schemas, and call graphs. | Sub-millisecond exact queries for classes, methods, and foreign keys. |
+| **3** | **Semantic Memory** | Vector embeddings and BM25 search over specifications and SME notes. | Semantic concept matching, synonym expansion, and intent lookup. |
+| **4** | **Procedural Memory** | Reusable extraction recipes, regex patterns, and traversal algorithms. | Dynamic pattern reuse across different legacy frameworks and dialects. |
+| **5** | **Transformation Memory**| 6R migration classifications, coupling metrics, and community detection. | Microservice candidate clustering, blast radius, and migration roadmaps. |
 
-[`uv`](https://docs.astral.sh/uv/) is a fast Python package and project manager built by Astral.
+---
 
-Official installation docs:
-👉 [https://docs.astral.sh/uv/getting-started/installation/](https://docs.astral.sh/uv/getting-started/installation/)
+## 🖥️ Two Interactive User Interfaces
 
-### Create a new Python project
+ModernizeAI provides two integrated user interfaces depending on your workflow:
 
-Create a folder for your project:
+### 1. ModernizeAI Dedicated Web Application
+* **Location**: [`apps/modernizeai_ui/server.py`](apps/modernizeai_ui/server.py)
+* **URL**: `http://localhost:8000`
+* **Features**:
+  * **One-Click Ingestion Pipeline**: Scan source repositories with real-time progress.
+  * **5-Tier Memory & Graph Metrics**: Live counters for nodes, edges, business rules, and microservices.
+  * **Interactive PyVis Knowledge Graph**: Embedded, zoomable 2D/3D visualizer with physics simulation.
+  * **Transitive Blast Radius Explorer**: Live dependency impact analysis for any class or table.
+  * **Artifacts Review Center**: Integrated viewer for Modernization Readiness Reports, Business Rules Catalogs, and Impact Matrices.
+  * **Grounded AI Copilot**: Chat interface backed by verified code provenance.
 
 ```bash
-mkdir my_project
-cd my_project
+# Launch ModernizeAI Web Application:
+python apps/modernizeai_ui/server.py --port 8000
 ```
 
-Create a virtual environment, initialize a git repo and install `neuro-san-studio`
+### 2. Neuro SAN Studio Client (`nsflow`)
+* **Location**: Built-in Neuro SAN Studio Client
+* **URL**: `http://localhost:4173/?network=generated%2Fmodernizeai`
+* **Features**:
+  * **Live Network Topology Visualizer**: Interactive React Flow diagram showing the 11 agents and 5 tool nodes.
+  * **Multi-Agent Swarm Chat**: Chat directly with `Frontman` and inspect real-time inter-agent delegation.
+  * **Execution Telemetry & Traces**: View full message passing, prompt token costs, and internal logs.
 
 ```bash
-uv init
-uv venv
-source .venv/bin/activate
-uv add neuro-san-studio
-```
-
-### Initialize neuro-san-studio
-
-Run `ns init` to initialize a Neuro SAN Studio project. `ns` stands for Neuro SAN. You can also use the long command
-`neuro-san-studio` instead. It will:
-* let you choose an LLM provider
-* create a `config` folder with your choice of LLM models and plugins configuration
-* create an `mcp` folder with a list of MCP tools
-* create a `registries` folder with a simple agent network
-
-To learn more about the `ns` command run `ns --help`.
-
-```bash
-ns init
-```
-
-```bash
-Which LLM providers do you want to enable?
-
-#  Provider       Default model
-1  OpenAI         gpt-5.2 (default)
-2  Anthropic      claude-sonnet
-3  Google Gemini  gemini-3-flash
-
-Enter numbers separated by commas (default: 1):
-```
-
-### Set your LLM API key(s)
-
-1. Set your provider key, e.g. `OPENAI_API_KEY`, `ANTHROPIC_API_KEY` or `GOOGLE_API_KEY`
-(or create a `.env` file in the current directory).
-See [docs/api_key.md](docs/api_key.md) for details and other providers.
-
-   ```bash
-   export OPENAI_API_KEY="XXX"
-   ```
-
-2. Check your LLM API keys are correctly configured:
-
-    ```bash
-    ns check-llm-keys
-    ```
-
-3. Check your `config/llm_config.hocon` is working:
-
-    ```bash
-    ns check-config
-    ```
-
-    If the configuration is valid you will get a `hello` response from the configured LLMs.
-
-### Import agent networks
-
-You can import the agent networks that ship with `neuro-san-studio` using the `ns import` command.
-It will run an interactive prompt. You can for instance import the `root` agent networks to use the
-Agent Network Designer to create your own agent network.
-
-See [`docs/cli/import.md`](docs/cli/import.md) for details.
-
-```bash
-ns import
-```
-
-Shows the following prompt:
-
-```bash
-[info]  Discovering available agent networks...
-
-? What do you want to import? (Use arrow keys)
-   Basic (17)
-   Experimental (9)
-   Industry (22)
- » Root (6)
-   Tools (28)
-   ---------------
-   Custom selection
-   All (82)
-```
-
-Choose `root` and press Enter. Confirm with `Y` to import the agent networks that are listed.
-
-From `Experimental`, also import:
-
-```bash
-   ● cruse_theme_agent
- » ● cruse_widget_agent
-````
-
-to enable CRUSE, the interactive UI that adapts the UI to the user/agents' needs.
-
-### Start the developer UI
-
-You can start a `neuro-san` server and the `nsflow` UI with the `ns run` command:
-
-```bash
+# Launch Neuro SAN Server + nsflow Studio UI:
 ns run
 ```
 
-The Neuro SAN server listens on `localhost:8080`.
+---
 
-The nsflow UI is served at
-[http://localhost:4173/](http://localhost:4173/).
+## ⚡ Quickstart
 
-Logs land under `logs/` (`server.log`, `nsflow.log`, `thinking_dir/`).
+### Prerequisites
+* Python 3.11+
+* [`uv`](https://docs.astral.sh/uv/) (recommended) or standard `pip` / `venv`
+* LLM API Key (OpenAI, Anthropic, Google Gemini, or local models via Ollama)
 
-Screenshot:
-
-![NSFlow UI Snapshot](https://raw.githubusercontent.com/cognizant-ai-lab/nsflow/main/docs/snapshot01.png)
-
-### Agent Network Designer
-
-Use the Agent Network Designer to create your own agent network.
-
-1. From the `nsflow` UI, click the `NEW` button at the top, center of the screen.
-![AND Button](docs/images/agent_network_designer_new_button.png)
-2. In the new window that opens, type your prompts in the text box in the bottom right
-corner of the screen. Then Agent Network Designer:
-   * Creates the agents
-   * Links them together
-   * Writes instructions for each agent
-   * Generates a few sample queries you can ask this agent network
-   * Saves the agent network in the `registries/generated` folder
-3. Once the Agent Network Designer is done and comes back with an answer in the chat window,
-you can continue the design by asking it to make changes
-4. Once you're happy with the design, test it! Click the blue `Launch` button at the top
-center of the screen. It opens a new window from which you can chat with the agent network.
-5. If you want to make modifications, go back to the editor window and ask for changes.
-6. You can also edit any agent network by clicking the pen icon next to its name in the main window.
-
-### Import a project from a file / Export to a file
-
-You can import a project from a .hocon file or from a zip file using the `ns import <PATH>`.
-
+### 1. Clone & Set Up Environment
 ```bash
-ns import ~/Downloads/my_project.hocon
+git clone https://github.com/lijumat007-eng/ModernizeAI_Neuro_San_Studio.git
+cd ModernizeAI_Neuro_San_Studio
+
+# Using uv:
+uv venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+uv pip install -r requirements.txt
 ```
 
-Similarly, you can export an agent network and all its dependencies using the `ns export` command:
-
+### 2. Configure Your API Key
+Copy `.env.example` to `.env` and set your key:
 ```bash
-ns export my_project.hocon
+cp .env.example .env
+```
+```env
+OPENAI_API_KEY="your-api-key"
+# or ANTHROPIC_API_KEY / GOOGLE_API_KEY
 ```
 
-See [`docs/cli/export.md`](docs/cli/export.md) for details.
+### 3. Run ModernizeAI
 
-### Command reference
+#### Option A: Dedicated Web Dashboard (Recommended)
+```bash
+python apps/modernizeai_ui/server.py --port 8000
+```
+Open [http://localhost:8000](http://localhost:8000) in your browser.
 
-<!-- pyml disable line-length -->
+#### Option B: Neuro SAN Studio Swarm UI
+```bash
+ns run
+```
+Open [http://localhost:4173/?network=generated%2Fmodernizeai](http://localhost:4173/?network=generated%2Fmodernizeai).
 
-| Command             | Purpose                                                          | Key flags                                                                                                                                                                       |
-|---------------------|------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `ns init`           | Scaffold a starter project in the current dir.                   | `--providers openai,anthropic,google`                                                                                                                                           |
-| `ns run`            | Start the Neuro SAN server and nsflow UI.                        | `--server-host`, `--server-http-port`, `--nsflow-port`, `--log-level`, `--client-only`, `--server-only`                                                                         |
-| `ns chat`           | Chat with an agent network directly (no server needed).          | Positional: agent name, `--connection`,  `--host`, `--port`, `--one-shot`, `--list`.                                                                                            |
-| `ns import`         | Import agent networks into the current project.                  | Positional: space-separated group names, network names, or `all`; or local `.hocon` / `.zip` paths (don't mix the two). `--force` to overwrite. Omit args for interactive mode. |
-| `ns export`         | Bundle a network from the current project into a shareable file. | Positional: network name (e.g. `music_nerd` or `basic/music_nerd`). `-o` / `--output` to set the output path. Omit args for interactive picker.                                 |
-| `ns check-llm-keys` | Validate LLM API keys / env vars.                                | `--tier 1` (placeholder), `--tier 2` (format), `--tier 3` (live API call, default)                                                                                              |
-| `ns check-config`   | Validate the LLM configurations in a HOCON file.                 | `--hocon-path` (defaults to `config/llm_config.hocon`)                                                                                                                          |
-
-<!-- pyml enable line-length -->
-
-Use `ns <command> --help` for the full flag list of any subcommand.
-
----
-
-## User guide
-
-Ready to dive in? Check out the [user guide](docs/user_guide.md) for a detailed overview of the neuro-san library
-and its features.
+#### Option C: Interactive CLI Runner
+```bash
+python scripts/run_modernize_cli.py
+```
 
 ---
 
-## Tutorial
+## 📂 Bundled Benchmark Application & Documentation
 
-For a detailed tutorial, refer to [docs/tutorial.md](docs/tutorial.md).
+This repository includes a complete legacy enterprise benchmark application to demonstrate the platform out-of-the-box:
 
----
-
-## Examples
-
-For examples of agent networks, check out [docs/examples.md](docs/examples.md).
-
----
-
-## Developer Guide
-
-For the development guide, check out [docs/dev_guide.md](docs/dev_guide.md).
-
----
-
-## Community Projects
-
-### Applications
-
-* [Climate Change](https://github.com/cognizant-ai-lab/neuro-san-cc):
-a tool to answer questions about COP, the Paris Agreement or the Kyoto Protocol using UNFCCC documents.
-* [Enterprise Access Portal](https://github.com/M-Elsaied/enterprise-access-portal):
-an AI-powered multi-agent system for managing enterprise application access requests and IT operations.
-* [F1 fans eval](https://github.com/deepsaia/f1-fan-eval):
-an app that evaluates F1 fan submissions about why they are the biggest F1 fans.
-* [PDF Knowledge Assistant](https://github.com/M-Elsaied/neuro-san-studio/tree/pdf-knowledge-base/apps/pdf_knowledge_assistant):
-a Flask web app that queries PDFs using RAG with topic-based long-term memory synthesis across documents.
-* [Loopy Agents](https://github.com/babakatwork/loopy_agent):
-run Neuro SAN agents continuously or on triggers through a separate service, with asynchronous messaging.
-* [Annual Report Reader](https://github.com/shrushtiimehta/neuro-san-annual-report-reader):
-analyzes a LinkedIn profile and delivers a personalized summary of Cognizant's 2024 Annual Report,
-surfacing content most relevant to the user's industry and seniority level.
-* [Tochiro File Organizer](https://github.com/ofrancon/tochiro):
-a macOS file organization assistant with a dedicated UI to analyze a folder,
-create a plan for moving the files, ask for approval and execute the moves.
-* [Legacy Business-Rule Extractor](https://github.com/Sivakumarraj/neuro-san-legacy-analyzer):
-a 6-agent network that extracts business rules from legacy COBOL, Java, and PL/SQL code,
-pairing deterministic CodedTool parsers with LLM agents to produce a modernization-ready
-specification document.
-
-### Utilities
-
-* [Neuro SAN Web Client](https://github.com/cognizant-ai-lab/neuro-san-web-client):
-a basic Flask web client interface for Neuro SAN.
-* [Neuro SAN Slack app](./apps/slack/README.md)
-a Slack integration that lets you interact with Neuro SAN directly from your workspace.
+* **Analyzed Application Profile**: `ClaimCore v2.4` (Enterprise Property & Casualty Claims Processing Monolith).
+* **Source Location**: [`data/insurance_claims_app/`](data/insurance_claims_app/)
+  * Java domain models, DAO layers, and business rules.
+  * Oracle SQL DDL schema definitions and stored procedures.
+  * Architecture specifications and adjuster workflow notes.
+* **Complete ModernizeAI Guide**: [`docs/generated/MODERNIZE_AI_GUIDE.md`](docs/generated/MODERNIZE_AI_GUIDE.md)
+* **Benchmark Inventory & Data Points**: [`docs/generated/MODERNIZE_DEMO_DATA_POINTS.md`](docs/generated/MODERNIZE_DEMO_DATA_POINTS.md)
+* **Generated Analysis Artifacts**:
+  * [`artifacts/business_rules_catalog.md`](artifacts/business_rules_catalog.md)
+  * [`artifacts/impact_blast_radius_matrix.md`](artifacts/impact_blast_radius_matrix.md)
+  * [`artifacts/modernization_readiness_report.md`](artifacts/modernization_readiness_report.md)
+  * [`artifacts/modernize_graph.html`](artifacts/modernize_graph.html) (Interactive PyVis Graph)
 
 ---
 
-## Links
+## 🔬 About the Underlying Framework: Neuro SAN Studio
 
-* Website: [Cognizant AI Lab](https://www.cognizant.com/us/en/ai-lab)
-* YouTube: [Decision AI](https://www.youtube.com/@decision-ai)
-* X: [@cognizantailab](https://x.com/cognizantailab)
-* LinkedIn: [Cognizant AI Lab](https://www.linkedin.com/showcase/cognizant-ai-lab)
-* Amazon Marketplace: [Cognizant Neuro SAN](https://aws.amazon.com/marketplace/pp/prodview-z246c4x7j3xb6)
-* Azure Marketplace: [Cognizant Neuro SAN](https://marketplace.microsoft.com/en-us/product/virtual-machine/cognizant.cognizant_neurosanai-application)
+ModernizeAI is powered by [**Neuro SAN Studio**](https://github.com/cognizant-ai-lab/neuro-san-studio), the hands-on playground and reference implementation for the [**Cognizant Neuro® AI Multi-Agent Accelerator**](https://www.cognizant.com/us/en/ai-lab).
+
+Neuro SAN Studio provides:
+* **HOCON-driven Declarative Orchestration**: Define complex multi-agent behaviors without boilerplate glue code.
+* **Agent Network Designer (AND)**: Built-in meta-agents capable of generating new agent networks from natural language prompts.
+* **Extensible Tool Bridge**: Native support for Python Coded Tools, MCP (Model Context Protocol), LangChain tools, and external agent ecosystems (CrewAI, Agentforce).
+* **Enterprise Observability**: End-to-end telemetry, OpenTelemetry / Phoenix logging, and token cost analytics.
+
+### Full Command Reference
+
+| Command | Purpose |
+| :--- | :--- |
+| `ns init` | Scaffold a new starter project with configured LLM providers. |
+| `ns run` | Start the Neuro SAN backend server and `nsflow` visual client. |
+| `ns chat <agent>` | Chat with any agent network directly from your terminal. |
+| `ns import` | Discover and import ready-to-run agent networks from the library. |
+| `ns export` | Package an agent network into a shareable bundle. |
+| `ns check-llm-keys` | Verify API key connectivity and format across configured providers. |
+| `ns check-config` | Validate HOCON agent configurations and test model responsiveness. |
+
+For deep dives into the underlying engine:
+* [Neuro SAN User Guide](docs/user_guide.md)
+* [Tutorial](docs/tutorial.md)
+* [Developer Guide](docs/dev_guide.md)
+* [Example Networks Catalog](docs/examples.md)
 
 ---
 
-## More details
+## 📜 License & Acknowledgments
 
-For more information, check out the [Cognizant AI Lab Neuro SAN landing page](https://www.cognizant.com/us/en/ai-lab/neuro-san).
+This project is licensed under the Apache 2.0 License - see the [LICENSE.txt](LICENSE.txt) file for details.
+
+Built with ❤️ using [Cognizant AI Lab Neuro SAN](https://github.com/cognizant-ai-lab/neuro-san).

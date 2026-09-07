@@ -4,7 +4,12 @@
 
 **ModernizeAI** is an Agentic Knowledge Factory and Hybrid Agentic Graph-RAG platform engineered to solve enterprise legacy application modernization and reverse engineering.
 
-Traditional legacy modernization efforts frequently suffer from a 70%+ failure or delay rate because teams attempt to migrate code before deeply understanding legacy business rules, implicit database locks, and distributed side effects. ModernizeAI solves this by strictly enforcing the **80/20 Principle**:
+Traditional legacy modernization efforts frequently suffer from a 70%+ failure or delay rate because teams attempt to migrate code before deeply understanding legacy business rules, implicit database locks, and distributed side effects. ModernizeAI solves this through a structured two-phase approach:
+
+* **Phase 1: Deterministic Reverse Engineering & Knowledge Graph Creation (Current Architecture)**: AST code parsers, regex symbol extractors, SQL/DDL interpreters, and schema analyzers extract concrete facts, method signatures, foreign keys, and line provenance without LLM hallucination, assembling a rich 5-Tier Memory Fabric and schema-enforced MultiDiGraph.
+* **Phase 2: Knowledge-Graph-Driven Code Migration Swarm (Next Phase / Future Scope)**: Autonomous agents ingest and read the Knowledge Graph to execute automated code transformation, transpile legacy monoliths (e.g., .NET to cloud-native microservices), decouple monolithic database locks, and generate regression test suites.
+
+ModernizeAI strictly enforces the **80/20 Principle**:
 - **80% Deterministic Extraction**: AST code parsers, regex symbol extractors, SQL/DDL interpreters, and schema analyzers extract concrete facts, method signatures, foreign keys, and line provenance without LLM hallucination.
 - **20% LLM Reasoning**: Large Language Models are applied strictly where semantic disambiguation is required—such as interpreting unstructured SME interview notes, resolving documentation-vs-code discrepancies, formulating 6R migration strategies, and answering natural-language architectural questions.
 
@@ -139,3 +144,84 @@ python scripts/run_modernize_cli.py
 - *"What business rules govern insurance claim validation and deductibles?"*
 - *"What candidate microservices are identified by community detection?"*
 - *"Generate modernization readiness report and interactive knowledge graph visualization"*
+
+---
+
+## 6. Future Scope & Roadmap: Phase 2 Active Code Migration Swarm
+
+### 6.1 Architectural Transition: From Passive Discovery to Active Code Transformation
+
+The **current implementation (Phase 1)** of ModernizeAI focuses comprehensively on **reverse engineering, deterministic fact extraction, and Knowledge Graph synthesis**. It equips enterprise teams with:
+- Deterministic AST code parsing (Java, C#/.NET, SQL DDL, PL/SQL)
+- Unambiguous line-level business rule catalogs
+- 5-Tier Memory Fabric persistence (Raw, Structural, Semantic, Procedural, Transformation)
+- Schema-enforced MultiDiGraph with Louvain community detection and blast-radius dependency tracing
+
+The **next phase (Phase 2)** bridges the gap between architectural intelligence and concrete execution by introducing **Active Code Migration & Cloud Transformation Swarm Agents**. 
+
+Instead of treating the Knowledge Graph as a static visualization, Phase 2 agents autonomously **ingest, query, and extract subgraphs** from the graph to scaffold target cloud architectures, transpile legacy codebases, decouple procedural database locks, and generate automated regression test suites.
+
+```mermaid
+flowchart TD
+    subgraph Phase 1 [Current Architecture: Reverse Engineering & KG]
+        LegacyApp[Legacy Monolith: .NET / Java / SQL] --> AstEngine[Deterministic AST & DDL Engine]
+        AstEngine --> RulesCatalog[Business Rules Catalog]
+        AstEngine --> KG[(MultiDiGraph Knowledge Fabric)]
+        AstEngine --> Memory5T[(5-Tier Memory Fabric)]
+    end
+
+    subgraph Phase 2 [Upcoming Architecture: Autonomous Migration Swarm]
+        KG --> KGReader[KG Reader & Extractor Agent]
+        Memory5T --> KGReader
+        RulesCatalog --> KGReader
+
+        KGReader --> Scaffolder[Cloud Architecture Scaffolder Agent]
+        KGReader --> CodeMigrator[Code Migrator Agent: .NET / Java to Cloud]
+        KGReader --> SqlMigrator[SQL & Stored Procedure Decoupler Agent]
+        KGReader --> TestGen[Provenance-Grounded Test Synthesizer]
+
+        Scaffolder --> TargetSolution[Cloud-Native Microservices]
+        CodeMigrator --> TargetSolution
+        SqlMigrator --> TargetSolution
+        TestGen --> TargetSolution
+
+        TargetSolution --> StranglerEngine[Strangler-Fig Gateway & Canary Deployment]
+    end
+```
+
+### 6.2 Knowledge Graph Ingestion & Traversal Pipeline
+
+Phase 2 introduces the **`kg_reader_agent`** supported by graph traversal tools:
+1. **Bounded Context Subgraph Slicing**: Queries the Louvain community clusters (e.g., Domain 1–5 identified in Phase 1) to extract the exact boundary of classes, tables, and rules belonging to a candidate microservice.
+2. **Provenance Traceability Retrieval**: Gathers raw code tokens, SHA-256 source line offsets, and AST symbol signatures from Structural and Raw Memory tiers.
+3. **Context-Optimized Agent Payload Assembly**: Packages isolated dependency subgraphs into structured context windows for downstream code generation agents, bypassing LLM context window limits and hallucinations.
+
+### 6.3 Code Migrator Agents: The .NET to Cloud Modernization Engine
+
+A flagship capability of the Phase 2 swarm is automated legacy **.NET to Cloud** transformation:
+
+* **Legacy Input**: Monolithic .NET Framework (4.x / C#) codebases relying on synchronous WCF/ASMX endpoints, direct ADO.NET SQL commands, and heavy database stored procedures.
+* **Target Modern Architecture**: Cloud-native .NET 8/9 or Spring Boot / Quarkus containerized microservices hosted on AWS ECS/EKS, Azure Container Apps, or Google Cloud Run.
+* **Transformation Operations**:
+  1. **Controller & API Modernization**: Converts legacy WCF `.svc` contracts and SOAP handlers into modern RESTful ASP.NET Core Minimal APIs or gRPC services with OpenAPI/Swagger definitions.
+  2. **Data Access Decoupling**: Replaces ADO.NET `SqlConnection` / `SqlCommand` blocks and table-locking queries with Entity Framework Core (EF Core) or Dapper repositories targeting cloud managed databases (PostgreSQL, Azure SQL, CosmosDB).
+  3. **Stored Procedure Translation**: Refactors monolithic procedural SQL (such as `SP_PROCESS_CLAIM` with `SELECT FOR UPDATE` locks) into distributed asynchronous Saga orchestrators using Temporal or Step Functions with the Outbox pattern.
+  4. **Domain Logic Re-implementation**: Directly injects the extracted, verified business rules (`BR-01` through `BR-05`) into clean domain models and validation pipelines (FluentValidation).
+
+### 6.4 Provenance-Grounded Behavioral Regression Testing
+
+To ensure modernization without unintended functional drift, the **`test_synthesizer_agent`**:
+- Reads the deterministic business rule specifications and their exact line provenance.
+- Generates exhaustive unit test suites (xUnit, NUnit, JUnit 5) verifying every boundary condition (e.g., $2,500 auto-approval limits, $50,000 fraud thresholds, policy grace periods).
+- Synthesizes contract tests (Pact / Prism) ensuring API compatibility between legacy clients and modernized cloud endpoints.
+
+### 6.5 Phased Roadmap Milestones
+
+| Milestone | Scope & Capabilities | Target Deliverables |
+| :---: | :--- | :--- |
+| **Phase 1 (Current)** | Reverse Engineering & Knowledge Graph Creation | AST/DDL parsers, MultiDiGraph, 5-tier memory, Louvain clustering, Blast Radius matrices, Web Dashboard. |
+| **Phase 2.1** | KG Reader & Context Slicing Engine | `kg_reader_agent`, sub-graph extraction tool, domain boundary exporter. |
+| **Phase 2.2** | Automated Code Migrators (.NET & Java) | `code_migrator_agent`, `cloud_scaffolder_agent`, ASP.NET Core & Spring Boot 3 target generators. |
+| **Phase 2.3** | Automated Regression & Contract Test Generation | `test_synthesizer_agent`, provenance-backed unit/integration test suites. |
+| **Phase 2.4** | Strangler-Fig Gateway & Canary Deployment | `strangler_deployer_agent`, API gateway route generation (Kong, Envoy, Azure APIM). |
+

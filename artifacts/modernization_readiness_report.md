@@ -53,4 +53,20 @@
 | **Legacy Stored Proc** | **Retire** | Distributed Transaction Manager / Saga | **Phase 2** | Retire `SP_PROCESS_CLAIM` to eliminate row-locking database timeouts during claim spikes. |
 
 ---
+
+## Next-Phase Action Plan: Automated Migration Swarm Hand-Off
+
+With the Reverse Engineering & Knowledge Graph extraction complete (**Phase 1**), the verified artifacts are staged for direct ingestion by the **Phase 2 Active Code Migration Swarm**:
+
+1. **Knowledge Graph Subgraph Slicing (`kg_reader_agent`)**:
+   - Ingests the 5 Louvain bounded clusters and verified business rules (`BR-01` to `BR-05`).
+   - Packages isolated domain contexts for target microservice generation.
+2. **Cloud Solution Scaffolding & Code Migration (`cloud_scaffolder_agent`, `code_migrator_agent`)**:
+   - Generates modern cloud-native service stubs (e.g., ASP.NET Core 8/9 or Spring Boot 3 on Cloud Run / AWS ECS).
+   - Transpiles legacy monolithic patterns (e.g., .NET / WCF / ADO.NET or Java / JDBC) into clean, modern architectures with EF Core / Dapper / JPA.
+   - Deconstructs procedural stored procedures (`SP_PROCESS_CLAIM`) into distributed Saga orchestrators.
+3. **Automated Behavioral Regression Verification (`test_synthesizer_agent`)**:
+   - Generates xUnit / NUnit / JUnit test suites directly from rule provenance to certify functional equivalence before production rollout.
+
+---
 *Generated automatically by ModernizeAI Hybrid Agentic Graph-RAG Knowledge Fabric.*

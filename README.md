@@ -5,6 +5,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.11%2B-brightgreen.svg)](https://www.python.org/)
 [![Swarm Architecture](https://img.shields.io/badge/Swarm-11%20Agents%20%7C%205%20Coded%20Tools-orange.svg)](docs/generated/MODERNIZE_AI_GUIDE.md)
 [![Memory Architecture](https://img.shields.io/badge/Memory-5--Tier%20Fabric-purple.svg)](docs/generated/MODERNIZE_AI_GUIDE.md)
+[![Roadmap](https://img.shields.io/badge/Roadmap-Phase%202%3A%20Code%20Migration%20Agents-blueviolet.svg)](#-future-roadmap-phase-2-active-code-migration--cloud-transformation)
 [![License](https://img.shields.io/badge/license-Apache%202.0-lightgrey.svg)](LICENSE.txt)
 
 ---
@@ -12,6 +13,10 @@
 ## 🌟 What is ModernizeAI?
 
 **ModernizeAI** is an enterprise-grade **Agentic Knowledge Factory** and **Hybrid Agentic Graph-RAG platform** built on the **Neuro SAN Studio** multi-agent orchestration framework. It is specifically engineered to solve the complexity, risk, and high failure rates associated with enterprise legacy application reverse-engineering and cloud migration.
+
+ModernizeAI is architected around a strategic two-phase lifecycle:
+* **Phase 1: Deterministic Reverse Engineering & Knowledge Graph Creation (Current Focus)**: Extracts verified ground truth via AST parsers, SQL schema analyzers, and documentation NLP, synthesizing intelligence into an enriched 5-Tier Memory Fabric and schema-enforced MultiDiGraph.
+* **Phase 2: Knowledge-Graph-Driven Code Migration Swarm (Future Scope)**: Deploys autonomous migration agents that ingest the Knowledge Graph to execute automated code transformation, transpilation (e.g., legacy .NET to cloud-native microservices), and provenance-grounded regression test generation.
 
 Traditional legacy modernization projects experience a **70%+ failure or delay rate** because organizations attempt code migration before deeply understanding legacy business logic, transitive database locks, and hidden side effects. ModernizeAI solves this by strictly enforcing the **80/20 Principle**:
 
@@ -103,6 +108,63 @@ ModernizeAI replaces standard single-prompt RAG with a structured five-tier memo
 | **3** | **Semantic Memory** | Vector embeddings and BM25 search over specifications and SME notes. | Semantic concept matching, synonym expansion, and intent lookup. |
 | **4** | **Procedural Memory** | Reusable extraction recipes, regex patterns, and traversal algorithms. | Dynamic pattern reuse across different legacy frameworks and dialects. |
 | **5** | **Transformation Memory**| 6R migration classifications, coupling metrics, and community detection. | Microservice candidate clustering, blast radius, and migration roadmaps. |
+
+---
+
+## 🚀 Future Roadmap: Phase 2 Active Code Migration & Cloud Transformation
+
+While the **current architecture (Phase 1)** is centered on **reverse engineering, deterministic AST/schema extraction, and Knowledge Graph creation**, the **next phase (Phase 2)** introduces autonomous **Code Migration & Transformation Swarm Agents**.
+
+Instead of stopping at architectural discovery and readiness reports, Phase 2 agents directly **ingest and traverse the verified Knowledge Graph and 5-Tier Memory Fabric** to perform end-to-end, automated code refactoring and cloud migration.
+
+```mermaid
+flowchart TD
+    subgraph Phase 1: Reverse Engineering & Knowledge Graph [Current Architecture]
+        LegacyCode[Legacy Source: .NET / Java / SQL] --> ParsingSwarm[Extraction & Intelligence Swarm]
+        ParsingSwarm --> KG[(Knowledge Graph MultiDiGraph)]
+        ParsingSwarm --> Memory5T[(5-Tier Memory Fabric)]
+        ParsingSwarm --> RulesCatalog[Business Rules Catalog & Provenance]
+    end
+
+    subgraph Phase 2: Active Code Migration Swarm [Next Phase / Future Scope]
+        KG --> KGReader[KG Reader & Extractor Agent]
+        Memory5T --> KGReader
+        RulesCatalog --> KGReader
+
+        KGReader --> ArchScaffolder[Cloud Architecture Scaffolder Agent]
+        KGReader --> CodeMigrator[Code Migrator Agent: .NET to Cloud]
+        KGReader --> TestSynthesizer[Provenance Test Synthesizer Agent]
+
+        ArchScaffolder --> TargetApp[Cloud-Native Microservices]
+        CodeMigrator --> TargetApp
+        TestSynthesizer --> TargetApp
+
+        TargetApp --> StranglerGateway[Strangler-Fig Routing & Deployment]
+    end
+```
+
+### Phase 2 Agent Network Specification
+
+| Agent Name | Role & Responsibility | Upstream / Downstream Linkage |
+| :--- | :--- | :--- |
+| **`kg_reader_agent`** | Ingests, queries, and extracts subgraphs from the Knowledge Graph MultiDiGraph and 5-Tier Memory (AST symbol tables, call graphs, DDL schemas, formalized business rules). | Queries `knowledge_graph_tool` & `memory_manager_tool`; feeds `cloud_scaffolder_agent` & `code_migrator_agent`. |
+| **`cloud_scaffolder_agent`** | Generates target cloud-native project scaffolding, dependency manifests, container configurations (Dockerfiles), and infrastructure blueprints (Kubernetes Helm charts, Terraform, serverless SAM templates). | Ingests candidate microservices from Louvain community detection (Domain 1–5). |
+| **`code_migrator_agent`** | Executes deep syntax and semantic code transpilation and modernization. For example, converting legacy on-premise **.NET Framework (C# / WCF / ADO.NET)** applications to modern **cloud-native .NET 8/9, ASP.NET Core Minimal APIs, or Cloud Run / AWS Lambda services**. | Ingests AST symbol graphs and business rule specifications; produces modern modular code. |
+| **`sql_to_cloud_agent`** | Decouples procedural stored procedures (e.g. PL/SQL / T-SQL row locks) and translates relational schemas into cloud-native data access layers (EF Core, Dapper, PostgreSQL, or DynamoDB/CosmosDB with Outbox/Saga patterns). | Modernizes database access based on DDL schemas and stored procedure ASTs. |
+| **`test_synthesizer_agent`** | Automatically generates comprehensive unit, contract, and behavioral integration tests directly from formalized business rules (`BR-01` through `BR-05`) to mathematically guarantee zero behavioral regression. | Uses business rule source provenance to validate modernized code against legacy behavior. |
+| **`strangler_deployer_agent`** | Orchestrates Strangler-Fig traffic migration, configuring API gateways (Azure APIM, AWS API Gateway, Envoy) to route traffic incrementally between legacy and modernized services. | Implements canary rollouts guided by the blast-radius dependency matrix. |
+
+### Concrete Exemplar: Legacy .NET to Cloud Modernization
+
+To illustrate how Phase 2 transforms enterprise legacy code:
+
+1. **Legacy Input**: A monolithic on-premise .NET Framework 4.8 application utilizing legacy WCF endpoints, ADO.NET queries with hardcoded SQL, and synchronous stored procedures with table locks.
+2. **Phase 1 Extraction (Completed)**: ModernizeAI extracts the C# AST, maps entity relationships to the Knowledge Graph, catalogs business rules with line-level provenance, and computes afferent/efferent coupling ($C_a, C_e$).
+3. **Phase 2 Automated Migration**:
+   * **Graph Extraction**: `kg_reader_agent` traverses the subgraphs corresponding to the isolated domain (e.g., Claim Settlement domain).
+   * **Solution Scaffolding**: `cloud_scaffolder_agent` scaffolds a modern ASP.NET Core solution structured as containerized microservices with OpenTelemetry, health checks, and Dockerfile definitions.
+   * **Code Transpilation**: `code_migrator_agent` translates legacy WCF controllers into RESTful OpenAPI/gRPC endpoints, replaces ADO.NET boilerplate with clean Entity Framework Core repositories, and re-implements validated business rules into modern domain logic.
+   * **Automated Verification**: `test_synthesizer_agent` generates xUnit/NUnit test suites grounded in legacy provenance to prove functional parity before deployment.
 
 ---
 

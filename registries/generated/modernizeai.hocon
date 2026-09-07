@@ -1,0 +1,309 @@
+{
+# Importing content from other HOCON files
+# The include keyword must be unquoted and followed by a quoted URL or file path.
+# File paths should be absolute or relative to the script's working directory, not the HOCON file location.
+# This "aaosa.hocon" file contains key-value pairs used for substitution.
+# Specifically, it provides values for the following keys:
+#   - aaosa_call
+#   - aaosa_instructions
+# IMPORTANT:
+# Ensure that you run `python -m neuro_san_studio run` from the top level of the repository.
+# The path to this substitution file is **relative to the top-level directory**,
+# so running the script from elsewhere may result in file not found errors.
+    include "registries/aaosa.hocon"
+
+    "max_execution_seconds": 6000,
+
+# Optional metadata describing this agent network
+    "metadata": {
+        "sample_queries": [
+            "Scan and ingest the legacy application in data/insurance_claims_app",
+            "What modules and tables are impacted if POLICY_MASTER changes?",
+            "What business rules govern insurance claim validation and deductibles?",
+            "What candidate microservices are identified by community detection?",
+            "Generate modernization readiness report and interactive knowledge graph visualization"
+        ],
+        "date_created": "2026-09-06T11:20:00.000000+00:00",
+        "description": "ModernizeAI: Hybrid Agentic Graph-RAG Knowledge Fabric with 5-Tier Memory, deterministic parsers, and interactive visualization."
+    },
+
+    # Application-specific LLM configuration for ModernizeAI
+    "llm_config": {
+        "fallbacks": [
+            {
+                "class": "gemini",
+                "model": "gemini-3.5-flash-lite"
+            },
+            {
+                "class": "ollama",
+                "model_name": "qwen2.5:3b",
+                "base_url": "http://localhost:11434"
+            }
+        ]
+    },
+
+
+   "instructions_prefix": """
+You are part of a team of specialist assistants in ModernizeAI.
+ModernizeAI is an Agentic Knowledge Factory and Hybrid Agentic Graph-RAG Knowledge Fabric.
+Only answer inquiries that are directly within your area of expertise.
+Do not try to help for other matters.
+Do not mention what you can NOT do. Only mention what you can do.
+Always ground your responses with exact source evidence (file paths and line numbers).
+""",
+
+   "tools": [
+        {
+            "name": "frontman",
+            "function": ${aaosa_call}{
+                "description": """
+Orchestrates the overall legacy modernization analysis workflow and routes user queries to the appropriate specialist agents.
+                """
+            },
+            "instructions": ${instructions_prefix} """
+The Frontman acts as the primary interface for users, receiving queries and orchestrating the entire modernization analysis pipeline:
+- For repository scanning and ingestion: call discovery_agent.
+- For impact and blast-radius analysis (e.g., "What breaks if X changes?"): call impact_analysis_agent.
+- For knowledge graph traversal, entity relationships, and visualization exports: call knowledge_graph_agent.
+- For cloud migration roadmaps and 6R strategy scorecards: call modernization_advisor_agent.
+Never express irrelevance without consulting your tools. Once determined, call the relevant specialist agents and synthesize the final verified result.
+""" ${aaosa_instructions},
+            "tools": ["discovery_agent", "impact_analysis_agent", "knowledge_graph_agent", "modernization_advisor_agent"]
+        },
+        {
+            "name": "discovery_agent",
+            "function": ${aaosa_call}{
+                "description": """
+Ingests and categorizes legacy application artifacts into Tier 1 (Raw) and Tier 3 (Semantic) memory.
+                """
+            },
+            "instructions": ${instructions_prefix} """
+The Discovery Agent identifies, ingests, and catalogs all legacy artifacts (Java sources, SQL DDLs, stored procedures, architecture specs, and SME notes). It delegates parsing tasks to the specialist intelligence agents (Code Intel, Database Intel, Doc Intel).
+""" ${aaosa_instructions},
+            "tools": ["code_intel_agent", "database_intel_agent", "doc_intel_agent"]
+        },
+        {
+            "name": "code_intel_agent",
+            "function": ${aaosa_call}{
+                "description": """
+Deterministically analyzes legacy Java and SQL code for AST structure, dependencies, and business logic.
+                """
+            },
+            "instructions": ${instructions_prefix} """
+The Code Intel Agent performs deterministic parsing (80% rule) of Java source files. It extracts classes, methods, service invocations, and embedded SQL queries using the code_intel_tool. It forwards structured findings to the Business Rules Agent.
+""" ${aaosa_instructions},
+            "tools": ["code_intel_tool", "business_rules_agent"]
+        },
+        {
+            "name": "database_intel_agent",
+            "function": ${aaosa_call}{
+                "description": """
+Processes database schema DDLs and stored procedures to extract data models, foreign keys, and read/write lineage.
+                """
+            },
+            "instructions": ${instructions_prefix} """
+The Database Intel Agent deterministically parses schema DDLs and stored procedures using the database_intel_tool. It extracts tables, columns, constraints, foreign keys, and stored procedure data lineage. It collaborates with the Business Rules Agent.
+""" ${aaosa_instructions},
+            "tools": ["database_intel_tool", "business_rules_agent"]
+        },
+        {
+            "name": "doc_intel_agent",
+            "function": ${aaosa_call}{
+                "description": """
+Extracts requirements, architecture insights, and tribal operational knowledge from documents and SME notes.
+                """
+            },
+            "instructions": ${instructions_prefix} """
+The Doc Intel Agent parses Markdown/text specifications and SME interview notes using the doc_intel_tool. It identifies documented business rules, architectural constraints, and tribal knowledge, forwarding extracted insights to the Business Rules Agent.
+""" ${aaosa_instructions},
+            "tools": ["doc_intel_tool", "business_rules_agent"]
+        },
+        {
+            "name": "business_rules_agent",
+            "function": ${aaosa_call}{
+                "description": """
+Extracts, formalizes, and numbers business rules from all ingested sources with exact line provenance.
+                """
+            },
+            "instructions": ${instructions_prefix} """
+The Business Rules Agent synthesizes findings from Code Intel, Database Intel, and Doc Intel to identify and formalize enterprise business rules (e.g., BR-01 through BR-05). It links each formalized rule to its implementing Java method or SQL procedure and passes the verified rules to the Validation Agent.
+""" ${aaosa_instructions},
+            "tools": ["validation_agent"]
+        },
+        {
+            "name": "validation_agent",
+            "function": ${aaosa_call}{
+                "description": """
+Validates extracted information against raw source evidence to eliminate hallucinations and verify consistency.
+                """
+            },
+            "instructions": ${instructions_prefix} """
+The Validation Agent plays a critical quality assurance role: it verifies that every entity, relationship, and business rule is grounded in real source evidence with verifiable line ranges. It resolves discrepancies (such as documentation vs code mismatches) before committing data to the Knowledge Graph Agent.
+""" ${aaosa_instructions},
+            "tools": ["knowledge_graph_agent"]
+        },
+        {
+            "name": "knowledge_graph_agent",
+            "function": ${aaosa_call}{
+                "description": """
+Constructs, manages, traverses, and visualizes the Hybrid Graph-RAG Knowledge Fabric.
+                """
+            },
+            "instructions": ${instructions_prefix} """
+The Knowledge Graph Agent is the central assembly hub for the Knowledge Fabric. Using the knowledge_graph_tool, it:
+- Builds and maintains the schema-enforced NetworkX MultiDiGraph (Nodes: Application, Service, Table, StoredProcedure, Rule, Risk; Edges: Calls, Reads, Writes, Depends_On, Impacts).
+- Executes Personalized PageRank (PPR) and Louvain Community Detection to discover candidate microservices.
+- Computes Hybrid Reciprocal Rank Fusion (RRF) combining semantic memory search with graph centrality.
+- Exports interactive PyVis HTML visualizations and machine-readable JSON/GraphML graphs.
+- Can instantly restore the graph from persistent memory using the 'load_graph' action if requested by the user.
+""" ${aaosa_instructions},
+            "tools": ["knowledge_graph_tool", "memory_manager_agent"]
+        },
+        {
+            "name": "memory_manager_agent",
+            "function": ${aaosa_call}{
+                "description": """
+Manages the five-tier memory architecture (Raw, Structural, Semantic, Procedural, Transformation).
+                """
+            },
+            "instructions": ${instructions_prefix} """
+The Memory Manager Agent oversees the 5-tier memory fabric via memory_manager_tool:
+- Tier 1 (Raw): SHA-256 verified source files and line-offset tables for 100% provenance.
+- Tier 2 (Structural): Deterministic AST symbols and schema definitions.
+- Tier 3 (Semantic): In-house local vector and BM25 hybrid search over specifications and SME notes.
+- Tier 4 (Procedural): Reusable extraction patterns and analysis recipes.
+- Tier 5 (Transformation): Modernization scorecards, coupling metrics, and 6R migration classifications.
+It serves as the persistence and retrieval backbone for the Knowledge Graph.
+""" ${aaosa_instructions},
+            "tools": ["memory_manager_tool"]
+        },
+        {
+            "name": "impact_analysis_agent",
+            "function": ${aaosa_call}{
+                "description": """
+Performs blast-radius impact analysis and dependency tracing across the Knowledge Graph.
+                """
+            },
+            "instructions": ${instructions_prefix} """
+The Impact Analysis Agent performs comprehensive blast-radius assessments using the knowledge_graph_tool. Given a target entity (e.g., POLICY_MASTER or ClaimService), it computes upstream callers/readers, downstream mutations, hop distances, and circular dependencies, outputting a risk-classified impact scorecard.
+""" ${aaosa_instructions},
+            "tools": ["knowledge_graph_agent", "knowledge_graph_tool"]
+        },
+        {
+            "name": "modernization_advisor_agent",
+            "function": ${aaosa_call}{
+                "description": """
+Generates phased modernization roadmaps, 6R migration strategies, and cloud architecture recommendations.
+                """
+            },
+            "instructions": ${instructions_prefix} """
+The Modernization Advisor Agent synthesizes blast-radius data, coupling metrics (Afferent/Efferent coupling, Instability), and candidate microservice domains from the Knowledge Graph Agent. It formulates a phased modernization strategy (Refactor, Replatform, Retain, Retire) and generates deliverable markdown reports.
+""" ${aaosa_instructions},
+            "tools": ["knowledge_graph_agent", "memory_manager_agent"]
+        },
+
+        # Coded Tools registered for the Agent Network
+        {
+            "name": "knowledge_graph_tool",
+            "class": "modernize.graph.knowledge_graph_tool.KnowledgeGraphTool",
+            "function": {
+                "description": "Constructs, queries, traverses, and visualizes the Knowledge Graph Fabric. Supports build_graph, load_graph, blast_radius, community_detection, hybrid_graph_rag, query_entity, and export_artifacts.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "action": {
+                            "type": "string",
+                            "description": "Action to execute: build_graph, load_graph, blast_radius, community_detection, hybrid_graph_rag, query_entity, export_artifacts, status"
+                        },
+                        "target_entity": {
+                            "type": "string",
+                            "description": "Target component or table name for blast-radius calculation."
+                        },
+                        "query": {
+                            "type": "string",
+                            "description": "Natural language query for Hybrid Graph-RAG retrieval."
+                        },
+                        "repo_path": {
+                            "type": "string",
+                            "description": "Path to legacy application codebase."
+                        }
+                    },
+                    "required": ["action"]
+                }
+            }
+        },
+        {
+            "name": "memory_manager_tool",
+            "class": "modernize.memory.memory_manager_tool.MemoryManagerTool",
+            "function": {
+                "description": "Manages the 5-Tier Memory Architecture: Raw, Structural, Semantic, Procedural, and Transformation Memory.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "action": {
+                            "type": "string",
+                            "description": "Memory tier action: ingest_repo, semantic_search, get_evidence, get_structural, get_transformation, status"
+                        },
+                        "query": {
+                            "type": "string",
+                            "description": "Query string for semantic search."
+                        },
+                        "repo_path": {
+                            "type": "string",
+                            "description": "Path to the repository."
+                        }
+                    },
+                    "required": ["action"]
+                }
+            }
+        },
+        {
+            "name": "code_intel_tool",
+            "class": "modernize.parsers.parser_tools.CodeIntelTool",
+            "function": {
+                "description": "Deterministically parses legacy Java and SQL source files to extract AST symbols, classes, methods, and SQL calls.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "file_path": {
+                            "type": "string",
+                            "description": "Specific file path to parse, or empty for all files in repo."
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "database_intel_tool",
+            "class": "modernize.parsers.parser_tools.DatabaseIntelTool",
+            "function": {
+                "description": "Deterministically parses schema DDLs and stored procedures to extract tables, columns, foreign keys, and read/write lineage.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "repo_path": {
+                            "type": "string",
+                            "description": "Path to codebase containing DDL and SQL scripts."
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "doc_intel_tool",
+            "class": "modernize.parsers.parser_tools.DocIntelTool",
+            "function": {
+                "description": "Deterministically parses documentation, architecture specifications, and SME interview notes.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "repo_path": {
+                            "type": "string",
+                            "description": "Path to documentation files."
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -200,10 +200,15 @@ TopicMemory.json
 *.db
 
 # Generated agent networks by the designer
-registries/generated/
+registries/generated/*
+!registries/generated/modernizeai.hocon
+!registries/generated/manifest.hocon
 
-# Persistent memory tool default root (per-user, per-agent memory files)
-memory/
+# Persistent memory tool default root (per-user, per-agent memory files at workspace root only)
+/memory/
+!coded_tools/modernize/memory/
+!coded_tools/modernize/memory/*.py
 
 # test local only
 registries/manifest.hocon.test
+

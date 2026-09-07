@@ -14,15 +14,19 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import uvicorn
 
-# Ensure coded_tools is on python path
-sys.path.insert(0, os.path.abspath("coded_tools"))
-sys.path.insert(0, os.path.abspath("."))
+# Ensure workspace root and coded_tools are on python path regardless of CWD
+WORKSPACE_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+CODED_TOOLS_DIR = os.path.join(WORKSPACE_ROOT, "coded_tools")
 
-from modernize.graph.algorithms import GraphAlgorithms
-from modernize.graph.knowledge_graph_tool import KnowledgeGraphTool, get_knowledge_graph
-from modernize.memory.memory_manager_tool import MemoryManagerTool, get_memory_fabric
-from modernize.reports.report_generator import ReportGenerator
-from modernize.swarm_coordinator import ModernizeSwarmCoordinator
+for p in (WORKSPACE_ROOT, CODED_TOOLS_DIR):
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
+from coded_tools.modernize.graph.algorithms import GraphAlgorithms
+from coded_tools.modernize.graph.knowledge_graph_tool import KnowledgeGraphTool, get_knowledge_graph
+from coded_tools.modernize.memory.memory_manager_tool import MemoryManagerTool, get_memory_fabric
+from coded_tools.modernize.reports.report_generator import ReportGenerator
+from coded_tools.modernize.swarm_coordinator import ModernizeSwarmCoordinator
 
 app = FastAPI(title="ModernizeAI Knowledge Fabric", version="1.0.0")
 
@@ -35,9 +39,9 @@ app.add_middleware(
 )
 
 # Static files setup
-STATIC_DIR = os.path.abspath("apps/modernizeai_ui/static")
-TEMPLATES_DIR = os.path.abspath("apps/modernizeai_ui/templates")
-ARTIFACTS_DIR = os.path.abspath("artifacts")
+STATIC_DIR = os.path.join(WORKSPACE_ROOT, "apps", "modernizeai_ui", "static")
+TEMPLATES_DIR = os.path.join(WORKSPACE_ROOT, "apps", "modernizeai_ui", "templates")
+ARTIFACTS_DIR = os.path.join(WORKSPACE_ROOT, "artifacts")
 
 os.makedirs(STATIC_DIR, exist_ok=True)
 os.makedirs(TEMPLATES_DIR, exist_ok=True)

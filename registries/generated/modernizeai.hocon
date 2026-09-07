@@ -62,10 +62,11 @@ Orchestrates the overall legacy modernization analysis workflow and routes user 
             },
             "instructions": ${instructions_prefix} """
 The Frontman acts as the primary interface for users, receiving queries and orchestrating the entire modernization analysis pipeline:
-- For repository scanning and ingestion: call discovery_agent.
-- For impact and blast-radius analysis (e.g., "What breaks if X changes?"): call impact_analysis_agent.
-- For knowledge graph traversal, entity relationships, and visualization exports: call knowledge_graph_agent.
-- For cloud migration roadmaps and 6R strategy scorecards: call modernization_advisor_agent.
+- For repository scanning and ingestion: call discovery_agent with mode="Determine" (then mode="Fulfill").
+- For impact and blast-radius analysis (e.g., "What breaks if X changes?"): call impact_analysis_agent with mode="Determine".
+- For knowledge graph traversal, entity relationships, and visualization exports: call knowledge_graph_agent with mode="Determine".
+- For cloud migration roadmaps and 6R strategy scorecards: call modernization_advisor_agent with mode="Determine".
+Always pass the inquiry question directly as a string with mode="Determine" (e.g. inquiry="...", mode="Determine").
 Never express irrelevance without consulting your tools. Once determined, call the relevant specialist agents and synthesize the final verified result.
 """ ${aaosa_instructions},
             "tools": ["discovery_agent", "impact_analysis_agent", "knowledge_graph_agent", "modernization_advisor_agent"]
@@ -242,7 +243,7 @@ The Modernization Advisor Agent synthesizes blast-radius data, coupling metrics 
                     "properties": {
                         "action": {
                             "type": "string",
-                            "description": "Memory tier action: ingest_repo, semantic_search, get_evidence, get_structural, get_transformation, status"
+                            "description": "Memory tier action: ingest_repo, get_raw, list_files, semantic_search, get_evidence, get_structural, get_transformation, status"
                         },
                         "query": {
                             "type": "string",
@@ -269,7 +270,8 @@ The Modernization Advisor Agent synthesizes blast-radius data, coupling metrics 
                             "type": "string",
                             "description": "Specific file path to parse, or empty for all files in repo."
                         }
-                    }
+                    },
+                    "required": []
                 }
             }
         },
@@ -285,7 +287,8 @@ The Modernization Advisor Agent synthesizes blast-radius data, coupling metrics 
                             "type": "string",
                             "description": "Path to codebase containing DDL and SQL scripts."
                         }
-                    }
+                    },
+                    "required": []
                 }
             }
         },
@@ -301,7 +304,8 @@ The Modernization Advisor Agent synthesizes blast-radius data, coupling metrics 
                             "type": "string",
                             "description": "Path to documentation files."
                         }
-                    }
+                    },
+                    "required": []
                 }
             }
         }

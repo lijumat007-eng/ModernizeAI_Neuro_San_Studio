@@ -74,8 +74,7 @@ You may, in turn, be called by other agents in the system and have to act as a d
                 },
             },
             "required": [
-                "inquiry",
-                "mode"
+                "inquiry"
             ]
         }
     },

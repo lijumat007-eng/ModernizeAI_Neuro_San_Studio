@@ -173,16 +173,24 @@ To illustrate how Phase 2 transforms enterprise legacy code:
 
 ModernizeAI provides two integrated user interfaces depending on your workflow:
 
-### 1. ModernizeAI Dedicated Web Application
+### 1. ModernizeAI Dedicated Web Application (Studio v2.4)
 * **Location**: [`apps/modernizeai_ui/server.py`](apps/modernizeai_ui/server.py)
 * **URL**: `http://localhost:8000`
 * **Features**:
-  * **One-Click Ingestion Pipeline**: Scan source repositories with real-time progress.
-  * **5-Tier Memory & Graph Metrics**: Live counters for nodes, edges, business rules, and microservices.
-  * **Interactive PyVis Knowledge Graph**: Embedded, zoomable 2D/3D visualizer with physics simulation.
-  * **Transitive Blast Radius Explorer**: Live dependency impact analysis for any class or table.
-  * **Artifacts Review Center**: Integrated viewer for Modernization Readiness Reports, Business Rules Catalogs, and Impact Matrices.
-  * **Grounded AI Copilot**: Chat interface backed by verified code provenance.
+  * **Multi-Source Ingestion Hub**: Ingest legacy codebases seamlessly from:
+    * *Local PC Folder* (with native browser directory picker & common project presets).
+    * *Remote Git Repository* (automated shallow clone into isolated workspaces in `data/_workspaces/`).
+    * *Cloud AWS S3 Bucket* (manifest sync and IAM credentials verification).
+  * **Project-Isolated Deliverables**: Each scanned project receives an isolated deliverables folder under `artifacts/<project_name>/` containing standalone HTML graphs, JSON/GraphML models, and markdown scorecards, automatically mirrored to the active dashboard.
+  * **Interactive Knowledge Fabric Explorer**:
+    * *Anti-Clumping Physics*: Star-spoke root hub edges are decoupled (`physics: false`), allowing genuine inter-component interactions to breathe with zero text collision.
+    * *Decluttered Visuals*: Static edge labels hidden by default; sleek glowing arrows reveal relationships only on hover or selection.
+    * *Ego-Graph Neighborhood Isolation*: Click any node to dim unrelated components to 12% opacity, highlighting direct callers (Teal) and database mutations (Orange).
+    * *Slide-Out Node Inspector*: Real-time code snippets from Tier 1 Raw Memory, line spans, SHA-256 provenance hash, one-click **Blast Radius** calculation, and **Ask Copilot** contextual prefill.
+    * *Canvas Toolbar*: Real-time search with auto-zoom, "Hide Tests" toggle (40% clutter reduction), Hierarchical / Force layout switch, and Freeze Physics.
+  * **Dynamic 6R Modernize Cockpit**: Live readiness scorecards (0-100), automated 6R cloud migration strategies, and Louvain community candidate microservices.
+  * **Rules & Risks Catalog**: Live catalog of formalized business rules ($BR-xx$) with line-level code citations and documentation-vs-code discrepancy audits.
+  * **Grounded Graph-RAG Copilot**: Conversational AI assistant grounded with graph topological paths to eliminate hallucinations.
 
 ```bash
 # Launch ModernizeAI Web Application:

@@ -156,7 +156,8 @@ class RulesExtractor:
 
         # 1. Extract from Java files
         for path, rec in fabric.raw._files.items():
-            if path.endswith(".java") and ("Service" in path or "Validation" in path or "Claim" in path):
+            norm_path = path.replace("\\", "/").lower()
+            if path.endswith(".java") and "/test/" not in norm_path and not norm_path.endswith("test.java") and not norm_path.endswith("tests.java"):
                 content = rec.get_lines(1, rec.line_count)
                 extracted = cls.extract_from_java(path, content)
                 all_rules.extend(extracted)

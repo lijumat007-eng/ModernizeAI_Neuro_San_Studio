@@ -42,6 +42,37 @@ ModernizeAI coordinates 11 purpose-built agents operating over a shared 5-Tier M
 
 ---
 
+## 🖥️ ModernizeAI Interactive Web Studio (v2.4)
+
+ModernizeAI provides an executive-grade web application running at `http://localhost:8000`:
+
+```bash
+# Start the ModernizeAI Web UI Server:
+.venv\Scripts\python apps/modernizeai_ui/server.py --port 8000
+```
+
+### Core Features & Workflows:
+
+1. **Multi-Source Ingestion Hub**:
+   - **Local PC Folders**: Browse and select local codebase directories with full recursive scanning of `.java`, `.sql`, `.ddl`, and `.md`.
+   - **Git Repositories**: Automated shallow cloning (`--depth 1`) from GitHub/GitLab into isolated project workspaces (`data/_workspaces/`).
+   - **AWS S3 Buckets**: Cloud S3 bucket manifest synchronization and IAM verification.
+   - **Live Pipeline Stepper**: 5-stage visual progress (`Discovery` → `AST & Schema` → `Rule Mining` → `Provenance QA` → `Graph Fabric`) with real-time SSE terminal streaming.
+
+2. **Interactive Knowledge Fabric Explorer**:
+   - **Physics Anti-Clumping**: Decoupled root application hub edges (`physics: false`) eliminate the "black hole" hairball effect, allowing genuine component dependencies to breathe.
+   - **Decluttered Visual Field**: Permanent bold edge text is hidden; relationships display cleanly on hover or selection via glowing directional arrows.
+   - **Ego-Graph Neighborhood Focus**: Click any node to dim unrelated components to **12% opacity**, highlighting direct callers (Teal) and database mutations (Orange).
+   - **Slide-Out Node Inspector**: Real-time syntax-highlighted code snippets from Tier 1 Raw Memory, line spans, SHA-256 provenance hash, one-click **💥 Blast Radius** calculation, and **💬 Ask Copilot** contextual prefill.
+   - **Canvas Toolbar**: Autocomplete search with auto-zoom, **🧪 Hide Tests** toggle (40% clutter reduction), **📐 Hierarchical** layout, and **❄️ Freeze Physics**.
+
+3. **Dynamic 6R Cockpit & Rules Catalog**:
+   - **6R Modernize Cockpit**: Dynamic readiness scores ($0-100$), AWS 6R migration recommendations (Replatform, Refactor, Repurchase, etc.), and Louvain community microservice candidate boundaries.
+   - **Rules & Risks Catalog**: Line-level formal business rules ($BR-01$ to $BR-xx$) and documentation-vs-code discrepancy audits.
+   - **Project-Isolated Deliverables**: Deliverables archived under `artifacts/<project_name>/` and mirrored to the active dashboard.
+
+---
+
 ## 📚 Comprehensive Documentation Links
 
 - **[ModernizeAI Architectural Guide](./generated/MODERNIZE_AI_GUIDE.md)**: Deep dive into the 5-tier memory, 6R scoring, and zero-mock dynamic pipeline.

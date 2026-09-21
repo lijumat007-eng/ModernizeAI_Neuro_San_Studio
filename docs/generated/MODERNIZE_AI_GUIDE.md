@@ -38,18 +38,25 @@ ns run
 
 ---
 
-### B. ModernizeAI Dedicated Web Application Dashboard
+### B. ModernizeAI Dedicated Web Application Dashboard (Studio v2.4)
 - **Location**: [apps/modernizeai_ui/server.py](../../apps/modernizeai_ui/server.py)
 - **Default URL**: [http://localhost:8000](http://localhost:8000)
 - **Primary Use Case**: End-to-End Modernization Workspace & Knowledge Fabric Explorer
 - **Features**:
-  - **Ingest & Rebuild Button**: One-click triggering of the deterministic parsing and ingestion pipeline (`/api/scan`).
-  - **5-Tier Memory & Graph Metrics**: Real-time counter cards showing active memory tiers, knowledge nodes, structural edges, formalized rules, and candidate microservices.
-  - **Swarm Live Status Visualizer**: Interactive chips showing real-time agent execution status.
-  - **Interactive PyVis Knowledge Graph**: Embedded, zoomable 2D/3D graph visualization with physics simulation (`/artifacts/modernize_graph.html`).
-  - **Blast Radius Explorer**: Interactive query box to calculate transitive dependency impacts for any class or table.
-  - **Artifacts Review Center**: Live tabbed viewer for generated Modernization Readiness Reports, Business Rules Catalogs, and Impact Matrices.
-  - **Swarm Coordinator Chat**: Direct conversational query engine with source code citation grounding.
+  - **Multi-Source Ingestion Hub**: Seamlessly ingest from:
+    - *Local PC Directory*: Native folder picker with auto-recursion for `.java`, `.sql`, `.ddl`, and `.md`.
+    * *Git Repositories*: Automated shallow cloning into isolated workspaces with Windows lock-safe cleanup.
+    * *Cloud AWS S3*: S3 bucket manifest synchronization and IAM credentials validation.
+  - **Project-Isolated Deliverable Archives**: Every scanned repository stores full deliverables in `artifacts/<project_name>/` (`modernize_graph.html`, `modernize_kg.json`, `modernize_kg.graphml`, `modernization_readiness_report.md`, `business_rules_catalog.md`, `impact_blast_radius_matrix.md`) and mirrors to the active dashboard.
+  - **Knowledge Fabric Architectural Explorer**:
+    - *Anti-Clumping Physics*: Decoupled application hub edges prevent the "black hole" hairball effect.
+    - *Decluttered Edges*: Dynamic hover labels eliminate permanent text overlap across 70+ edges.
+    - *Ego-Graph Neighborhood Isolation*: Click any node to dim unrelated system components to 12% opacity, highlighting direct callers in Teal and database tables in Orange.
+    - *Slide-Out Node Inspector*: Real-time code snippets from Tier 1 Raw Memory, line spans, SHA-256 provenance hash, one-click **💥 Blast Radius** calculation, and **💬 Ask Copilot** prefill.
+    - *Canvas Toolbar*: Instant Search with auto-zoom, "Hide Tests" toggle (40% clutter reduction), Hierarchical / Force layout switch, and Freeze Physics.
+  - **Dynamic 6R Modernize Cockpit**: Real-time cloud readiness scoring (0-100), automated 6R migration recommendations, and Louvain community microservice candidate boundaries.
+  - **Live Rules & Risks Catalog**: Discrepancy detection between legacy documentation and actual code implementation.
+  - **Graph-RAG Conversational Copilot**: Multi-turn architectural assistant grounded with topological graph paths.
 
 ```bash
 # Start ModernizeAI Web Application:

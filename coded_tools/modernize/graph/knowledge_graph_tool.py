@@ -43,98 +43,112 @@ class KnowledgeGraphTool(CodedTool):
 
         if action == "build_graph":
             repo_path = args.get("repo_path", "data/insurance_claims_app")
+            # Clear previous graph if rebuilding
+            kg.graph.clear()
+
             # 1. Ingest into memory fabric if not already done
             if len(fabric.raw._files) == 0:
                 fabric.raw.ingest_directory(repo_path)
 
             # 2. Add Top-Level Application Node
+            if repo_path == "data/insurance_claims_app" or not repo_path:
+                app_node_id = "ClaimCore_App"
+                app_label = "ClaimCore Monolith v2.4"
+            else:
+                base_name = os.path.basename(os.path.normpath(repo_path)) or "Application"
+                app_node_id = f"{base_name}_App"
+                app_label = f"{base_name} Application"
+
             kg.add_node(
-                node_id="ClaimCore_App",
+                node_id=app_node_id,
                 node_type="Application",
-                label="ClaimCore Monolith v2.4",
-                source_file="data/insurance_claims_app",
+                label=app_label,
+                source_file=repo_path,
                 line_start=1,
                 line_end=100,
                 extractor="manifest",
-                evidence_snippet="Core insurance legacy application adjudicating claims.",
+                evidence_snippet=f"Core application node for {app_label}.",
             )
 
-            # 3. Parse and register DDL (Tables and Foreign Keys)
-            ddl_file = fabric.raw.get("schema.ddl")
-            if ddl_file:
-                content = ddl_file.get_lines(1, ddl_file.line_count)
-                ddl_data = DdlParser.parse_ddl("schema.ddl", content)
-                for tbl in ddl_data["tables"]:
-                    t_name = tbl["table_name"]
-                    kg.add_node(
-                        node_id=t_name,
-                        node_type="DatabaseTable",
-                        label=f"Table: {t_name}",
-                        source_file=tbl["file_path"],
-                        line_start=tbl["start_line"],
-                        line_end=tbl["end_line"],
-                        extractor="ddl_parser",
-                        evidence_snippet=f"CREATE TABLE {t_name} with primary key {tbl['primary_key']}",
-                    )
-                    kg.add_edge(
-                        "ClaimCore_App",
-                        t_name,
-                        "DEPENDS_ON",
-                        source_file=tbl["file_path"],
-                        line_start=tbl["start_line"],
-                        line_end=tbl["end_line"],
-                    )
-                    # Foreign keys
-                    for fk in tbl["foreign_keys"]:
-                        target = fk["target_table"]
-                        if kg.graph.has_node(target):
-                            kg.add_edge(
-                                t_name,
-                                target,
-                                "DEPENDS_ON",
-                                source_file=tbl["file_path"],
-                                line_start=tbl["start_line"],
-                                line_end=tbl["end_line"],
-                                evidence_snippet=f"CONSTRAINT {fk['constraint_name']} REFERENCES {target}",
-                            )
+            # 3. Parse and register DDL (Tables and Foreign Keys) across all DDL/SQL files
+            for fpath, rec in fabric.raw._files.items():
+                if fpath.endswith((".ddl", ".sql")):
+                    content = rec.get_lines(1, rec.line_count)
+                    try:
+                        ddl_data = DdlParser.parse_ddl(fpath, content)
+                        for tbl in ddl_data.get("tables", []):
+                            t_name = tbl["table_name"]
+                            if not kg.graph.has_node(t_name):
+                                kg.add_node(
+                                    node_id=t_name,
+                                    node_type="DatabaseTable",
+                                    label=f"Table: {t_name}",
+                                    source_file=tbl.get("file_path", fpath),
+                                    line_start=tbl.get("start_line", 1),
+                                    line_end=tbl.get("end_line", 1),
+                                    extractor="ddl_parser",
+                                    evidence_snippet=f"CREATE TABLE {t_name} with primary key {tbl.get('primary_key')}",
+                                )
+                                kg.add_edge(
+                                    app_node_id,
+                                    t_name,
+                                    "DEPENDS_ON",
+                                    source_file=tbl.get("file_path", fpath),
+                                    line_start=tbl.get("start_line", 1),
+                                    line_end=tbl.get("end_line", 1),
+                                )
+                            for fk in tbl.get("foreign_keys", []):
+                                target = fk.get("target_table")
+                                if target and kg.graph.has_node(target):
+                                    kg.add_edge(
+                                        t_name,
+                                        target,
+                                        "DEPENDS_ON",
+                                        source_file=tbl.get("file_path", fpath),
+                                        line_start=tbl.get("start_line", 1),
+                                        line_end=tbl.get("end_line", 1),
+                                        evidence_snippet=f"CONSTRAINT {fk.get('constraint_name')} REFERENCES {target}",
+                                    )
+                    except Exception:
+                        pass
 
-            # 4. Parse Stored Procedure
-            sp_file = fabric.raw.get("process_claim_sp.sql")
-            if sp_file:
-                sp_content = sp_file.get_lines(1, sp_file.line_count)
-                sp_data = DdlParser.parse_stored_procedure("process_claim_sp.sql", sp_content)
-                for proc in sp_data["procedures"]:
-                    p_name = proc["procedure_name"]
-                    kg.add_node(
-                        node_id=p_name,
-                        node_type="StoredProcedure",
-                        label=f"Procedure: {p_name}",
-                        source_file=proc["file_path"],
-                        line_start=proc["start_line"],
-                        line_end=proc["end_line"],
-                        extractor="ddl_parser",
-                        evidence_snippet=f"CREATE PROCEDURE {p_name} updating deductible and payout balances",
-                    )
-                    for r_tbl in proc["tables_read"]:
-                        if kg.graph.has_node(r_tbl):
-                            kg.add_edge(
-                                p_name,
-                                r_tbl,
-                                "READS_FROM",
-                                source_file=proc["file_path"],
-                                line_start=proc["start_line"],
-                                line_end=proc["end_line"],
-                            )
-                    for w_tbl in proc["tables_written"]:
-                        if kg.graph.has_node(w_tbl):
-                            kg.add_edge(
-                                p_name,
-                                w_tbl,
-                                "WRITES_TO",
-                                source_file=proc["file_path"],
-                                line_start=proc["start_line"],
-                                line_end=proc["end_line"],
-                            )
+                    try:
+                        sp_data = DdlParser.parse_stored_procedure(fpath, content)
+                        for proc in sp_data.get("procedures", []):
+                            p_name = proc["procedure_name"]
+                            if not kg.graph.has_node(p_name):
+                                kg.add_node(
+                                    node_id=p_name,
+                                    node_type="StoredProcedure",
+                                    label=f"Procedure: {p_name}",
+                                    source_file=proc.get("file_path", fpath),
+                                    line_start=proc.get("start_line", 1),
+                                    line_end=proc.get("end_line", 1),
+                                    extractor="ddl_parser",
+                                    evidence_snippet=f"CREATE PROCEDURE {p_name}",
+                                )
+                            for r_tbl in proc.get("tables_read", []):
+                                if kg.graph.has_node(r_tbl):
+                                    kg.add_edge(
+                                        p_name,
+                                        r_tbl,
+                                        "READS_FROM",
+                                        source_file=proc.get("file_path", fpath),
+                                        line_start=proc.get("start_line", 1),
+                                        line_end=proc.get("end_line", 1),
+                                    )
+                            for w_tbl in proc.get("tables_written", []):
+                                if kg.graph.has_node(w_tbl):
+                                    kg.add_edge(
+                                        p_name,
+                                        w_tbl,
+                                        "WRITES_TO",
+                                        source_file=proc.get("file_path", fpath),
+                                        line_start=proc.get("start_line", 1),
+                                        line_end=proc.get("end_line", 1),
+                                    )
+                    except Exception:
+                        pass
 
             # 5. Parse Java Classes and Rules
             for fpath, rec in fabric.raw._files.items():
@@ -153,7 +167,7 @@ class KnowledgeGraphTool(CodedTool):
                         extractor="java_ast_parser",
                         evidence_snippet=f"Java component {c_name} with {len(parsed['methods'])} methods",
                     )
-                    kg.add_edge("ClaimCore_App", c_name, "DEPENDS_ON", source_file=fpath)
+                    kg.add_edge(app_node_id, c_name, "DEPENDS_ON", source_file=fpath)
 
                     # SQL references
                     for sql in parsed["sql_statements"]:

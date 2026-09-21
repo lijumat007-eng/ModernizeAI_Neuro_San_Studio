@@ -3,338 +3,634 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ModernizeAI | Hybrid Agentic Graph-RAG Knowledge Fabric</title>
+    <title>ModernizeAI Studio | Hybrid Agentic Graph-RAG Knowledge Fabric</title>
+    <meta name="description" content="Enterprise Cloud Modernization & Legacy Migration Platform powered by Neuro SAN Studio 11-Agent Swarm">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
-    <!-- Top Header -->
-    <header class="app-header">
-        <div class="header-left">
-            <div class="logo-badge">
-                <span class="logo-icon">⚡</span>
-                <div class="logo-text">
-                    <h1>ModernizeAI</h1>
-                    <span class="subtitle">Hybrid Agentic Graph-RAG Knowledge Fabric</span>
+<body class="app-body">
+    <!-- App Shell Layout -->
+    <div class="app-shell">
+        <!-- Collapsible Left Navigation Rail -->
+        <aside class="app-sidebar" id="app-sidebar">
+            <div class="sidebar-header">
+                <div class="brand-badge">
+                    <span class="brand-icon">⚡</span>
+                    <div class="brand-titles">
+                        <span class="brand-name">ModernizeAI</span>
+                        <span class="brand-version">Studio v2.4</span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="header-right">
-            <div class="status-chip" id="system-status-chip">
-                <span class="pulse-dot"></span>
-                <span id="status-text">Knowledge Fabric Active</span>
-            </div>
-            <button id="rescan-btn" class="btn btn-primary">
-                <span class="btn-icon">🚀</span> Ingest & Rebuild Fabric
-            </button>
-        </div>
-    </header>
 
-    <!-- Main Container -->
-    <main class="app-container">
-        <!-- Metric Cards Row -->
-        <section class="metrics-row">
-            <div class="metric-card glass-card">
-                <div class="metric-icon cyan">🧠</div>
-                <div class="metric-info">
-                    <span class="metric-value" id="stat-memory">5 / 5</span>
-                    <span class="metric-label">Memory Tiers Active</span>
-                </div>
+            <!-- Active Workspace Indicator -->
+            <div class="workspace-chip" title="Current Ingested Workspace">
+                <span class="chip-label">Active Target:</span>
+                <span class="chip-path" id="sidebar-active-path">data/insurance_claims_app</span>
             </div>
-            <div class="metric-card glass-card">
-                <div class="metric-icon blue">🕸️</div>
-                <div class="metric-info">
-                    <span class="metric-value" id="stat-nodes">21</span>
-                    <span class="metric-label">Knowledge Nodes</span>
-                </div>
-            </div>
-            <div class="metric-card glass-card">
-                <div class="metric-icon purple">🔗</div>
-                <div class="metric-info">
-                    <span class="metric-value" id="stat-edges">29</span>
-                    <span class="metric-label">Structural Edges</span>
-                </div>
-            </div>
-            <div class="metric-card glass-card">
-                <div class="metric-icon amber">📜</div>
-                <div class="metric-info">
-                    <span class="metric-value" id="stat-rules">5</span>
-                    <span class="metric-label">Formalized Rules</span>
-                </div>
-            </div>
-            <div class="metric-card glass-card">
-                <div class="metric-icon green">🧩</div>
-                <div class="metric-info">
-                    <span class="metric-value" id="stat-domains">5</span>
-                    <span class="metric-label">Candidate Domains</span>
-                </div>
-            </div>
-        </section>
 
-        <!-- Multi-Agent Swarm Live Visualizer -->
-        <section class="swarm-section glass-card">
-            <div class="section-header">
-                <div class="section-title">
-                    <h2>Multi-Agent Swarm Orchestration (Neuro SAN Studio)</h2>
-                    <span class="badge badge-subtle">11 Mixture-of-Experts Agents</span>
-                </div>
-                <div class="ratio-badge">80% Deterministic / 20% LLM Reasoning</div>
-            </div>
-            <div class="swarm-grid" id="swarm-grid">
-                <!-- Agent Cards Dynamically Populated / Pre-rendered -->
-                <div class="agent-chip active" data-agent="frontman">
-                    <span class="agent-icon">👑</span>
-                    <div class="agent-details">
-                        <span class="agent-name">Frontman</span>
-                        <span class="agent-role">Orchestrator</span>
-                    </div>
-                </div>
-                <div class="agent-chip active" data-agent="discovery">
-                    <span class="agent-icon">🔍</span>
-                    <div class="agent-details">
-                        <span class="agent-name">Discovery</span>
-                        <span class="agent-role">Asset Ingestion</span>
-                    </div>
-                </div>
-                <div class="agent-chip active" data-agent="code_intel">
-                    <span class="agent-icon">☕</span>
-                    <div class="agent-details">
-                        <span class="agent-name">Code Intel</span>
-                        <span class="agent-role">Java/SQL AST</span>
-                    </div>
-                </div>
-                <div class="agent-chip active" data-agent="database_intel">
-                    <span class="agent-icon">🗄️</span>
-                    <div class="agent-details">
-                        <span class="agent-name">DB Intel</span>
-                        <span class="agent-role">DDL & Lineage</span>
-                    </div>
-                </div>
-                <div class="agent-chip active" data-agent="doc_intel">
-                    <span class="agent-icon">📄</span>
-                    <div class="agent-details">
-                        <span class="agent-name">Doc Intel</span>
-                        <span class="agent-role">Specs & Notes</span>
-                    </div>
-                </div>
-                <div class="agent-chip active" data-agent="business_rules">
-                    <span class="agent-icon">⚖️</span>
-                    <div class="agent-details">
-                        <span class="agent-name">Business Rules</span>
-                        <span class="agent-role">Logic Extraction</span>
-                    </div>
-                </div>
-                <div class="agent-chip active" data-agent="validation">
-                    <span class="agent-icon">🛡️</span>
-                    <div class="agent-details">
-                        <span class="agent-name">Validation</span>
-                        <span class="agent-role">Anti-Hallucination</span>
-                    </div>
-                </div>
-                <div class="agent-chip active highlight-chip" data-agent="knowledge_graph">
-                    <span class="agent-icon">🌐</span>
-                    <div class="agent-details">
-                        <span class="agent-name">Knowledge Graph</span>
-                        <span class="agent-role">MultiDiGraph Engine</span>
-                    </div>
-                </div>
-                <div class="agent-chip active highlight-chip" data-agent="memory_manager">
-                    <span class="agent-icon">💾</span>
-                    <div class="agent-details">
-                        <span class="agent-name">Memory Manager</span>
-                        <span class="agent-role">5-Tier Memory</span>
-                    </div>
-                </div>
-                <div class="agent-chip active" data-agent="impact_analysis">
-                    <span class="agent-icon">💥</span>
-                    <div class="agent-details">
-                        <span class="agent-name">Impact Analysis</span>
-                        <span class="agent-role">Blast-Radius BFS</span>
-                    </div>
-                </div>
-                <div class="agent-chip active" data-agent="modernization_advisor">
-                    <span class="agent-icon">🧭</span>
-                    <div class="agent-details">
-                        <span class="agent-name">Modernize Advisor</span>
-                        <span class="agent-role">6R Roadmap</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Main Workspace Tabs -->
-        <section class="workspace-section">
-            <div class="workspace-tabs">
-                <button class="tab-btn active" data-tab="tab-graph">
-                    <span class="tab-icon">🌐</span> Interactive Knowledge Graph
+            <!-- Navigation Items -->
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-view="view-ingest">
+                    <span class="nav-icon">📥</span>
+                    <span class="nav-label">Ingestion Hub</span>
                 </button>
-                <button class="tab-btn" data-tab="tab-query">
-                    <span class="tab-icon">🔎</span> Hybrid Graph-RAG Query
+                <button class="nav-item" data-view="view-graph">
+                    <span class="nav-icon">🌐</span>
+                    <span class="nav-label">Knowledge Fabric</span>
                 </button>
-                <button class="tab-btn" data-tab="tab-readiness">
-                    <span class="tab-icon">📊</span> Modernization Readiness Report
+                <button class="nav-item" data-view="view-copilot">
+                    <span class="nav-icon">💬</span>
+                    <span class="nav-label">Graph-RAG Copilot</span>
                 </button>
-                <button class="tab-btn" data-tab="tab-blast">
-                    <span class="tab-icon">💥</span> Blast-Radius Matrix
+                <button class="nav-item" data-view="view-cockpit">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">6R Modernize Cockpit</span>
                 </button>
-                <button class="tab-btn" data-tab="tab-rules">
-                    <span class="tab-icon">📋</span> Business Rules Catalog
+                <button class="nav-item" data-view="view-rules">
+                    <span class="nav-icon">⚖️</span>
+                    <span class="nav-label">Rules & Risks Catalog</span>
                 </button>
-                <button class="tab-btn" data-tab="tab-json">
-                    <span class="tab-icon">💾</span> Graph Exports (JSON / GraphML)
+                <button class="nav-item" data-view="view-exports">
+                    <span class="nav-icon">💾</span>
+                    <span class="nav-label">Graph Exports</span>
                 </button>
-            </div>
+            </nav>
 
-            <!-- Tab 1: Interactive Knowledge Graph Explorer -->
-            <div class="tab-pane active" id="tab-graph">
-                <div class="graph-card glass-card">
-                    <div class="graph-toolbar">
-                        <div class="legend-items">
-                            <span class="legend-dot" style="background:#00a896;"></span> Service
-                            <span class="legend-dot" style="background:#3a86ff;"></span> Table
-                            <span class="legend-dot" style="background:#06d6a0;"></span> StoredProc
-                            <span class="legend-dot" style="background:#ffb703;"></span> BusinessRule
-                            <span class="legend-dot" style="background:#e63946;"></span> Risk
-                            <span class="legend-dot" style="background:#f72585;"></span> SME Note
-                        </div>
-                        <div class="toolbar-actions">
-                            <a href="/artifacts/modernize_graph.html" target="_blank" class="btn btn-secondary btn-sm">
-                                ↗ Open Fullscreen
-                            </a>
-                        </div>
-                    </div>
-                    <div class="iframe-container">
-                        <iframe id="graph-iframe" src="/artifacts/modernize_graph.html" title="Interactive Knowledge Graph"></iframe>
+            <!-- Bottom System Status -->
+            <div class="sidebar-footer">
+                <div class="system-status-indicator">
+                    <span class="pulse-dot"></span>
+                    <div class="status-meta">
+                        <span class="status-title">Neuro SAN Swarm</span>
+                        <span class="status-desc" id="status-agent-count">11 Agents Active</span>
                     </div>
                 </div>
             </div>
+        </aside>
 
-            <!-- Tab 2: Hybrid Graph-RAG Query Console -->
-            <div class="tab-pane" id="tab-query">
-                <div class="query-container glass-card">
-                    <div class="query-header">
-                        <h3>Ask ModernizeAI Knowledge Fabric</h3>
-                        <p>Queries fuse dense semantic search over documentation with Personalized PageRank (PPR) across the Knowledge Graph.</p>
-                    </div>
-
-                    <div class="query-bar-container">
-                        <input type="text" id="query-input" placeholder="e.g. What breaks if ClaimsService or POLICY_MASTER changes?" value="What modules and business rules are impacted if POLICY_MASTER changes?">
-                        <button id="run-query-btn" class="btn btn-primary">
-                            <span>Execute Graph-RAG</span>
-                        </button>
-                    </div>
-
-                    <div class="query-chips">
-                        <span class="query-chip" data-q="What business rules govern claim validation and deductible calculation?">Claims & Deductibles Logic</span>
-                        <span class="query-chip" data-q="What tables and procedures are affected if POLICY_MASTER is modified?">POLICY_MASTER Blast Radius</span>
-                        <span class="query-chip" data-q="Which services call SP_PROCESS_CLAIM and what tables are modified?">SP_PROCESS_CLAIM Lineage</span>
-                        <span class="query-chip" data-q="What are the architectural risks and hardcoded thresholds in the codebase?">Architectural Risks</span>
-                    </div>
-
-                    <!-- Query Results -->
-                    <div id="query-results" class="query-results-panel">
-                        <div class="results-placeholder">
-                            <span class="placeholder-icon">💡</span>
-                            <p>Click a suggested chip or type a question above to execute Hybrid Agentic Graph-RAG.</p>
+        <!-- Main Workspace Stage -->
+        <div class="main-stage">
+            <!-- Top App Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <h2 class="view-title" id="view-title">Ingestion Studio</h2>
+                    <span class="view-breadcrumb" id="view-breadcrumb">Data Sources & Codebase Ingestion</span>
+                </div>
+                <div class="top-bar-right">
+                    <!-- Quick KPI Chips -->
+                    <div class="kpi-chip">
+                        <span class="kpi-icon">🧠</span>
+                        <div class="kpi-text">
+                            <span class="kpi-val" id="kpi-memory">5/5</span>
+                            <span class="kpi-lbl">Tiers</span>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Tab 3: Modernization Readiness Report -->
-            <div class="tab-pane" id="tab-readiness">
-                <div class="markdown-preview-card glass-card">
-                    <div class="report-header">
-                        <div class="report-title">
-                            <h3>Modernization Readiness & 6R Architecture Report</h3>
-                            <span class="badge badge-success">Artifact: modernization_readiness_report.md</span>
-                        </div>
-                        <a href="/artifacts/modernization_readiness_report.md" download class="btn btn-secondary btn-sm">⬇ Download Markdown</a>
-                    </div>
-                    <div class="markdown-body" id="readiness-report-body">
-                        <!-- Populated via API -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 4: Impact & Blast-Radius Matrix -->
-            <div class="tab-pane" id="tab-blast">
-                <div class="markdown-preview-card glass-card">
-                    <div class="report-header">
-                        <div class="report-title">
-                            <h3>Impact & Blast-Radius Traversal Matrix</h3>
-                            <span class="badge badge-warning">Artifact: impact_blast_radius_matrix.md</span>
-                        </div>
-                        <a href="/artifacts/impact_blast_radius_matrix.md" download class="btn btn-secondary btn-sm">⬇ Download Markdown</a>
-                    </div>
-                    <div class="markdown-body" id="blast-matrix-body">
-                        <!-- Populated via API -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 5: Business Rules Catalog -->
-            <div class="tab-pane" id="tab-rules">
-                <div class="markdown-preview-card glass-card">
-                    <div class="report-header">
-                        <div class="report-title">
-                            <h3>Business Rules Traceability Matrix</h3>
-                            <span class="badge badge-info">Artifact: business_rules_catalog.md</span>
-                        </div>
-                        <a href="/artifacts/business_rules_catalog.md" download class="btn btn-secondary btn-sm">⬇ Download Markdown</a>
-                    </div>
-                    <div class="markdown-body" id="rules-catalog-body">
-                        <!-- Populated via API -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 6: JSON Knowledge Graph & GraphML Export -->
-            <div class="tab-pane" id="tab-json">
-                <div class="json-export-card glass-card">
-                    <div class="report-header">
-                        <div class="report-title">
-                            <h3>Machine-Readable Knowledge Fabric Exports</h3>
-                            <span class="badge badge-subtle">Ready for Neo4j, Gephi, & AWS Neptune</span>
-                        </div>
-                        <div class="export-actions">
-                            <a href="/artifacts/modernize_kg.json" download class="btn btn-secondary btn-sm">⬇ Download JSON-LD</a>
-                            <a href="/artifacts/modernize_kg.graphml" download class="btn btn-secondary btn-sm">⬇ Download GraphML</a>
+                    <div class="kpi-chip">
+                        <span class="kpi-icon">🕸️</span>
+                        <div class="kpi-text">
+                            <span class="kpi-val" id="kpi-nodes">21</span>
+                            <span class="kpi-lbl">Nodes</span>
                         </div>
                     </div>
-                    <pre class="json-viewer" id="json-viewer-content">Loading knowledge graph JSON...</pre>
+                    <div class="kpi-chip">
+                        <span class="kpi-icon">🔗</span>
+                        <div class="kpi-text">
+                            <span class="kpi-val" id="kpi-edges">29</span>
+                            <span class="kpi-lbl">Edges</span>
+                        </div>
+                    </div>
+                    <div class="kpi-chip highlight">
+                        <span class="kpi-icon">⭐</span>
+                        <div class="kpi-text">
+                            <span class="kpi-val" id="kpi-score">78/100</span>
+                            <span class="kpi-lbl">Readiness</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-sm" id="quick-scan-trigger">
+                        <span>⚡ Quick Ingest</span>
+                    </button>
                 </div>
-            </div>
-        </section>
-    </main>
+            </header>
 
-    <!-- Ingestion Modal -->
-    <div id="ingest-modal" class="modal-backdrop">
-        <div class="modal-card glass-card">
-            <div class="modal-header">
-                <h3>Ingest Legacy Codebase</h3>
-                <button class="close-modal-btn" id="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Specify the local repository or synthetic application path to scan, parse, and rebuild the 5-Tier Memory & Knowledge Fabric:</p>
-                <div class="input-group">
-                    <label for="repo-input">Repository Path:</label>
-                    <input type="text" id="repo-input" value="data/insurance_claims_app" class="text-input">
-                </div>
-                <div class="progress-bar-container" id="ingest-progress-container" style="display:none;">
-                    <div class="progress-bar" id="ingest-progress-bar"></div>
-                    <span class="progress-label" id="ingest-progress-label">Parsing ASTs and Building Knowledge Fabric...</span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancel-modal-btn">Cancel</button>
-                <button class="btn btn-primary" id="start-ingest-btn">Run Discovery & Fabric Build</button>
-            </div>
+            <!-- Dynamic Views Container -->
+            <main class="content-viewport">
+                <!-- VIEW 1: Multi-Source Ingestion Hub -->
+                <section class="workspace-view active" id="view-ingest">
+                    <div class="ingest-grid">
+                        <!-- Left Panel: Multi-Source Connector Wizard -->
+                        <div class="connector-card glass-panel">
+                            <div class="panel-header">
+                                <div class="header-text">
+                                    <h3>Data Source Connector</h3>
+                                    <p>Select your legacy application source to ingest into Tier 1 Raw Memory and build the Knowledge Fabric.</p>
+                                </div>
+                            </div>
+
+                            <!-- Source Tabs: Local, Git, S3 -->
+                            <div class="source-tabs">
+                                <button class="source-tab-btn active" data-source="local">
+                                    <span class="tab-badge-icon">📁</span> Local PC Folder
+                                </button>
+                                <button class="source-tab-btn" data-source="git">
+                                    <span class="tab-badge-icon">🐙</span> Git Repository
+                                </button>
+                                <button class="source-tab-btn" data-source="s3">
+                                    <span class="tab-badge-icon">☁️</span> AWS S3 Bucket
+                                </button>
+                            </div>
+
+                            <!-- Source Form 1: Local Directory -->
+                            <div class="source-form-panel active" id="source-form-local">
+                                <div class="form-group">
+                                    <label for="local-path-input">Folder Path on PC:</label>
+                                    <div class="input-with-button">
+                                        <input type="text" id="local-path-input" class="form-control" value="data/insurance_claims_app" placeholder="e.g. data/insurance_claims_app or C:\code\monolith">
+                                        <button class="btn btn-secondary" id="browse-folder-btn" title="Pick directory from your computer">
+                                            <span>📂 Browse</span>
+                                        </button>
+                                        <input type="file" id="native-folder-picker" webkitdirectory directory style="display:none;">
+                                    </div>
+                                    <span class="form-hint">Supports full recursion for Java (.java), SQL (.sql, .ddl), Specs (.md), and Notes (.txt).</span>
+                                </div>
+
+                                <div class="preset-pills">
+                                    <span class="preset-label">Presets:</span>
+                                    <button class="preset-btn active" data-preset="data/insurance_claims_app">ClaimCore v2.4 (Default)</button>
+                                    <button class="preset-btn" data-preset="data/insurance_claims_app/ClaimService.java">Single Service</button>
+                                </div>
+                            </div>
+
+                            <!-- Source Form 2: Git Repository -->
+                            <div class="source-form-panel" id="source-form-git">
+                                <div class="form-group">
+                                    <label for="git-url-input">Git Clone URL:</label>
+                                    <input type="text" id="git-url-input" class="form-control" placeholder="https://github.com/organization/legacy-monolith.git">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group flex-1">
+                                        <label for="git-branch-input">Branch / Tag:</label>
+                                        <input type="text" id="git-branch-input" class="form-control" value="main" placeholder="main or master">
+                                    </div>
+                                    <div class="form-group flex-1">
+                                        <label for="git-token-input">Personal Access Token (optional):</label>
+                                        <input type="password" id="git-token-input" class="form-control" placeholder="ghp_xxxxxxxxxxxx">
+                                    </div>
+                                </div>
+                                <span class="form-hint">Executes an isolated shallow clone (depth 1) into sandboxed workspace.</span>
+                            </div>
+
+                            <!-- Source Form 3: AWS S3 Bucket -->
+                            <div class="source-form-panel" id="source-form-s3">
+                                <div class="form-group">
+                                    <label for="s3-uri-input">S3 Bucket URI:</label>
+                                    <input type="text" id="s3-uri-input" class="form-control" placeholder="s3://my-enterprise-cloud-bucket/legacy-source/">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group flex-1">
+                                        <label for="s3-region-input">AWS Region:</label>
+                                        <select id="s3-region-input" class="form-control">
+                                            <option value="us-east-1" selected>US East (N. Virginia) us-east-1</option>
+                                            <option value="us-west-2">US West (Oregon) us-west-2</option>
+                                            <option value="eu-west-1">Europe (Ireland) eu-west-1</option>
+                                            <option value="ap-south-1">Asia Pacific (Mumbai) ap-south-1</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <span class="form-hint">Syncs S3 bucket objects directly into Tier 1 Memory with SHA-256 integrity verification.</span>
+                            </div>
+
+                            <!-- Action Bar -->
+                            <div class="connector-actions">
+                                <button class="btn btn-primary btn-lg" id="run-ingestion-btn">
+                                    <span class="btn-icon">🚀</span> Start Ingestion & Rebuild Fabric
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Live Swarm Pipeline Stepper & Ingestion Log -->
+                        <div class="pipeline-card glass-panel">
+                            <div class="panel-header">
+                                <div class="header-text">
+                                    <h3>Swarm Ingestion Pipeline</h3>
+                                    <span class="badge badge-subtle">11 Mixture-of-Experts Agents</span>
+                                </div>
+                                <span class="pipeline-status-badge" id="pipeline-status-badge">Idle / Ready</span>
+                            </div>
+
+                            <!-- Visual Step Flow -->
+                            <div class="stepper-track">
+                                <div class="stepper-step completed" id="step-discovery">
+                                    <div class="step-bubble">1</div>
+                                    <div class="step-meta">
+                                        <span class="step-title">Discovery</span>
+                                        <span class="step-desc">Tier 1 Raw Memory</span>
+                                    </div>
+                                </div>
+                                <div class="stepper-connector"></div>
+                                <div class="stepper-step completed" id="step-ast">
+                                    <div class="step-bubble">2</div>
+                                    <div class="step-meta">
+                                        <span class="step-title">AST & Schema</span>
+                                        <span class="step-desc">Java & DDL Intel</span>
+                                    </div>
+                                </div>
+                                <div class="stepper-connector"></div>
+                                <div class="stepper-step completed" id="step-rules">
+                                    <div class="step-bubble">3</div>
+                                    <div class="step-meta">
+                                        <span class="step-title">Rule Mining</span>
+                                        <span class="step-desc">Formal BR-xx Rules</span>
+                                    </div>
+                                </div>
+                                <div class="stepper-connector"></div>
+                                <div class="stepper-step completed" id="step-qa">
+                                    <div class="step-bubble">4</div>
+                                    <div class="step-meta">
+                                        <span class="step-title">Provenance QA</span>
+                                        <span class="step-desc">Line Hash Audit</span>
+                                    </div>
+                                </div>
+                                <div class="stepper-connector"></div>
+                                <div class="stepper-step completed" id="step-fabric">
+                                    <div class="step-bubble">5</div>
+                                    <div class="step-meta">
+                                        <span class="step-title">Graph Fabric</span>
+                                        <span class="step-desc">NetworkX MultiDiGraph</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Live Terminal Output Box -->
+                            <div class="terminal-box">
+                                <div class="terminal-bar">
+                                    <div class="terminal-dots">
+                                        <span class="t-dot red"></span>
+                                        <span class="t-dot yellow"></span>
+                                        <span class="t-dot green"></span>
+                                    </div>
+                                    <span class="terminal-title">Ingestion Log Stream</span>
+                                </div>
+                                <div class="terminal-content" id="ingest-terminal-content">
+[SYSTEM] Ready for codebase ingestion.
+[WORKSPACE] Default target: data/insurance_claims_app
+[READY] 11 Agents synchronized on AAOSA communication bus.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 2: Knowledge Fabric Canvas & Inspector -->
+                <section class="workspace-view" id="view-graph">
+                    <div class="fabric-layout">
+                        <!-- Canvas Card -->
+                        <div class="canvas-panel glass-panel">
+                            <div class="canvas-toolbar">
+                                <div class="legend-group">
+                                    <span class="legend-pill" style="--tag-color: #00a896;">Service</span>
+                                    <span class="legend-pill" style="--tag-color: #3a86ff;">Table</span>
+                                    <span class="legend-pill" style="--tag-color: #06d6a0;">StoredProc</span>
+                                    <span class="legend-pill" style="--tag-color: #ffb703;">BusinessRule</span>
+                                    <span class="legend-pill" style="--tag-color: #e63946;">Risk</span>
+                                </div>
+                                <div class="toolbar-actions">
+                                    <button class="btn btn-secondary btn-sm" id="freeze-physics-btn">
+                                        <span>❄️ Freeze Physics</span>
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" id="toggle-tests-ui-btn">
+                                        <span>🧪 Hide Tests</span>
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" id="toggle-layout-ui-btn">
+                                        <span>📐 Hierarchical</span>
+                                    </button>
+                                    <a href="/artifacts/modernize_graph.html" target="_blank" class="btn btn-secondary btn-sm">
+                                        <span>↗ Fullscreen</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="canvas-frame-container">
+                                <iframe id="graph-iframe" src="/artifacts/modernize_graph.html" title="Interactive Knowledge Graph"></iframe>
+                            </div>
+                        </div>
+
+                        <!-- Slide-Out Node Inspector Drawer -->
+                        <aside class="node-inspector-drawer glass-panel" id="node-inspector-drawer">
+                            <div class="drawer-header">
+                                <div class="drawer-title-group">
+                                    <span class="node-type-badge" id="inspector-type">Service</span>
+                                    <h4 id="inspector-name">PolicyValidationService</h4>
+                                </div>
+                                <button class="drawer-close-btn" id="close-inspector-btn">&times;</button>
+                            </div>
+
+                            <div class="drawer-body">
+                                <div class="meta-field">
+                                    <span class="meta-label">Source File:</span>
+                                    <span class="meta-value mono" id="inspector-file">data/insurance_claims_app/PolicyValidationService.java</span>
+                                </div>
+                                <div class="meta-field">
+                                    <span class="meta-label">Line Span:</span>
+                                    <span class="meta-value mono" id="inspector-lines">Lines 1 - 85</span>
+                                </div>
+                                <div class="meta-field">
+                                    <span class="meta-label">SHA-256 Provenance:</span>
+                                    <span class="meta-value mono" id="inspector-sha">e3b0c44298fc1c14...</span>
+                                </div>
+
+                                <hr class="drawer-divider">
+
+                                <div class="drawer-section">
+                                    <h5>Exact Source Evidence:</h5>
+                                    <pre class="snippet-viewer" id="inspector-snippet">// Source code snippet appears here...</pre>
+                                </div>
+
+                                <div class="drawer-section">
+                                    <h5>Upstream Callers / Inbound:</h5>
+                                    <ul class="connection-list" id="inspector-inbound">
+                                        <li>ClaimService (CALLS)</li>
+                                    </ul>
+                                </div>
+
+                                <div class="drawer-section">
+                                    <h5>Downstream Mutations / Outbound:</h5>
+                                    <ul class="connection-list" id="inspector-outbound">
+                                        <li>POLICY_MASTER (READS_FROM)</li>
+                                        <li>BR-01 (IMPLEMENTS)</li>
+                                    </ul>
+                                </div>
+
+                                <div class="drawer-actions">
+                                    <button class="btn btn-danger btn-sm w-100" id="trigger-blast-btn">
+                                        💥 Run Blast Radius for this Node
+                                    </button>
+                                    <button class="btn btn-primary btn-sm w-100" id="ask-copilot-node-btn" style="margin-top: 8px;">
+                                        💬 Ask Copilot About This Component
+                                    </button>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </section>
+
+                <!-- VIEW 3: Graph-RAG Conversational Copilot -->
+                <section class="workspace-view" id="view-copilot">
+                    <div class="copilot-container glass-panel">
+                        <div class="copilot-header">
+                            <div class="copilot-title">
+                                <h3>Hybrid Agentic Graph-RAG Copilot</h3>
+                                <p>Ask natural-language questions across documentation, AST logic, database lineage, and risk nodes.</p>
+                            </div>
+                            <div class="copilot-status">
+                                <span class="pulse-dot"></span> LLM Grounded (Gemini 3.5 Flash / Ollama)
+                            </div>
+                        </div>
+
+                        <!-- Prompt Suggestion Chips -->
+                        <div class="query-prompt-chips">
+                            <button class="prompt-chip" data-q="What business rules govern insurance claim validation and deductibles?">
+                                ⚖️ Claims & Deductibles Logic
+                            </button>
+                            <button class="prompt-chip" data-q="What tables and services are impacted if POLICY_MASTER is modified?">
+                                💥 POLICY_MASTER Blast Radius
+                            </button>
+                            <button class="prompt-chip" data-q="What are the architectural discrepancies between documentation and code?">
+                                ⚠️ Discrepancy & Concurrency Audit
+                            </button>
+                            <button class="prompt-chip" data-q="What candidate microservices are identified by community detection?">
+                                🧩 Microservice Domain Clusters
+                            </button>
+                        </div>
+
+                        <!-- Chat Message Thread -->
+                        <div class="chat-thread" id="chat-thread">
+                            <div class="chat-bubble assistant">
+                                <div class="bubble-avatar">⚡</div>
+                                <div class="bubble-body">
+                                    <p>Hello! I am your <strong>ModernizeAI Copilot</strong>. I have indexed your codebase into a 5-tier memory fabric and NetworkX MultiDiGraph.</p>
+                                    <p>Ask me about architectural dependencies, business rule implementations, blast-radius impacts, or 6R cloud migration strategies.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Input Bar -->
+                        <div class="chat-input-bar">
+                            <input type="text" id="copilot-input" class="chat-input" placeholder="Ask a question about the codebase (e.g. What breaks if ClaimService changes?)...">
+                            <button class="btn btn-primary" id="copilot-send-btn">
+                                <span>Send</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 4: 6R Modernization Cockpit -->
+                <section class="workspace-view" id="view-cockpit">
+                    <div class="cockpit-grid">
+                        <!-- Scorecard Hero Card -->
+                        <div class="scorecard-hero glass-panel">
+                            <div class="score-dial-container">
+                                <div class="score-circle">
+                                    <span class="score-number" id="cockpit-score">78</span>
+                                    <span class="score-max">/ 100</span>
+                                </div>
+                                <div class="score-meta">
+                                    <h3>Cloud Modernization Readiness</h3>
+                                    <p class="score-subtitle" id="cockpit-score-subtitle">Mathematically weighted composite: Modularity (75%) + Provenance (100%) + Risk Health (60%)</p>
+                                </div>
+                            </div>
+
+                            <div class="subscore-meters">
+                                <div class="subscore-row">
+                                    <span class="subscore-lbl">Component Modularity & Decoupling</span>
+                                    <div class="meter-bar"><div class="meter-fill" id="meter-modularity" style="width: 75%;"></div></div>
+                                    <span class="subscore-val" id="val-modularity">75%</span>
+                                </div>
+                                <div class="subscore-row">
+                                    <span class="subscore-lbl">SHA-256 Source Provenance Integrity</span>
+                                    <div class="meter-bar"><div class="meter-fill" id="meter-provenance" style="width: 100%;"></div></div>
+                                    <span class="subscore-val" id="val-provenance">100%</span>
+                                </div>
+                                <div class="subscore-row">
+                                    <span class="subscore-lbl">Concurrency & Conflict Risk Health</span>
+                                    <div class="meter-bar"><div class="meter-fill" id="meter-risk" style="width: 60%; background:#f59e0b;"></div></div>
+                                    <span class="subscore-val" id="val-risk">60%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 6R Strategy Breakdown Cards -->
+                        <div class="strategy-row" id="cockpit-strategies-row">
+                            <div class="strategy-card glass-panel" style="--card-accent: #06b6d4;">
+                                <div class="strat-header">
+                                    <span class="strat-badge">Refactor (3)</span>
+                                </div>
+                                <h4>Cloud-Native Microservices</h4>
+                                <p>`ClaimService`, `PolicyValidationService`, `ClaimCore_App`</p>
+                            </div>
+                            <div class="strategy-card glass-panel" style="--card-accent: #3b82f6;">
+                                <div class="strat-header">
+                                    <span class="strat-badge">Replatform (1)</span>
+                                </div>
+                                <h4>Managed Relational DB</h4>
+                                <p>`POLICY_MASTER`, `CLAIMS_RECORD` to Amazon Aurora / Cloud SQL</p>
+                            </div>
+                            <div class="strategy-card glass-panel" style="--card-accent: #f43f5e;">
+                                <div class="strat-header">
+                                    <span class="strat-badge">Retire / Replace (1)</span>
+                                </div>
+                                <h4>PL/SQL Stored Procedures</h4>
+                                <p>`SP_PROCESS_CLAIM` pessimistic row lock retired for optimistic locking</p>
+                            </div>
+                            <div class="strategy-card glass-panel" style="--card-accent: #10b981;">
+                                <div class="strat-header">
+                                    <span class="strat-badge">Retain / ACL (1)</span>
+                                </div>
+                                <h4>Legacy Customer Master</h4>
+                                <p>`CUSTOMER_ACCOUNT` accessed via Anti-Corruption Layer (ACL)</p>
+                            </div>
+                        </div>
+
+                        <!-- Candidate Microservice Domains -->
+                        <div class="domains-panel glass-panel">
+                            <div class="panel-header">
+                                <h3>Candidate Microservice Boundaries (Louvain Community Detection)</h3>
+                                <span class="badge badge-subtle">Domain-Driven Decomposition</span>
+                            </div>
+                            <div class="domains-grid" id="cockpit-domains-grid">
+                                <div class="domain-card">
+                                    <h5>🏥 Claims Intake & Policy Boundary</h5>
+                                    <p>Components: `PolicyValidationService`, `Policy`, `Customer`</p>
+                                </div>
+                                <div class="domain-card">
+                                    <h5>⚙️ Adjudication Engine Boundary</h5>
+                                    <p>Components: `ClaimService`, `Claim`, `CLAIMS_RECORD`</p>
+                                </div>
+                                <div class="domain-card">
+                                    <h5>🗄️ Shared Storage Legacy Boundary</h5>
+                                    <p>Components: `SP_PROCESS_CLAIM`, `CUSTOMER_ACCOUNT`, `POLICY_MASTER`</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Downloadable Reports Bar -->
+                        <div class="downloads-bar glass-panel">
+                            <div class="download-text">
+                                <h4>Download Verified Executive Deliverables</h4>
+                                <p>Comprehensive Markdown and JSON artifacts generated by ModernizeAI agents.</p>
+                            </div>
+                            <div class="download-btns">
+                                <a href="/api/artifacts/readiness_report" download="modernization_readiness_report.md" class="btn btn-secondary">
+                                    📄 Readiness Report (.md)
+                                </a>
+                                <a href="/api/artifacts/blast_radius" download="impact_blast_radius_matrix.md" class="btn btn-secondary">
+                                    💥 Blast-Radius Matrix (.md)
+                                </a>
+                                <a href="/api/artifacts/business_rules" download="business_rules_catalog.md" class="btn btn-secondary">
+                                    📋 Rules Catalog (.md)
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 5: Rules & Risks Catalog -->
+                <section class="workspace-view" id="view-rules">
+                    <div class="rules-container glass-panel">
+                        <div class="rules-header">
+                            <div class="header-left">
+                                <h3>Enterprise Business Rules & Provenance Catalog</h3>
+                                <p>Every rule is verified against Tier 1 Raw Memory with exact line numbers and SHA-256 hashes.</p>
+                            </div>
+                            <div class="filter-pills">
+                                <button class="filter-pill active" data-filter="all">All Items</button>
+                                <button class="filter-pill" data-filter="rule">Rules Only (BR-xx)</button>
+                                <button class="filter-pill" data-filter="risk">Discrepancies & Risks</button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="rules-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name & Description</th>
+                                        <th>Source File</th>
+                                        <th>Line Range</th>
+                                        <th>SHA-256 Provenance</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rules-table-body">
+                                    <!-- Populated dynamically via JS -->
+                                    <tr data-type="rule">
+                                        <td><span class="id-badge rule">BR-01</span></td>
+                                        <td><strong>Policy Active Coverage Check</strong><br><small>Rejects claims if policy is not ACTIVE.</small></td>
+                                        <td class="mono">PolicyValidationService.java</td>
+                                        <td class="mono">Lines 28-34</td>
+                                        <td class="mono hash">d2a1b9c8...</td>
+                                        <td><span class="status-tag verified">✓ Verified</span></td>
+                                    </tr>
+                                    <tr data-type="rule">
+                                        <td><span class="id-badge rule">BR-02</span></td>
+                                        <td><strong>Date Range Adjudication</strong><br><small>Loss date must fall strictly between effective and expiration dates.</small></td>
+                                        <td class="mono">PolicyValidationService.java</td>
+                                        <td class="mono">Lines 42-49</td>
+                                        <td class="mono hash">a9f0e132...</td>
+                                        <td><span class="status-tag verified">✓ Verified</span></td>
+                                    </tr>
+                                    <tr data-type="rule">
+                                        <td><span class="id-badge rule">BR-03</span></td>
+                                        <td><strong>Auto-Approval Threshold</strong><br><small>Claims under $2,500 approved automatically if policy is valid.</small></td>
+                                        <td class="mono">PolicyValidationService.java</td>
+                                        <td class="mono">Lines 55-60</td>
+                                        <td class="mono hash">4e8b12d5...</td>
+                                        <td><span class="status-tag verified">✓ Verified</span></td>
+                                    </tr>
+                                    <tr data-type="risk">
+                                        <td><span class="id-badge risk">DISC-01</span></td>
+                                        <td><strong>Specification vs Code Conflict</strong><br><small>Architecture Spec declares 30-day grace period, but batch notes reveal 15-day cutoff.</small></td>
+                                        <td class="mono">SME_Interview_Notes.txt</td>
+                                        <td class="mono">Line 4</td>
+                                        <td class="mono hash">7c31a0b1...</td>
+                                        <td><span class="status-tag risk">⚠️ Discrepancy</span></td>
+                                    </tr>
+                                    <tr data-type="risk">
+                                        <td><span class="id-badge risk">DISC-02</span></td>
+                                        <td><strong>Database Concurrency Bottleneck</strong><br><small>SP_PROCESS_CLAIM uses pessimistic row lock (SELECT FOR UPDATE) blocking parallel adjudication.</small></td>
+                                        <td class="mono">process_claim_sp.sql</td>
+                                        <td class="mono">Lines 18-22</td>
+                                        <td class="mono hash">8f42e319...</td>
+                                        <td><span class="status-tag risk">⚠️ Concurrency</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 6: Raw Exports -->
+                <section class="workspace-view" id="view-exports">
+                    <div class="exports-panel glass-panel">
+                        <div class="panel-header">
+                            <div>
+                                <h3>Machine-Readable Knowledge Fabric Exports</h3>
+                                <p>Standard JSON-LD and GraphML exports ready for import into Neo4j, Gephi, AWS Neptune, or LangChain.</p>
+                            </div>
+                            <div class="export-btns">
+                                <a href="/artifacts/modernize_kg.json" download class="btn btn-primary">⬇ Download JSON-LD</a>
+                                <a href="/artifacts/modernize_kg.graphml" download class="btn btn-secondary">⬇ Download GraphML</a>
+                            </div>
+                        </div>
+                        <pre class="json-code-box" id="json-export-preview">Loading Knowledge Graph JSON...</pre>
+                    </div>
+                </section>
+            </main>
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="/static/app.js"></script>
 </body>

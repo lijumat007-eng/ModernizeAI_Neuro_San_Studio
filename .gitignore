@@ -212,3 +212,7 @@ registries/generated/*
 # test local only
 registries/manifest.hocon.test
 
+# Temporary workspaces and caches for ingested repositories
+data/_workspaces/
+data/_s3_cache/
+

@@ -94,9 +94,12 @@ class JavaParser:
                 "line": line_no,
             })
 
-        # 7. Inter-service calls and instantiation
+        # 7. Inter-service and component calls and instantiation
         service_calls = []
-        instantiation_pattern = re.compile(r"new\s+([A-Za-z0-9_]+ValidationService|[A-Za-z0-9_]+Service)\s*\(", re.MULTILINE)
+        instantiation_pattern = re.compile(
+            r"new\s+([A-Za-z0-9_]+(?:Service|ValidationService|Controller|Repository|Dao|Manager|Handler|Client|Processor))\s*\(",
+            re.MULTILINE,
+        )
         for m in instantiation_pattern.finditer(content):
             called_service = m.group(1)
             line_no = content[: m.start()].count("\n") + 1
@@ -106,13 +109,15 @@ class JavaParser:
                 "line": line_no,
             })
 
-        method_call_pattern = re.compile(r"([A-Za-z0-9_]+Service)\.([A-Za-z0-9_]+)\(", re.MULTILINE)
+        method_call_pattern = re.compile(
+            r"([A-Za-z0-9_]+(?:Service|Controller|Repository|Dao|Manager|Handler|Client|Processor))\.[a-zA-Z0-9_]+\(",
+            re.MULTILINE,
+        )
         for m in method_call_pattern.finditer(content):
-            target_srv, method = m.groups()
+            target_srv = m.group(1)
             line_no = content[: m.start()].count("\n") + 1
             service_calls.append({
                 "target_service": target_srv,
-                "target_method": method,
                 "call_type": "INVOCATION",
                 "line": line_no,
             })

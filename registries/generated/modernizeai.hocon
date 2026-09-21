@@ -81,7 +81,7 @@ Ingests and categorizes legacy application artifacts into Tier 1 (Raw) and Tier 
             "instructions": ${instructions_prefix} """
 The Discovery Agent identifies, ingests, and catalogs all legacy artifacts (Java sources, SQL DDLs, stored procedures, architecture specs, and SME notes). It delegates parsing tasks to the specialist intelligence agents (Code Intel, Database Intel, Doc Intel).
 """ ${aaosa_instructions},
-            "tools": ["code_intel_agent", "database_intel_agent", "doc_intel_agent"]
+            "tools": ["discovery_tool", "code_intel_agent", "database_intel_agent", "doc_intel_agent"]
         },
         {
             "name": "code_intel_agent",
@@ -127,9 +127,9 @@ Extracts, formalizes, and numbers business rules from all ingested sources with 
                 """
             },
             "instructions": ${instructions_prefix} """
-The Business Rules Agent synthesizes findings from Code Intel, Database Intel, and Doc Intel to identify and formalize enterprise business rules (e.g., BR-01 through BR-05). It links each formalized rule to its implementing Java method or SQL procedure and passes the verified rules to the Validation Agent.
+The Business Rules Agent synthesizes findings from Code Intel, Database Intel, and Doc Intel to identify and formalize enterprise business rules (e.g., BR-01 through BR-05) using business_rules_tool. It links each formalized rule to its implementing Java method or SQL procedure and passes the verified rules to the Validation Agent.
 """ ${aaosa_instructions},
-            "tools": ["validation_agent"]
+            "tools": ["business_rules_tool", "validation_agent"]
         },
         {
             "name": "validation_agent",
@@ -139,9 +139,9 @@ Validates extracted information against raw source evidence to eliminate halluci
                 """
             },
             "instructions": ${instructions_prefix} """
-The Validation Agent plays a critical quality assurance role: it verifies that every entity, relationship, and business rule is grounded in real source evidence with verifiable line ranges. It resolves discrepancies (such as documentation vs code mismatches) before committing data to the Knowledge Graph Agent.
+The Validation Agent plays a critical quality assurance role: it verifies that every entity, relationship, and business rule is grounded in real source evidence with verifiable line ranges using validation_tool. It resolves discrepancies (such as documentation vs code mismatches) before committing data to the Knowledge Graph Agent.
 """ ${aaosa_instructions},
-            "tools": ["knowledge_graph_agent"]
+            "tools": ["validation_tool", "knowledge_graph_agent"]
         },
         {
             "name": "knowledge_graph_agent",
@@ -198,9 +198,9 @@ Generates phased modernization roadmaps, 6R migration strategies, and cloud arch
                 """
             },
             "instructions": ${instructions_prefix} """
-The Modernization Advisor Agent synthesizes blast-radius data, coupling metrics (Afferent/Efferent coupling, Instability), and candidate microservice domains from the Knowledge Graph Agent. It formulates a phased modernization strategy (Refactor, Replatform, Retain, Retire) and generates deliverable markdown reports.
+The Modernization Advisor Agent synthesizes blast-radius data, coupling metrics (Afferent/Efferent coupling, Instability), and candidate microservice domains from the Knowledge Graph Agent. Using modernization_advisor_tool, it calculates mathematical readiness scores, formulates a phased 6R modernization strategy (Refactor, Replatform, Retain, Retire), and generates deliverable markdown reports.
 """ ${aaosa_instructions},
-            "tools": ["knowledge_graph_agent", "memory_manager_agent"]
+            "tools": ["modernization_advisor_tool", "knowledge_graph_agent", "memory_manager_agent"]
         },
 
         # Coded Tools registered for the Agent Network
@@ -303,6 +303,98 @@ The Modernization Advisor Agent synthesizes blast-radius data, coupling metrics 
                         "repo_path": {
                             "type": "string",
                             "description": "Path to documentation files."
+                        }
+                    },
+                    "required": []
+                }
+            }
+        },
+        {
+            "name": "discovery_tool",
+            "class": "modernize.tools.discovery_tool.DiscoveryTool",
+            "function": {
+                "description": "Scans repository directories, catalogs legacy code, database schemas, and specifications into Tier 1 Raw Memory.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "action": {
+                            "type": "string",
+                            "description": "Action to execute: scan_repository, list_catalog"
+                        },
+                        "repo_path": {
+                            "type": "string",
+                            "description": "Path to repository directory."
+                        }
+                    },
+                    "required": []
+                }
+            }
+        },
+        {
+            "name": "business_rules_tool",
+            "class": "modernize.tools.business_rules_tool.BusinessRulesTool",
+            "function": {
+                "description": "Dynamically extracts, formalizes, and catalogs business rules from code AST, stored procedures, and specifications.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "action": {
+                            "type": "string",
+                            "description": "Action to execute: extract_rules, get_rule, list_rules"
+                        },
+                        "rule_id": {
+                            "type": "string",
+                            "description": "Rule ID (e.g. BR-01) for get_rule action."
+                        }
+                    },
+                    "required": []
+                }
+            }
+        },
+        {
+            "name": "validation_tool",
+            "class": "modernize.tools.validation_tool.ValidationTool",
+            "function": {
+                "description": "Verifies source line provenance, checks SHA-256 integrity, and algorithmically detects cross-artifact discrepancies.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "action": {
+                            "type": "string",
+                            "description": "Action to execute: detect_discrepancies, verify_provenance, validate_knowledge_fabric"
+                        },
+                        "source_file": {
+                            "type": "string",
+                            "description": "Source file path for provenance verification."
+                        },
+                        "line_start": {
+                            "type": "integer",
+                            "description": "Starting line number."
+                        },
+                        "line_end": {
+                            "type": "integer",
+                            "description": "Ending line number."
+                        }
+                    },
+                    "required": []
+                }
+            }
+        },
+        {
+            "name": "modernization_advisor_tool",
+            "class": "modernize.tools.modernization_advisor_tool.ModernizationAdvisorTool",
+            "function": {
+                "description": "Calculates mathematical readiness scores, formulates 6R cloud migration strategies, and generates deliverable reports.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "action": {
+                            "type": "string",
+                            "description": "Action to execute: calculate_readiness_score, generate_6r_strategy, generate_reports"
+                        },
+                        "output_dir": {
+                            "type": "string",
+                            "description": "Output directory for generated markdown reports."
                         }
                     },
                     "required": []

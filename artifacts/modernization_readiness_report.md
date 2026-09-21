@@ -1,44 +1,49 @@
 # ModernizeAI: Modernization Readiness & Cloud Architecture Report
 
 ## Executive Summary
-- **Legacy Monolith**: ClaimCore v2.4 (Insurance Claims Management)
-- **Analyzed Assets**: 5 Java classes, SQL DDL schema, PL/SQL stored procedure, Architecture Specification, SME Interview notes.
-- **Knowledge Fabric Metrics**: 21 Verified Nodes, 29 Structural & Semantic Relationships.
-- **Overall Modernization Readiness Score**: **78/100** (Ready for phased strangler-fig migration).
+- **Analyzed Codebase**: Enterprise Legacy Repository (`data/insurance_claims_app`)
+- **Knowledge Fabric Metrics**: 24 Verified Nodes, 32 Structural & Semantic Relationships.
+- **Overall Modernization Readiness Score**: **76/100** (B (Ready for Phased Strangler-Fig Migration)).
+- **Modularity Factor**: 82.8/100 | **Provenance Factor**: 100.0/100 | **Risk Health Factor**: 46.0/100.
 
 ---
 
 ## Architectural Coupling & Complexity Analysis
 
-| Component / Table | Afferent Coupling ($C_a$) | Efferent Coupling ($C_e$) | Instability Metric ($I$) |
-| :--- | :---: | :---: | :---: |
-| `ClaimService` | 1 | 4 | 0.8 |
-| `PolicyValidationService` | 1 | 5 | 0.83 |
-| `POLICY_MASTER` | 5 | 1 | 0.17 |
-| `CLAIMS_RECORD` | 4 | 2 | 0.33 |
-| `SP_PROCESS_CLAIM` | 1 | 5 | 0.83 |
+| Component / Table | Entity Type | Afferent Coupling ($C_a$) | Efferent Coupling ($C_e$) | Instability Metric ($I$) |
+| :--- | :--- | :---: | :---: | :---: |
+| `CUSTOMER_ACCOUNT` | DatabaseTable | 4 | 0 | 0.0 |
+| `POLICY_MASTER` | DatabaseTable | 5 | 1 | 0.17 |
+| `CLAIMS_RECORD` | DatabaseTable | 4 | 2 | 0.33 |
+| `CLAIM_AUDIT_LOG` | DatabaseTable | 2 | 1 | 0.33 |
+| `SP_PROCESS_CLAIM` | StoredProcedure | 1 | 5 | 0.83 |
+| `ClaimService` | Service | 1 | 4 | 0.8 |
+| `PolicyValidationService` | Service | 1 | 4 | 0.8 |
 
 > [!NOTE]
-> High Afferent Coupling ($C_a$) on `POLICY_MASTER` (incoming reads and writes from multiple services and stored procedures) indicates that the policy data store is an architectural gravity well. Direct table access should be encapsulated via an Anti-Corruption Layer (ACL).
+> High Afferent Coupling ($C_a$) on core database tables indicates architectural gravity wells. Direct table access across microservice domains should be encapsulated via an Anti-Corruption Layer (ACL).
 
 ---
 
 ## Candidate Microservices (Louvain Modularity Clustering)
 
-### Domain: Domain_1 (4 Components)
-- **Components Included**: `ClaimCore_App`, `Policy`, `Customer`, `Claim`
+### Domain: Domain_1 (9 Components)
+- **Components Included**: `SP_PROCESS_CLAIM`, `Customer`, `CLAIM_AUDIT_LOG`, `ClaimCore_App`, `POLICY_MASTER`, `CLAIMS_RECORD`, `ClaimService`, `CUSTOMER_ACCOUNT`, `DISC-02`
 
-### Domain: Domain_2 (8 Components)
-- **Components Included**: `POLICY_MASTER`, `ClaimService`, `CUSTOMER_ACCOUNT`, `Risk_Shared_Database`, `SP_PROCESS_CLAIM`, `CLAIMS_RECORD`, `Risk_Row_Locking`, `CLAIM_AUDIT_LOG`
+### Domain: Domain_2 (6 Components)
+- **Components Included**: `BR-04`, `BR-02`, `Policy`, `BR-06`, `BR-05`, `BR-03`
 
-### Domain: Domain_3 (7 Components)
-- **Components Included**: `BR-05`, `BR-01`, `BR-02`, `BR-04`, `Risk_Hardcoded_Rule`, `PolicyValidationService`, `BR-03`
+### Domain: Domain_3 (5 Components)
+- **Components Included**: `BR-08`, `DISC-03-2500`, `BR-07`, `DISC-01`, `PolicyValidationService`
 
-### Domain: Domain_4 (1 Components)
-- **Components Included**: `Claims_Architecture_Spec`
+### Domain: Domain_4 (2 Components)
+- **Components Included**: `BR-01`, `Claim`
 
 ### Domain: Domain_5 (1 Components)
-- **Components Included**: `SME_Tribal_Notes`
+- **Components Included**: `Claims_Architecture_Spec`
+
+### Domain: Domain_6 (1 Components)
+- **Components Included**: `SME_Interview_Notes`
 
 
 ---
@@ -47,26 +52,13 @@
 
 | Component | 6R Strategy | Target Architecture Pattern | Migration Phase | Rationale & Risk Mitigation |
 | :--- | :--- | :--- | :---: | :--- |
-| **Claim Validation** | **Refactor** | Stateless Event-Driven Lambda / Fargate | **Phase 1** | Decouple pure business rules from monolithic persistence; eliminate hardcoded $2,500 threshold. |
-| **Claim Adjudication** | **Replatform** | Spring Boot 3.x / Quarkus Microservice | **Phase 2** | Decompose `ClaimService` and replace blocking `SP_PROCESS_CLAIM` with asynchronous saga workflow. |
-| **Policy Master Data** | **Retain / ACL** | Database-per-service with CDC Event Streaming | **Phase 3** | Shield shared `CUSTOMER_ACCOUNT` and `POLICY_MASTER` tables using Debezium / Kafka CDC. |
-| **Legacy Stored Proc** | **Retire** | Distributed Transaction Manager / Saga | **Phase 2** | Retire `SP_PROCESS_CLAIM` to eliminate row-locking database timeouts during claim spikes. |
+| **CUSTOMER_ACCOUNT** | **Retain / ACL** | Anti-Corruption Layer + Debezium CDC Event Stream | **Phase 3** | High Afferent Coupling (Ca=4). Direct table access represents an architectural gravity well. |
+| **POLICY_MASTER** | **Retain / ACL** | Anti-Corruption Layer + Debezium CDC Event Stream | **Phase 3** | High Afferent Coupling (Ca=5). Direct table access represents an architectural gravity well. |
+| **CLAIMS_RECORD** | **Retain / ACL** | Anti-Corruption Layer + Debezium CDC Event Stream | **Phase 3** | High Afferent Coupling (Ca=4). Direct table access represents an architectural gravity well. |
+| **CLAIM_AUDIT_LOG** | **Replatform** | Dedicated Cloud Managed Database (RDS / Azure SQL) | **Phase 2** | Isolated operational entity suitable for database-per-service ownership. |
+| **SP_PROCESS_CLAIM** | **Retire** | Distributed Asynchronous Saga / Outbox Orchestrator | **Phase 2** | Procedural database code contains row-level table locks (SELECT FOR UPDATE) causing concurrency contention. |
+| **ClaimService** | **Refactor** | Stateless Event-Driven Cloud Function / Lambda | **Phase 1** | High Instability (I=0.8) with pure business validation logic; ideal for serverless extraction. |
+| **PolicyValidationService** | **Refactor** | Stateless Event-Driven Cloud Function / Lambda | **Phase 1** | High Instability (I=0.8) with pure business validation logic; ideal for serverless extraction. |
 
 ---
-
-## Next-Phase Action Plan: Automated Migration Swarm Hand-Off
-
-With the Reverse Engineering & Knowledge Graph extraction complete (**Phase 1**), the verified artifacts are staged for direct ingestion by the **Phase 2 Active Code Migration Swarm**:
-
-1. **Knowledge Graph Subgraph Slicing (`kg_reader_agent`)**:
-   - Ingests the 5 Louvain bounded clusters and verified business rules (`BR-01` to `BR-05`).
-   - Packages isolated domain contexts for target microservice generation.
-2. **Cloud Solution Scaffolding & Code Migration (`cloud_scaffolder_agent`, `code_migrator_agent`)**:
-   - Generates modern cloud-native service stubs (e.g., ASP.NET Core 8/9 or Spring Boot 3 on Cloud Run / AWS ECS).
-   - Transpiles legacy monolithic patterns (e.g., .NET / WCF / ADO.NET or Java / JDBC) into clean, modern architectures with EF Core / Dapper / JPA.
-   - Deconstructs procedural stored procedures (`SP_PROCESS_CLAIM`) into distributed Saga orchestrators.
-3. **Automated Behavioral Regression Verification (`test_synthesizer_agent`)**:
-   - Generates xUnit / NUnit / JUnit test suites directly from rule provenance to certify functional equivalence before production rollout.
-
----
-*Generated automatically by ModernizeAI Hybrid Agentic Graph-RAG Knowledge Fabric.*
+*Generated dynamically by ModernizeAI Hybrid Agentic Graph-RAG Knowledge Fabric.*

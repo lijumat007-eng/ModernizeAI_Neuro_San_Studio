@@ -24,10 +24,10 @@ Ctrl-C / Esc exits cleanly without writing anything.
 ### Non-interactive
 
 ```bash
-ns export music_nerd                          # → music_nerd.{hocon|zip} in cwd
-ns export basic/music_nerd                    # grouped network
-ns export agent_network_designer -o /tmp/and.zip
-ns export music_nerd -o /tmp/mn.hocon         # explicit single-HOCON output
+ns export modernizeai                          # → modernizeai.{hocon|zip} in cwd
+ns export basic/modernizeai                    # grouped network
+ns export modernizeai -o /tmp/and.zip
+ns export modernizeai -o /tmp/mn.hocon         # explicit single-HOCON output
 ```
 
 `-o` / `--output` overrides the default file path.
@@ -89,9 +89,9 @@ surface as a warning rather than silently shipping an empty config.
 
 | Format | Example |
 |---|---|
-| Bare name | `music_nerd` (resolved across every group) |
-| Group/name | `basic/music_nerd` |
-| With extension | `basic/music_nerd.hocon` |
+| Bare name | `modernizeai` (resolved across every group) |
+| Group/name | `basic/modernizeai` |
+| With extension | `basic/modernizeai.hocon` |
 
 ## Requirements
 

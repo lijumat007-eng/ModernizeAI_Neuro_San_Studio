@@ -175,17 +175,11 @@ required to run the following steps 1st:
 - export AGENT_TOOL_PATH=tests/coded_tools/ 
 - export AGENT_MANIFEST_FILE=tests/registries/manifest.hocon
 
-# Run all integration test suite:
-- Run pytest -s -m "integration"
+# Run ModernizeAI test suite:
+- python -m unittest tests/coded_tools/modernize/test_modernize_fabric.py
 
-# Run all test cases under that group of sectors:
-- Run pytest -s -m "integration_basic"
-- Run pytest -s -m "integration_industry"
-
-# Run all test cases that related to network agent name:
-- Run pytest -s -m "integration_basic_coffee_finder_advance"
-
-For detailed test organization, grouping strategies, and how to add new test cases, see the [User Guide](docs/user_guide.md#integration-test).
+# Run all test cases via pytest (if installed):
+- pytest tests/coded_tools/modernize/test_modernize_fabric.py
 ```
 
 For Windows (manual):

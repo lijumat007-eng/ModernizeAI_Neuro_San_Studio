@@ -8,28 +8,28 @@ This document details the concrete demo data points, extracted facts, and benchm
 
 - **Application Name**: `ClaimCore v2.4`
 - **Domain**: Enterprise Property & Casualty (P&C) Insurance Claims Processing
-- **Source Repository Path**: [`data/insurance_claims_app`](file:///c:/Users/lijum/OneDrive/Documents/Copilot%20Projects/cog_nuero/neuro-san-studio-main/data/insurance_claims_app)
+- **Source Repository Path**: [`data/insurance_claims_app`](../../data/insurance_claims_app)
 - **Monolith Characteristics**: Monolithic Java service orchestrating claims, coupling business logic with direct JDBC queries and blocking stored procedures over a shared Oracle database schema.
 
 ### Inventory of Legacy Artifacts
 
 | Artifact Name | Type | Size | Key Responsibilities & Logic |
 | :--- | :--- | :--- | :--- |
-| [`ClaimService.java`](file:///c:/Users/lijum/OneDrive/Documents/Copilot%20Projects/cog_nuero/neuro-san-studio-main/data/insurance_claims_app/ClaimService.java) | Java Service | 6.1 KB | Core adjudication workflow; directly queries `POLICY_MASTER`, invokes `SP_PROCESS_CLAIM`, inserts into `CLAIMS_RECORD`. |
-| [`PolicyValidationService.java`](file:///c:/Users/lijum/OneDrive/Documents/Copilot%20Projects/cog_nuero/neuro-san-studio-main/data/insurance_claims_app/PolicyValidationService.java) | Java Service | 3.6 KB | Evaluates policy status, date coverage, deductibles, $2,500 auto-approval limits, and $50,000 fraud thresholds. |
-| [`Claim.java`](file:///c:/Users/lijum/OneDrive/Documents/Copilot%20Projects/cog_nuero/neuro-san-studio-main/data/insurance_claims_app/Claim.java) | Java Entity | 2.1 KB | Domain model representing claim requests, amounts, dates, and adjudication status. |
-| [`Policy.java`](file:///c:/Users/lijum/OneDrive/Documents/Copilot%20Projects/cog_nuero/neuro-san-studio-main/data/insurance_claims_app/Policy.java) | Java Entity | 1.9 KB | Domain model for policy coverage limits, effective/expiration dates, and customer bindings. |
-| [`Customer.java`](file:///c:/Users/lijum/OneDrive/Documents/Copilot%20Projects/cog_nuero/neuro-san-studio-main/data/insurance_claims_app/Customer.java) | Java Entity | 1.3 KB | Domain model for policyholder account data. |
-| [`schema.ddl`](file:///c:/Users/lijum/OneDrive/Documents/Copilot%20Projects/cog_nuero/neuro-san-studio-main/data/insurance_claims_app/schema.ddl) | SQL DDL | 1.9 KB | Relational definitions for `CUSTOMER_ACCOUNT`, `POLICY_MASTER`, `CLAIMS_RECORD`, and `CLAIM_AUDIT_LOG`. |
-| [`process_claim_sp.sql`](file:///c:/Users/lijum/OneDrive/Documents/Copilot%20Projects/cog_nuero/neuro-san-studio-main/data/insurance_claims_app/process_claim_sp.sql) | PL/SQL Procedure | 1.5 KB | `SP_PROCESS_CLAIM` with pessimistic row locking (`SELECT ... FOR UPDATE`), deductible deduction, and audit logging. |
-| [`Claims_Architecture_Spec.md`](file:///c:/Users/lijum/OneDrive/Documents/Copilot%20Projects/cog_nuero/neuro-san-studio-main/data/insurance_claims_app/Claims_Architecture_Spec.md) | Markdown Spec | 1.3 KB | High-level system architecture document detailing SLA targets, 30-day grace periods, and audit requirements. |
-| [`SME_Interview_Notes.txt`](file:///c:/Users/lijum/OneDrive/Documents/Copilot%20Projects/cog_nuero/neuro-san-studio-main/data/insurance_claims_app/SME_Interview_Notes.txt) | SME Notes | 1.2 KB | Tribal operational knowledge: reveals 15-day batch billing cutoff, row-lock database contention, and memory leak patterns. |
+| [`ClaimService.java`](../../data/insurance_claims_app/ClaimService.java) | Java Service | 6.1 KB | Core adjudication workflow; directly queries `POLICY_MASTER`, invokes `SP_PROCESS_CLAIM`, inserts into `CLAIMS_RECORD`. |
+| [`PolicyValidationService.java`](../../data/insurance_claims_app/PolicyValidationService.java) | Java Service | 3.6 KB | Evaluates policy status, date coverage, deductibles, $2,500 auto-approval limits, and $50,000 fraud thresholds. |
+| [`Claim.java`](../../data/insurance_claims_app/Claim.java) | Java Entity | 2.1 KB | Domain model representing claim requests, amounts, dates, and adjudication status. |
+| [`Policy.java`](../../data/insurance_claims_app/Policy.java) | Java Entity | 1.9 KB | Domain model for policy coverage limits, effective/expiration dates, and customer bindings. |
+| [`Customer.java`](../../data/insurance_claims_app/Customer.java) | Java Entity | 1.3 KB | Domain model for policyholder account data. |
+| [`schema.ddl`](../../data/insurance_claims_app/schema.ddl) | SQL DDL | 1.9 KB | Relational definitions for `CUSTOMER_ACCOUNT`, `POLICY_MASTER`, `CLAIMS_RECORD`, and `CLAIM_AUDIT_LOG`. |
+| [`process_claim_sp.sql`](../../data/insurance_claims_app/process_claim_sp.sql) | PL/SQL Procedure | 1.5 KB | `SP_PROCESS_CLAIM` with pessimistic row locking (`SELECT ... FOR UPDATE`), deductible deduction, and audit logging. |
+| [`Claims_Architecture_Spec.md`](../../data/insurance_claims_app/Claims_Architecture_Spec.md) | Markdown Spec | 1.3 KB | High-level system architecture document detailing SLA targets, 30-day grace periods, and audit requirements. |
+| [`SME_Interview_Notes.txt`](../../data/insurance_claims_app/SME_Interview_Notes.txt) | SME Notes | 1.2 KB | Tribal operational knowledge: reveals 15-day batch billing cutoff, row-lock database contention, and memory leak patterns. |
 
 ---
 
 ## 2. Knowledge Fabric Graph Metrics
 
-The ModernizeAI Knowledge Graph Fabric constructs a schema-enforced MultiDiGraph saved at [artifacts/modernize_kg.json](file:///c:/Users/lijum/OneDrive/Documents/Copilot%20Projects/cog_nuero/neuro-san-studio-main/artifacts/modernize_kg.json):
+The ModernizeAI Knowledge Graph Fabric constructs a schema-enforced MultiDiGraph saved at [artifacts/modernize_kg.json](../../artifacts/modernize_kg.json):
 
 - **Total Verified Nodes**: 21
 - **Total Structural & Semantic Edges**: 29
@@ -62,9 +62,9 @@ Every business rule is extracted deterministically with exact source code file a
 | **BR-05** | Straight-Through Auto-Approval | Clean claims $< \$2,500$ on active policies qualify for instant auto-approval. | `PolicyValidationService.java:66-72` | `isEligibleForAutoApproval()` |
 
 ### Cross-Artifact Discrepancy (20% LLM Reasoning Finding)
-- **Documented Rule**: [Claims_Architecture_Spec.md:12](file:///c:/Users/lijum/OneDrive/Documents/Copilot%20Projects/cog_nuero/neuro-san-studio-main/data/insurance_claims_app/Claims_Architecture_Spec.md#L12) specifies a **30-day grace period**.
-- **Code Reality**: [PolicyValidationService.java:27](file:///c:/Users/lijum/OneDrive/Documents/Copilot%20Projects/cog_nuero/neuro-san-studio-main/data/insurance_claims_app/PolicyValidationService.java#L27) delegates status to database flag.
-- **Tribal Truth**: [SME_Interview_Notes.txt:4](file:///c:/Users/lijum/OneDrive/Documents/Copilot%20Projects/cog_nuero/neuro-san-studio-main/data/insurance_claims_app/SME_Interview_Notes.txt#L4) notes the nightly billing cron job enforces a **15-day cutoff**, prematurely lapsing valid policies.
+- **Documented Rule**: [Claims_Architecture_Spec.md:12](../../data/insurance_claims_app/Claims_Architecture_Spec.md#L12) specifies a **30-day grace period**.
+- **Code Reality**: [PolicyValidationService.java:27](../../data/insurance_claims_app/PolicyValidationService.java#L27) delegates status to database flag.
+- **Tribal Truth**: [SME_Interview_Notes.txt:4](../../data/insurance_claims_app/SME_Interview_Notes.txt#L4) notes the nightly billing cron job enforces a **15-day cutoff**, prematurely lapsing valid policies.
 
 ---
 

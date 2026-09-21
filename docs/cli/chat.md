@@ -12,13 +12,13 @@ Under the hood this command delegates to neuro-san's `AgentCli`, so it stays in 
 
 ```bash
 # Interactive chat with an agent (direct/library connection, no server needed)
-ns chat basic/music_nerd
+ns chat basic/modernizeai
 
 # One-shot mode: send a prompt from a file and exit
-ns chat basic/music_nerd --one-shot --first_prompt_file prompt.txt
+ns chat basic/modernizeai --one-shot --first_prompt_file prompt.txt
 
 # Connect to a running neuro-san server
-ns chat basic/music_nerd --connection http --host localhost --port 8080
+ns chat basic/modernizeai --connection http --host localhost --port 8080
 
 # List all available agents
 ns chat --list
@@ -27,7 +27,7 @@ ns chat --list
 ns chat --tag tool
 
 # Test connectivity of an agent network
-ns chat basic/music_nerd --connectivity
+ns chat basic/modernizeai --connectivity
 ```
 
 The command exits with code `0` on normal completion (including user-initiated Ctrl+C) and `1` on error.
@@ -69,7 +69,7 @@ Use `python -m neuro_san.client.agent_cli --help` for the full reference.
 ### Direct connection (no server needed)
 
 ```bash
-ns chat basic/music_nerd
+ns chat basic/modernizeai
 ```
 
 This starts an interactive chat loop. The agent's description is printed first, then you
@@ -79,11 +79,11 @@ are prompted for input. Type `quit` to exit, or press Ctrl+C.
 
 ```bash
 echo "Who wrote Little Black Submarines?" > /tmp/prompt.txt
-ns chat music_nerd --one-shot --first_prompt_file /tmp/prompt.txt
+ns chat modernizeai --one-shot --first_prompt_file /tmp/prompt.txt
 ```
 
 ### Remote server connection
 
 ```bash
-ns chat basic/music_nerd --connection https --host my-server.example.com --port 443
+ns chat basic/modernizeai --connection https --host my-server.example.com --port 443
 ```

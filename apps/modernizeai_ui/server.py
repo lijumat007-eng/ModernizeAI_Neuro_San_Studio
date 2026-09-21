@@ -143,6 +143,20 @@ async def run_blast_radius(req: BlastRadiusRequest):
     )
 
 
+@app.get("/api/readiness")
+async def get_readiness():
+    from coded_tools.modernize.tools.modernization_advisor_tool import ModernizationAdvisorTool
+    advisor = ModernizationAdvisorTool()
+    return advisor.invoke({"action": "calculate_readiness_score"}, {})
+
+
+@app.get("/api/rules")
+async def get_rules():
+    from coded_tools.modernize.tools.business_rules_tool import BusinessRulesTool
+    rules_tool = BusinessRulesTool()
+    return rules_tool.invoke({"action": "extract_rules"}, {})
+
+
 @app.get("/api/artifacts/{artifact_name}")
 async def get_artifact_content(artifact_name: str):
     file_map = {

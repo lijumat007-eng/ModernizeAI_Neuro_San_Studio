@@ -126,103 +126,133 @@
 </node>
 <node id="BR-01">
   <data key="d0">BusinessRule</data>
-  <data key="d1">BR-01: Policy Status Check</data>
-  <data key="d2">data/insurance_claims_app/PolicyValidationService.java</data>
-  <data key="d3">21</data>
-  <data key="d4">29</data>
+  <data key="d1">BR-01: Process Claim Check</data>
+  <data key="d2">ClaimService.java</data>
+  <data key="d3">31</data>
+  <data key="d4">72</data>
   <data key="d5">1.0</data>
-  <data key="d6">deterministic_rule_extractor</data>
-  <data key="d7">Policy must have ACTIVE or GRACE_PERIOD status to adjudicate claims.</data>
+  <data key="d6">java_ast_condition_analyzer</data>
+  <data key="d7">Method processClaim() validates: policy == null AND !violations.isEmpty(</data>
 </node>
 <node id="BR-02">
   <data key="d0">BusinessRule</data>
-  <data key="d1">BR-02: Date Range Eligibility</data>
-  <data key="d2">data/insurance_claims_app/PolicyValidationService.java</data>
-  <data key="d3">32</data>
-  <data key="d4">40</data>
+  <data key="d1">BR-02: Policy Status Check</data>
+  <data key="d2">PolicyValidationService.java</data>
+  <data key="d3">23</data>
+  <data key="d4">29</data>
   <data key="d5">1.0</data>
-  <data key="d6">deterministic_rule_extractor</data>
-  <data key="d7">Incident date must fall within policy start and end dates.</data>
+  <data key="d6">java_ast_condition_analyzer</data>
+  <data key="d7">Method validatePolicyStatus() validates: policy == null</data>
 </node>
 <node id="BR-03">
   <data key="d0">BusinessRule</data>
-  <data key="d1">BR-03: Coverage Limit Adjudication</data>
-  <data key="d2">data/insurance_claims_app/PolicyValidationService.java</data>
-  <data key="d3">43</data>
-  <data key="d4">51</data>
+  <data key="d1">BR-03: Incident Date Check</data>
+  <data key="d2">PolicyValidationService.java</data>
+  <data key="d3">35</data>
+  <data key="d4">41</data>
   <data key="d5">1.0</data>
-  <data key="d6">deterministic_rule_extractor</data>
-  <data key="d7">Claim amount cannot exceed remaining policy coverage balance.</data>
+  <data key="d6">java_ast_condition_analyzer</data>
+  <data key="d7">Method validateIncidentDate() validates: claim == null || policy == null || claim.getIncidentDate(</data>
 </node>
 <node id="BR-04">
   <data key="d0">BusinessRule</data>
-  <data key="d1">BR-04: High-Risk Fraud Escalation</data>
-  <data key="d2">data/insurance_claims_app/PolicyValidationService.java</data>
-  <data key="d3">54</data>
-  <data key="d4">62</data>
+  <data key="d1">BR-04: Coverage Limit Check</data>
+  <data key="d2">PolicyValidationService.java</data>
+  <data key="d3">47</data>
+  <data key="d4">54</data>
   <data key="d5">1.0</data>
-  <data key="d6">deterministic_rule_extractor</data>
-  <data key="d7">Claims exceeding $50k or filed within 7 days of inception require fraud review.</data>
+  <data key="d6">java_ast_condition_analyzer</data>
+  <data key="d7">Method validateCoverageLimit() validates: claim == null || policy == null</data>
 </node>
 <node id="BR-05">
   <data key="d0">BusinessRule</data>
-  <data key="d1">BR-05: Auto-Approval Limit ($2.5k)</data>
-  <data key="d2">data/insurance_claims_app/PolicyValidationService.java</data>
-  <data key="d3">66</data>
-  <data key="d4">74</data>
+  <data key="d1">BR-05: High Risk Claim Check</data>
+  <data key="d2">PolicyValidationService.java</data>
+  <data key="d3">60</data>
+  <data key="d4">67</data>
   <data key="d5">1.0</data>
-  <data key="d6">deterministic_rule_extractor</data>
-  <data key="d7">Clean claims under $2,500 on active policies are eligible for straight-through approval.</data>
+  <data key="d6">java_ast_condition_analyzer</data>
+  <data key="d7">Method isHighRiskClaim() validates: claim.getClaimAmount(</data>
+</node>
+<node id="BR-06">
+  <data key="d0">BusinessRule</data>
+  <data key="d1">BR-06: Eligible For Auto Approval Check</data>
+  <data key="d2">PolicyValidationService.java</data>
+  <data key="d3">73</data>
+  <data key="d4">78</data>
+  <data key="d5">1.0</data>
+  <data key="d6">java_ast_condition_analyzer</data>
+  <data key="d7">Method isEligibleForAutoApproval() validates: Enforces business condition.</data>
+</node>
+<node id="BR-07">
+  <data key="d0">BusinessRule</data>
+  <data key="d1">BR-07: Stored Procedure Constraint #1</data>
+  <data key="d2">process_claim_sp.sql</data>
+  <data key="d3">24</data>
+  <data key="d4">26</data>
+  <data key="d5">1.0</data>
+  <data key="d6">sql_sp_analyzer</data>
+  <data key="d7">Stored procedure validates: IF p_claim_amount &gt; v_deductible</data>
+</node>
+<node id="BR-08">
+  <data key="d0">BusinessRule</data>
+  <data key="d1">BR-08: Stored Procedure Constraint #2</data>
+  <data key="d2">process_claim_sp.sql</data>
+  <data key="d3">31</data>
+  <data key="d4">33</data>
+  <data key="d5">1.0</data>
+  <data key="d6">sql_sp_analyzer</data>
+  <data key="d7">Stored procedure validates: IF v_net_approved &gt; v_remaining</data>
 </node>
 <node id="Claims_Architecture_Spec">
   <data key="d0">RequirementDocument</data>
-  <data key="d1">Doc: Claims Architecture Spec</data>
-  <data key="d2">data/insurance_claims_app/Claims_Architecture_Spec.md</data>
+  <data key="d1">Doc: Claims_Architecture_Spec</data>
+  <data key="d2">Claims_Architecture_Spec.md</data>
   <data key="d3">1</data>
-  <data key="d4">25</data>
+  <data key="d4">16</data>
   <data key="d5">1.0</data>
   <data key="d6">doc_parser</data>
-  <data key="d7">Monolith overview, SLA requirements, and deductible calculation workflows.</data>
+  <data key="d7">Specification document with 16 lines.</data>
 </node>
-<node id="SME_Tribal_Notes">
+<node id="SME_Interview_Notes">
   <data key="d0">SMEInsight</data>
-  <data key="d1">SME: Bob Vance Interview</data>
-  <data key="d2">data/insurance_claims_app/SME_Interview_Notes.txt</data>
+  <data key="d1">SME: SME_Interview_Notes</data>
+  <data key="d2">SME_Interview_Notes.txt</data>
   <data key="d3">1</data>
-  <data key="d4">15</data>
+  <data key="d4">9</data>
   <data key="d5">1.0</data>
   <data key="d6">doc_parser</data>
-  <data key="d7">Grace period mismatch, row locking in SP_PROCESS_CLAIM, and CUSTOMER_ACCOUNT sharing.</data>
+  <data key="d7">SME interview and operational tribal knowledge notes (9 lines).</data>
 </node>
-<node id="Risk_Row_Locking">
+<node id="DISC-01">
   <data key="d0">Risk</data>
-  <data key="d1">Risk: Database Row Locking Contention</data>
-  <data key="d2">process_claim_sp.sql</data>
+  <data key="d1">Discrepancy: Grace Period Constraint Conflict (Documentation vs Tribal Reality)</data>
+  <data key="d2">PolicyValidationService</data>
   <data key="d3">1</data>
   <data key="d4">1</data>
   <data key="d5">1.0</data>
-  <data key="d6">architectural_analyzer</data>
-  <data key="d7">SP_PROCESS_CLAIM locks POLICY_MASTER rows during claim surges.</data>
+  <data key="d6">provenance_validator</data>
+  <data key="d7">Architecture specification claims a 30-day grace period (SME_Interview_Notes.txt:5), but operational SME notes (SME_Interview_Notes.txt:5) reveal the nightly billing batch job only enforces a 15-day cutoff, prematurely lapsing valid policies.</data>
 </node>
-<node id="Risk_Shared_Database">
+<node id="DISC-02">
   <data key="d0">Risk</data>
-  <data key="d1">Risk: Shared Database Anti-Pattern</data>
-  <data key="d2">schema.ddl</data>
+  <data key="d1">Discrepancy: Pessimistic Row Locking in High-Volume Adjudication Procedure</data>
+  <data key="d2">SP_PROCESS_CLAIM</data>
   <data key="d3">1</data>
   <data key="d4">1</data>
   <data key="d5">1.0</data>
-  <data key="d6">architectural_analyzer</data>
-  <data key="d7">CUSTOMER_ACCOUNT table is shared across 3 other legacy systems.</data>
+  <data key="d6">provenance_validator</data>
+  <data key="d7">SP_PROCESS_CLAIM executes 'SELECT ... FOR UPDATE' on POLICY_MASTER rows. During claim surges, this creates blocking database locks across concurrent customer requests.</data>
 </node>
-<node id="Risk_Hardcoded_Rule">
+<node id="DISC-03-2500">
   <data key="d0">Risk</data>
-  <data key="d1">Risk: Hardcoded Auto-Approval Threshold</data>
-  <data key="d2">PolicyValidationService.java</data>
+  <data key="d1">Discrepancy: Hardcoded Threshold Constant ($2500) in Source Code</data>
+  <data key="d2">PolicyValidationService</data>
   <data key="d3">1</data>
   <data key="d4">1</data>
   <data key="d5">1.0</data>
-  <data key="d6">architectural_analyzer</data>
-  <data key="d7">$2,500 approval limit is hardcoded as constant in PolicyValidationService.</data>
+  <data key="d6">provenance_validator</data>
+  <data key="d7">Financial threshold value $2500 is hardcoded in Java service logic instead of being configurable via enterprise rule engine.</data>
 </node>
 <edge source="ClaimCore_App" target="CUSTOMER_ACCOUNT" id="DEPENDS_ON">
   <data key="d8">DEPENDS_ON</data>
@@ -305,15 +335,6 @@
   <data key="d13">deterministic</data>
   <data key="d14"></data>
 </edge>
-<edge source="CUSTOMER_ACCOUNT" target="Risk_Shared_Database" id="IMPACTS">
-  <data key="d8">IMPACTS</data>
-  <data key="d9"></data>
-  <data key="d10">1</data>
-  <data key="d11">1</data>
-  <data key="d12">1.0</data>
-  <data key="d13">deterministic</data>
-  <data key="d14"></data>
-</edge>
 <edge source="POLICY_MASTER" target="CUSTOMER_ACCOUNT" id="DEPENDS_ON">
   <data key="d8">DEPENDS_ON</data>
   <data key="d9">schema.ddl</data>
@@ -386,11 +407,20 @@
   <data key="d13">deterministic</data>
   <data key="d14"></data>
 </edge>
-<edge source="SP_PROCESS_CLAIM" target="Risk_Row_Locking" id="IMPACTS">
+<edge source="SP_PROCESS_CLAIM" target="DISC-02" id="IMPACTS">
   <data key="d8">IMPACTS</data>
   <data key="d9"></data>
   <data key="d10">1</data>
   <data key="d11">1</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="Claim" target="BR-01" id="IMPLEMENTS_RULE">
+  <data key="d8">IMPLEMENTS_RULE</data>
+  <data key="d9">ClaimService.java</data>
+  <data key="d10">31</data>
+  <data key="d11">72</data>
   <data key="d12">1.0</data>
   <data key="d13">deterministic</data>
   <data key="d14"></data>
@@ -431,52 +461,88 @@
   <data key="d13">deterministic</data>
   <data key="d14">{call SP_PROCESS_CLAIM(?, ?, ?)}</data>
 </edge>
-<edge source="PolicyValidationService" target="BR-01" id="IMPLEMENTS_RULE">
+<edge source="ClaimService" target="PolicyValidationService" id="CALLS">
+  <data key="d8">CALLS</data>
+  <data key="d9">ClaimService.java</data>
+  <data key="d10">24</data>
+  <data key="d11">24</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="Policy" target="BR-02" id="IMPLEMENTS_RULE">
   <data key="d8">IMPLEMENTS_RULE</data>
-  <data key="d9">data/insurance_claims_app/PolicyValidationService.java</data>
-  <data key="d10">21</data>
+  <data key="d9">PolicyValidationService.java</data>
+  <data key="d10">23</data>
   <data key="d11">29</data>
   <data key="d12">1.0</data>
   <data key="d13">deterministic</data>
   <data key="d14"></data>
 </edge>
-<edge source="PolicyValidationService" target="BR-02" id="IMPLEMENTS_RULE">
+<edge source="Policy" target="BR-03" id="IMPLEMENTS_RULE">
   <data key="d8">IMPLEMENTS_RULE</data>
-  <data key="d9">data/insurance_claims_app/PolicyValidationService.java</data>
-  <data key="d10">32</data>
-  <data key="d11">40</data>
+  <data key="d9">PolicyValidationService.java</data>
+  <data key="d10">35</data>
+  <data key="d11">41</data>
   <data key="d12">1.0</data>
   <data key="d13">deterministic</data>
   <data key="d14"></data>
 </edge>
-<edge source="PolicyValidationService" target="BR-03" id="IMPLEMENTS_RULE">
+<edge source="Policy" target="BR-04" id="IMPLEMENTS_RULE">
   <data key="d8">IMPLEMENTS_RULE</data>
-  <data key="d9">data/insurance_claims_app/PolicyValidationService.java</data>
-  <data key="d10">43</data>
-  <data key="d11">51</data>
+  <data key="d9">PolicyValidationService.java</data>
+  <data key="d10">47</data>
+  <data key="d11">54</data>
   <data key="d12">1.0</data>
   <data key="d13">deterministic</data>
   <data key="d14"></data>
 </edge>
-<edge source="PolicyValidationService" target="BR-04" id="IMPLEMENTS_RULE">
+<edge source="Policy" target="BR-05" id="IMPLEMENTS_RULE">
   <data key="d8">IMPLEMENTS_RULE</data>
-  <data key="d9">data/insurance_claims_app/PolicyValidationService.java</data>
-  <data key="d10">54</data>
-  <data key="d11">62</data>
+  <data key="d9">PolicyValidationService.java</data>
+  <data key="d10">60</data>
+  <data key="d11">67</data>
   <data key="d12">1.0</data>
   <data key="d13">deterministic</data>
   <data key="d14"></data>
 </edge>
-<edge source="PolicyValidationService" target="BR-05" id="IMPLEMENTS_RULE">
+<edge source="Policy" target="BR-06" id="IMPLEMENTS_RULE">
   <data key="d8">IMPLEMENTS_RULE</data>
-  <data key="d9">data/insurance_claims_app/PolicyValidationService.java</data>
-  <data key="d10">66</data>
-  <data key="d11">74</data>
+  <data key="d9">PolicyValidationService.java</data>
+  <data key="d10">73</data>
+  <data key="d11">78</data>
   <data key="d12">1.0</data>
   <data key="d13">deterministic</data>
   <data key="d14"></data>
 </edge>
-<edge source="BR-05" target="Risk_Hardcoded_Rule" id="IMPACTS">
+<edge source="PolicyValidationService" target="BR-07" id="IMPLEMENTS_RULE">
+  <data key="d8">IMPLEMENTS_RULE</data>
+  <data key="d9">process_claim_sp.sql</data>
+  <data key="d10">24</data>
+  <data key="d11">26</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="PolicyValidationService" target="BR-08" id="IMPLEMENTS_RULE">
+  <data key="d8">IMPLEMENTS_RULE</data>
+  <data key="d9">process_claim_sp.sql</data>
+  <data key="d10">31</data>
+  <data key="d11">33</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="PolicyValidationService" target="DISC-01" id="IMPACTS">
+  <data key="d8">IMPACTS</data>
+  <data key="d9"></data>
+  <data key="d10">1</data>
+  <data key="d11">1</data>
+  <data key="d12">1.0</data>
+  <data key="d13">deterministic</data>
+  <data key="d14"></data>
+</edge>
+<edge source="PolicyValidationService" target="DISC-03-2500" id="IMPACTS">
   <data key="d8">IMPACTS</data>
   <data key="d9"></data>
   <data key="d10">1</data>

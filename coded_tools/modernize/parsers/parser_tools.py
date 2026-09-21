@@ -6,9 +6,7 @@ CodedTools for Intel Agents:
 - DocIntelTool (Markdown and SME document chunker)
 """
 
-import os
-from typing import Any, Dict, List
-from neuro_san.interfaces.coded_tool import CodedTool
+from coded_tools.modernize.tool_base import CodedTool
 
 from coded_tools.modernize.memory.memory_manager_tool import get_memory_fabric
 from coded_tools.modernize.parsers.ddl_parser import DdlParser

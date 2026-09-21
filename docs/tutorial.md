@@ -71,7 +71,7 @@ Users can interact with these multi-agent networks through web-based clients:
 This entire setup is easily configurable using **HOCON** (`.hocon`) files.
 
 **Note**: This tutorial is written with the help of the agent network example
-[advanced_calculator.hocon](../registries/basic/advanced_calculator.hocon).
+`advanced_calculator.hocon`.
 
 ---
 
@@ -222,7 +222,7 @@ you also link to or embed the coded tool).
 ```
 
 **Note**: You can also automatically create simple agent networks using our example agent_network_designer agent network
-(see: [agent_network_designer.md](examples/agent_network_designer.md))
+(see: [examples.md](examples.md))
 
 #### Step 2: Run the server with this `.hocon` file. You can do so by
 
@@ -792,7 +792,7 @@ Middleware is configured per agent using the `middleware` key, which takes a lis
 Each definition requires a `class` field (the fully-qualified middleware class name) and an optional `args`
 dictionary for constructor arguments.
 
-Here is a complete example based on [pii_middleware.hocon](../registries/basic/pii_middleware.hocon).
+Here is a complete example based on `pii_middleware.hocon`.
 The `prankster` agent uses `PIIMiddleware` to detect and redact phone numbers:
 
 ```hocon
@@ -906,7 +906,7 @@ Point `skill_sources` at a local directory containing a `SKILL.md` file:
 }
 ```
 
-See [job_guessing_skill.hocon](../registries/basic/job_guessing_skill.hocon) for the full example.
+See `job_guessing_skill.hocon` for the full example.
 
 #### Remote skill source
 
@@ -920,7 +920,7 @@ See [job_guessing_skill.hocon](../registries/basic/job_guessing_skill.hocon) for
 }
 ```
 
-See [internal_communication_skill.hocon](../registries/basic/internal_communication_skill.hocon) for the full example.
+See `internal_communication_skill.hocon` for the full example.
 
 > ⚠️ **Security note**: Always review skills from the internet before use. They may contain malicious scripts or
 > instructions that reference tools or resources not available in your environment.

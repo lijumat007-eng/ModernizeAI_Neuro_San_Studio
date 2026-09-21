@@ -5,8 +5,7 @@ Builds, queries, traverses, and visualizes the Knowledge Graph Fabric.
 """
 
 import os
-from typing import Any, Dict, List, Optional
-from neuro_san.interfaces.coded_tool import CodedTool
+from coded_tools.modernize.tool_base import CodedTool
 
 from coded_tools.modernize.graph.algorithms import GraphAlgorithms
 from coded_tools.modernize.graph.graph_engine import KnowledgeGraphEngine
@@ -15,6 +14,8 @@ from coded_tools.modernize.memory.memory_manager_tool import get_memory_fabric
 from coded_tools.modernize.parsers.ddl_parser import DdlParser
 from coded_tools.modernize.parsers.doc_parser import DocParser
 from coded_tools.modernize.parsers.java_parser import JavaParser
+from coded_tools.modernize.parsers.rules_extractor import RulesExtractor
+from coded_tools.modernize.qa.provenance_validator import ProvenanceValidator
 
 
 # Global graph instance for shared local access
@@ -185,80 +186,71 @@ class KnowledgeGraphTool(CodedTool):
                                 line_end=call["line"],
                             )
 
-            # 6. Add Formalized Business Rules
-            rules = [
-                ("BR-01", "Policy Status Check", "Policy must have ACTIVE or GRACE_PERIOD status to adjudicate claims.", "PolicyValidationService", 21),
-                ("BR-02", "Date Range Eligibility", "Incident date must fall within policy start and end dates.", "PolicyValidationService", 32),
-                ("BR-03", "Coverage Limit Adjudication", "Claim amount cannot exceed remaining policy coverage balance.", "PolicyValidationService", 43),
-                ("BR-04", "High-Risk Fraud Escalation", "Claims exceeding $50k or filed within 7 days of inception require fraud review.", "PolicyValidationService", 54),
-                ("BR-05", "Auto-Approval Limit ($2.5k)", "Clean claims under $2,500 on active policies are eligible for straight-through approval.", "PolicyValidationService", 66),
-            ]
-            for r_id, r_label, r_desc, impl_class, line_no in rules:
+            # 6. Dynamically Extract and Add Formalized Business Rules
+            extracted_rules = RulesExtractor.extract_all(fabric)
+            for r in extracted_rules:
+                r_id = r["rule_id"]
+                r_name = r["rule_name"]
+                r_spec = r["specification"]
+                src_f = r["source_file"]
+                ls = r["line_start"]
+                le = r["line_end"]
+                impl_class = r.get("method_name", "PolicyValidationService")
+
                 kg.add_node(
                     node_id=r_id,
                     node_type="BusinessRule",
-                    label=f"{r_id}: {r_label}",
-                    source_file="data/insurance_claims_app/PolicyValidationService.java",
-                    line_start=line_no,
-                    line_end=line_no + 8,
-                    extractor="deterministic_rule_extractor",
-                    evidence_snippet=r_desc,
+                    label=f"{r_id}: {r_name}",
+                    source_file=src_f,
+                    line_start=ls,
+                    line_end=le,
+                    extractor=r.get("extractor", "dynamic_rules_extractor"),
+                    evidence_snippet=r_spec,
                 )
-                if kg.graph.has_node(impl_class):
-                    kg.add_edge(
-                        impl_class,
-                        r_id,
-                        "IMPLEMENTS_RULE",
-                        source_file="data/insurance_claims_app/PolicyValidationService.java",
-                        line_start=line_no,
-                        line_end=line_no + 8,
+
+                # Link implementing service/class to rule
+                for node_candidate in kg.graph.nodes():
+                    if node_candidate in src_f or node_candidate == "PolicyValidationService":
+                        kg.add_edge(
+                            node_candidate,
+                            r_id,
+                            "IMPLEMENTS_RULE",
+                            source_file=src_f,
+                            line_start=ls,
+                            line_end=le,
+                        )
+                        break
+
+            # 7. Dynamically Add Architecture Specs and SME Insights
+            for path, rec in fabric.raw._files.items():
+                if path.endswith(".md"):
+                    doc_id = os.path.basename(path).replace(".md", "").replace(".", "_")
+                    kg.add_node(
+                        node_id=doc_id,
+                        node_type="RequirementDocument",
+                        label=f"Doc: {doc_id}",
+                        source_file=rec.rel_path,
+                        line_start=1,
+                        line_end=min(50, rec.line_count),
+                        extractor="doc_parser",
+                        evidence_snippet=f"Specification document with {rec.line_count} lines.",
+                    )
+                elif "sme" in path.lower() or path.endswith(".txt"):
+                    sme_id = os.path.basename(path).replace(".txt", "").replace(".", "_")
+                    kg.add_node(
+                        node_id=sme_id,
+                        node_type="SMEInsight",
+                        label=f"SME: {sme_id}",
+                        source_file=rec.rel_path,
+                        line_start=1,
+                        line_end=min(50, rec.line_count),
+                        extractor="doc_parser",
+                        evidence_snippet=f"SME interview and operational tribal knowledge notes ({rec.line_count} lines).",
                     )
 
-            # 7. Add Architecture Docs and SME Insights
-            kg.add_node(
-                node_id="Claims_Architecture_Spec",
-                node_type="RequirementDocument",
-                label="Doc: Claims Architecture Spec",
-                source_file="data/insurance_claims_app/Claims_Architecture_Spec.md",
-                line_start=1,
-                line_end=25,
-                extractor="doc_parser",
-                evidence_snippet="Monolith overview, SLA requirements, and deductible calculation workflows.",
-            )
-            kg.add_node(
-                node_id="SME_Tribal_Notes",
-                node_type="SMEInsight",
-                label="SME: Bob Vance Interview",
-                source_file="data/insurance_claims_app/SME_Interview_Notes.txt",
-                line_start=1,
-                line_end=15,
-                extractor="doc_parser",
-                evidence_snippet="Grace period mismatch, row locking in SP_PROCESS_CLAIM, and CUSTOMER_ACCOUNT sharing.",
-            )
-
-            # 8. Add Architectural Risks
-            risks = [
-                ("Risk_Row_Locking", "Database Row Locking Contention", "SP_PROCESS_CLAIM locks POLICY_MASTER rows during claim surges.", "process_claim_sp.sql"),
-                ("Risk_Shared_Database", "Shared Database Anti-Pattern", "CUSTOMER_ACCOUNT table is shared across 3 other legacy systems.", "schema.ddl"),
-                ("Risk_Hardcoded_Rule", "Hardcoded Auto-Approval Threshold", "$2,500 approval limit is hardcoded as constant in PolicyValidationService.", "PolicyValidationService.java"),
-            ]
-            for rk_id, rk_label, rk_desc, src_f in risks:
-                kg.add_node(
-                    node_id=rk_id,
-                    node_type="Risk",
-                    label=f"Risk: {rk_label}",
-                    source_file=src_f,
-                    extractor="architectural_analyzer",
-                    evidence_snippet=rk_desc,
-                )
-
-            # Link risks
-            if kg.graph.has_node("SP_PROCESS_CLAIM"):
-                kg.add_edge("SP_PROCESS_CLAIM", "Risk_Row_Locking", "IMPACTS")
-            if kg.graph.has_node("CUSTOMER_ACCOUNT"):
-                kg.add_edge("CUSTOMER_ACCOUNT", "Risk_Shared_Database", "IMPACTS")
-            if kg.graph.has_node("BR-05"):
-                kg.add_edge("BR-05", "Risk_Hardcoded_Rule", "IMPACTS")
+            # 8. Dynamically Detect Architectural Risks and Discrepancies
+            discrepancies = ProvenanceValidator.detect_discrepancies(fabric)
+            ProvenanceValidator.inject_discrepancies_into_graph(kg, discrepancies)
 
             return {
                 "status": "success",

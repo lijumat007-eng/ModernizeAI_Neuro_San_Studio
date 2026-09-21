@@ -6,8 +6,7 @@ Exposes the 5-tier memory fabric (Raw, Structural, Semantic, Procedural, Transfo
 
 import json
 import os
-from typing import Any, Dict, List, Optional, Union
-from neuro_san.interfaces.coded_tool import CodedTool
+from coded_tools.modernize.tool_base import CodedTool
 
 from coded_tools.modernize.memory.procedural_memory import ProceduralMemory
 from coded_tools.modernize.memory.raw_memory import RawMemory

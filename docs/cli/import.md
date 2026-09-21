@@ -33,8 +33,8 @@ Top menu (single-select, Enter to pick):
 ns import basic                          # one group
 ns import industry experimental          # multiple groups
 ns import all                            # everything
-ns import music_nerd                     # one network (any group)
-ns import basic agent_network_designer   # mix
+ns import modernizeai                     # one network (any group)
+ns import basic modernizeai   # mix
 ```
 
 Arguments without a file extension are resolved against the installed package's
@@ -47,7 +47,7 @@ no flag required. Pass one or more, space-separated, to import them in one call:
 
 ```bash
 ns import path/to/network.hocon            # self-contained single HOCON
-ns import music_nerd.hocon                 # bare name resolved in the current directory
+ns import modernizeai.hocon                 # bare name resolved in the current directory
 ns import path/to/bundle.zip               # network + dependencies
 ns import a.hocon path/to/b.zip            # multiple files in one call
 ns import path/to/bundle.zip --force       # overwrite existing files
@@ -130,8 +130,8 @@ missing.
 
 ```hocon
 {
-    "basic/music_nerd.hocon": true,
-    "agent_network_designer.hocon": true
+    "basic/modernizeai.hocon": true,
+    "modernizeai.hocon": true
 }
 ```
 
@@ -151,9 +151,9 @@ section).
 
 | Format | Example |
 |---|---|
-| Bare name | `music_nerd` |
-| Group/name | `basic/music_nerd` |
-| Root network | `agent_network_designer` |
+| Bare name | `modernizeai` |
+| Group/name | `basic/modernizeai` |
+| Root network | `modernizeai` |
 
 ## Requirements
 

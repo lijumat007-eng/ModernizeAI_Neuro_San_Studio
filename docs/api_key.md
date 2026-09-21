@@ -89,82 +89,34 @@ Summary: 3/7 valid, 4 warnings, 0 errors
 
 ---
 
-## Individual Key Testing
+## Testing Keys via CLI
 
-You can also test individual API keys using the scripts below:
+You can test individual or all API keys using the built-in `check-llm-keys` command:
 
-### OpenAI API Key
+```bash
+# Validate all configured keys across all 3 tiers (format & live ping)
+ns check-llm-keys --tier 3
 
-- Export your OpenAI API environment variables
+# Validate only format & placeholders
+ns check-llm-keys --tier 2
+```
 
-    ```bash
-    export OPENAI_API_KEY="XXX"
-    ```
+### Environment Variables Quick Reference
 
-- Run the script testing OpenAI API key
+Configure your keys in your `.env` file:
 
-    ```bash
-    python3 ./tests/apps/openai_api_key.py
-    ```
+```bash
+# OpenAI
+OPENAI_API_KEY="sk-proj-..."
 
-- You will receive a message indicating success or failure.
+# Anthropic
+ANTHROPIC_API_KEY="sk-ant-..."
 
-### Azure OpenAI API Key
+# Google Gemini
+GOOGLE_API_KEY="AIzaSy..."
 
-- Export your Azure OpenAI API environment variables
-
-    ```bash
-    export AZURE_OPENAI_API_KEY="YOUR_API_KEY"
-    export OPENAI_API_VERSION="2025-04-01-preview"
-    export AZURE_OPENAI_ENDPOINT="https://YOUR_RESOURCE_NAME.openai.azure.com/"
-    export AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o"
-
-    ```
-
-    - Azure OpenAI requires you to first deploy a model and then reference it using the deployment name in API calls.
-    Deployment name is NOT the model name itself. It's a label you assign to the model when you deploy it. E.g., you
-    may deploy a "gpt-4" model and label it "my-gpt-4".
-
-- Run the script testing Azure OpenAI API key
-
-    ```bash
-    python3 ./tests/apps/azure_openai_api_key.py
-    ```
-
-<!-- pyml disable line-length-->
-- You will receive a message indicating success or failure.
-- See [Azure OpenAI Quickstart](https://learn.microsoft.com/en-us/azure/ai-services/openai/chatgpt-quickstart?tabs=keyless%2Ctypescript-keyless%2Cpython-new%2Ccommand-line&pivots=programming-language-python) for more information.
-<!-- pyml enable line-length-->
-
-### Anthropic API Key
-
-- Export your Anthropic API environment variables
-
-    ```bash
-    export ANTHROPIC_API_KEY="XXX"
-    export ANTHROPIC_BASE_URL="https://api.anthropic.com"
-    ```
-
-- Set the `model` variable in the script (e.g., to `claude-opus-4-20250514`) and run the script testing Anthropic API key
-
-    ```bash
-    python3 ./tests/apps/anthropic_api_key.py
-    ```
-
-- You will receive a message indicating success or failure.
-
-### Gemini API Key
-
-- Export your Gemini API environment variables
-
-    ```bash
-    export GOOGLE_API_KEY="XXX"
-    ```
-
-- Set the `model` variable in the script (e.g., to `gemini-1.5-pro`) and run the script testing Gemini API key
-
-    ```bash
-    python3 ./tests/apps/gemini_api_key.py
-    ```
-
-- You will receive a message indicating success or failure.
+# Azure OpenAI
+AZURE_OPENAI_API_KEY="your-key"
+AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o"
+```

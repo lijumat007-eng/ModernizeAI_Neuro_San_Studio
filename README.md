@@ -384,18 +384,43 @@ ModernizeAI includes an out-of-the-box legacy enterprise benchmark application (
 
 ---
 
-### 8. 🏛️ Upstream Host Framework (Neuro SAN Studio — NOT ModernizeAI)
+### 8. 🏛️ Upstream Host Framework & Repository Pruning
 
-For developers and auditors reviewing the repository, the following components belong to the underlying **Neuro SAN Studio** framework:
+To ensure ModernizeAI is clean, focused, and production-ready, the repository was audited and pruned of extraneous sample bots and demo directories:
 
-* `neuro_san_studio/`: Core Neuro SAN framework engine (CLI commands `ns run`, `ns chat`, `ns init`, agent network assembler, plugin architecture, tool classifiers).
-* `middleware/`: Framework-level middlewares (agent checklist middleware, agent skills middleware, persistent memory middleware).
-* `servers/`: Framework communication bridges (Agent-to-Agent `a2a/` and Model Context Protocol `mcp/` servers).
-* `apps/` (other subfolders): Built-in framework example apps (`conscious_assistant/`, `cruse/`, `log_analyzer/`, `slack/`, `wwaw/`).
-* `coded_tools/` (other subfolders): Framework sample tools (`basic/`, `industry/`, `tools/`, `agent_network_architect/`, `agent_network_editor/`).
-* `registries/` (other subfolders): Framework sample agent networks (`basic/`, `industry/`, `tools/`, `experimental/`).
-* `docs/` (root docs): Upstream framework documentation (`dev_guide.md`, `tutorial.md`, `user_guide.md`, `examples.md`, etc.).
-* `tests/` (excluding `tests/coded_tools/modernize/`): Framework unit and integration test harnesses.
+* **Pre-Cleanup Full Backup**: A complete `.zip` snapshot of the entire repository prior to cleanup is archived at `D:\neuro-san-studio-main-backup-20260920_232503.zip` (1,949 files, 20.2 MB).
+* **Pruned Extraneous Code**:
+  - Removed sample apps: `apps/conscious_assistant/`, `apps/cruse/`, `apps/log_analyzer/`, `apps/slack/`, `apps/wwaw/`.
+  - Removed sample demo registries: `registries/basic/`, `registries/industry/`, `registries/experimental/`, `registries/tools/`, and meta-agent generators.
+  - Removed sample demo tools: `coded_tools/basic/`, `coded_tools/industry/`, `coded_tools/experimental/`, `coded_tools/agent_network_*/`.
+  - Removed extraneous tests: `tests/apps/`, `tests/coded_tools/basic/`, `tests/coded_tools/tools/`.
+* **Preserved Host Runtime**:
+  - `neuro_san_studio/`: Core Neuro SAN framework engine and CLI runtime (`ns run`, `ns chat`, `ns init`).
+  - `registries/aaosa.hocon`: Required AAOSA protocol definitions included by `modernizeai.hocon`.
+  - `registries/manifest.hocon`: Cleaned to point exclusively to `registries/generated/manifest.hocon`.
+  - `.venv`: Fully configured virtual environment containing `neuro-san==0.6.95` and `nsflow==0.6.19`.
+
+---
+
+### 9. 🚀 Phase 1 Overhaul: Dynamic Logic & Zero-Mock Architecture
+
+All preliminary mock strings, hardcoded business rules (`BR-01`..`BR-05`), and static readiness scores (`78/100`) have been eliminated and replaced with dynamic, AST-driven algorithms:
+
+1. **Dynamic AST Business Rules Extraction**:
+   - Analyzes Java syntax trees (`if` statements, ternary operators, threshold constants), SQL procedures (`IF ... THEN ... ELSE`, `ROLLBACK`), and markdown specifications.
+   - Populates Tier 4 Semantic Memory with exact source line citations and SHA-256 integrity hashes.
+2. **Provenance QA & Discrepancy Auto-Injection**:
+   - Verifies line ranges and SHA-256 hashes against Tier 1 Raw Memory.
+   - Detects specification conflicts (e.g., `DISC-01`: 30-day spec vs. 15-day batch cutoff) and concurrency risks (e.g., `DISC-02`: pessimistic row locking in `SP_PROCESS_CLAIM`).
+   - Automatically injects discovered discrepancies as `Risk` nodes directly into the Knowledge Graph fabric.
+3. **Balanced 6R Cloud Modernization Readiness Scoring**:
+   - Replaced static scores with an evenly weighted composite formula:
+     $$\text{Score} = \text{round}\left(\frac{S_{\text{mod}} + S_{\text{prov}} + S_{\text{risk\_health}}}{3}\right)$$
+   - Dynamically evaluates component 6R strategies (`Refactor`, `Replatform`, `Retire`, `Retain/ACL`).
+4. **End-to-End Verification**:
+   - `8/8` unit tests pass in [`tests/coded_tools/modernize/test_modernize_fabric.py`](tests/coded_tools/modernize/test_modernize_fabric.py).
+   - All 7 REST API endpoints verified end-to-end via FastAPI test harness.
+
 
 ---
 

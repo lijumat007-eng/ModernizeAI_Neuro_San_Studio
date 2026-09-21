@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ModernizeAI - Executive Single Page Presentation</title>
+  <style>
+    :root {
+      --bg-primary: #0a0f1d;
+      --bg-card: rgba(18, 26, 47, 0.85);
+      --bg-card-border: rgba(56, 189, 248, 0.2);
+      --accent-blue: #38bdf8;
+      --accent-purple: #a855f7;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* 16:9 Presentation Slide Container */
+    .slide-wrapper {
+      width: 100%;
+      max-width: 1440px;
+      aspect-ratio: 16 / 9;
+      min-height: 810px;
+      background: rgba(13, 19, 36, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(56, 189, 248, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Slide Header */
+    .slide-header {
+      padding: 20px 32px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.08), transparent);
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-tag {
+      background: linear-gradient(135deg, #0284c7, #6366f1);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .brand-title h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .header-badges {
+      display: flex;
+      gap: 10px;
+    }
+
+    .pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 11px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill strong {
+      color: var(--text-main);
+    }
+
+    /* Slide Body Grid */
+    .slide-body {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.15fr 1.15fr 0.9fr;
+      grid-template-rows: auto 1fr auto;
+      gap: 16px;
+      padding: 20px 32px;
+      overflow: hidden;
+    }
+
+    /* Common Card Styling */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      color: var(--accent-blue);
+    }
+
+    .card p, .card li {
+      font-size: 12px;
+      line-height: 1.45;
+      color: #cbd5e1;
+    }
+
+    .card ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .card ul li {
+      position: relative;
+      padding-left: 14px;
+      margin-bottom: 6px;
+    }
+
+    .card ul li::before {
+      content: "•";
+      position: absolute;
+      left: 2px;
+      color: var(--accent-blue);
+      font-weight: bold;
+    }
+
+    /* Highlight Badges */
+    .hl-cyan { color: #38bdf8; font-weight: 600; }
+    .hl-amber { color: #f59e0b; font-weight: 600; }
+    .hl-purple { color: #c084fc; font-weight: 600; }
+    .hl-emerald { color: #34d399; font-weight: 600; }
+
+    /* Top Row Hero Cards */
+    .hero-col-span-2 {
+      grid-column: span 2;
+    }
+
+    /* Metrics Bar */
+    .metrics-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .metric-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .metric-val {
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .metric-lbl {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Warning / Limitation Banner */
+    .corporate-limitation-banner {
+      grid-column: 1 / -1;
+      background: linear-gradient(90deg, rgba(244, 63, 94, 0.15), rgba(245, 158, 11, 0.12));
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .warning-icon-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .warning-badge {
+      background: #f43f5e;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .warning-text {
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: #fecdd3;
+    }
+
+    .warning-text strong {
+      color: #fff;
+      text-decoration: underline;
+    }
+
+    /* Footer */
+    .slide-footer {
+      padding: 10px 32px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.2);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .btn-print {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid var(--accent-blue);
+      color: var(--accent-blue);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-print:hover {
+      background: var(--accent-blue);
+      color: #000;
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        background: #0a0f1d;
+      }
+      .slide-wrapper {
+        border: none;
+        box-shadow: none;
+        max-width: 100%;
+        aspect-ratio: auto;
+        min-height: 100vh;
+      }
+      .btn-print {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="slide-wrapper">
+    <!-- Slide Header -->
+    <header class="slide-header">
+      <div class="brand-title">
+        <span class="badge-tag">Executive Summary</span>
+        <div>
+          <h1>ModernizeAI: Enterprise Legacy Modernization Platform</h1>
+          <div class="brand-subtitle">Autonomous Hybrid Agentic Graph-RAG Swarm Powered by Cognizant Neuro® AI Multi-Agent Accelerator</div>
+        </div>
+      </div>
+      <div class="header-badges">
+        <div class="pill">Architecture: <strong>11 Agents | 5 Coded Tools</strong></div>
+        <div class="pill">Framework: <strong>Neuro SAN Studio</strong></div>
+        <div class="pill">Innovation: <strong>80/20 Principle</strong></div>
+      </div>
+    </header>
+
+    <!-- Slide Body Grid -->
+    <main class="slide-body">
+      
+      <!-- Card 1: Description & Purpose -->
+      <div class="card">
+        <div class="card-title">🎯 1. Description & Purpose</div>
+        <p><strong>What is ModernizeAI?</strong> An enterprise-grade <em>Agentic Knowledge Factory</em> and <em>Hybrid Graph-RAG platform</em> that eliminates the <strong>70%+ failure rate</strong> of enterprise cloud migrations.</p>
+        <ul style="margin-top: 8px;">
+          <li><strong>De-risking Legacy Systems:</strong> Reverse-engineers monolithic codebases (Java, .NET, Oracle SQL) before writing a single line of target code.</li>
+          <li><strong>The Core Problem Solved:</strong> Eliminates hidden transitive database locks, undocumented tribal rules, and high blast-radius side effects.</li>
+          <li><strong>Origin & Originator:</strong> Built on <strong>Cognizant Neuro® AI Multi-Agent Accelerator (Neuro SAN Studio)</strong> using declarative HOCON and autonomous conversational routing (AAOSA).</li>
+        </ul>
+        <div class="metrics-bar">
+          <div class="metric-box">
+            <div class="metric-val hl-cyan">11</div>
+            <div class="metric-lbl">AI Agents</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val hl-emerald">5</div>
+            <div class="metric-lbl">Coded Tools</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val hl-purple">5</div>
+            <div class="metric-lbl">Memory Tiers</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val hl-amber">78/100</div>
+            <div class="metric-lbl">Readiness Score</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Innovation & Core Ideas -->
+      <div class="card">
+        <div class="card-title">💡 2. Innovation & Core Ideas</div>
+        <p><strong>The 80/20 Architecture Principle:</strong> Strictly separates deterministic ground-truth extraction from probabilistic AI reasoning.</p>
+        <ul style="margin-top: 8px;">
+          <li><span class="hl-cyan">80% Deterministic Extraction:</span> AST code parsers, regex symbol extractors, and SQL/DDL interpreters extract classes, methods, and foreign keys <strong>with zero hallucination</strong> and line-level provenance.</li>
+          <li><span class="hl-purple">20% LLM Agent Reasoning:</span> GenAI strictly resolves semantic discrepancies (e.g. documentation vs code conflicts), SME tribal notes, 6R migration plans, and blast radius.</li>
+          <li><span class="hl-emerald">5-Tier Memory Fabric:</span>
+            <em>1. Raw</em> (SHA-256 offsets) &bull; <em>2. Structural</em> (AST/DDL symbols) &bull; <em>3. Semantic</em> (Vector/BM25) &bull; <em>4. Procedural</em> (traversals) &bull; <em>5. Transformation</em> (6R coupling).</li>
+          <li><span class="hl-amber">Schema-Enforced MultiDiGraph:</span> NetworkX graph model with Louvain community detection for microservice boundary clustering.</li>
+        </ul>
+      </div>
+
+      <!-- Card 3: Key Features & Workspaces -->
+      <div class="card">
+        <div class="card-title">⚡ 3. Key Features Delivered</div>
+        <ul>
+          <li><strong>Two Native User Interfaces:</strong>
+            <br>&bull; <em>ModernizeAI Web App:</em> FastAPI portal (`localhost:8000`) with 2D/3D PyVis interactive graph, blast radius explorer, & rule viewer.
+            <br>&bull; <em>Neuro SAN Studio Client (`nsflow`):</em> Live React Flow topology graph and agent telemetry.
+          </li>
+          <li><strong>Line-Level Business Rules Catalog:</strong> Deterministically catalogs rules (`BR-01` to `BR-05`) with exact file and line citation.</li>
+          <li><strong>Transitive Blast-Radius Explorer:</strong> Calculates ripple effect impact when tables (e.g. `POLICY_MASTER`) or services are modified.</li>
+          <li><strong>Sly-Data Privacy:</strong> Protects proprietary code and schema credentials from leaking to LLM prompts.</li>
+        </ul>
+      </div>
+
+      <!-- Card 4: Future Upgrades & Roadmap (Phase 2) -->
+      <div class="card hero-col-span-2">
+        <div class="card-title">🚀 4. Future Upgrades & Roadmap: Phase 2 Active Code Migration Swarm</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div>
+            <p><strong>Transition from Passive Discovery to Active Transformation:</strong></p>
+            <ul style="margin-top: 4px;">
+              <li><span class="hl-cyan">KG Reader Agent (`kg_reader_agent`):</span> Traverses candidate microservice subgraphs identified via Louvain community clustering.</li>
+              <li><span class="hl-purple">Cloud Scaffolder Agent:</span> Generates target containerized microservice architectures, Dockerfiles, and Helm/Terraform manifests.</li>
+              <li><span class="hl-emerald">Code Migrator Agent (.NET / Java):</span> Transpiles legacy on-premise monoliths (e.g. .NET Framework WCF & ADO.NET) to modern <strong>.NET 8/9 Minimal APIs / Cloud Run</strong>.</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Guaranteed Zero-Regression & Cloud Rollout:</strong></p>
+            <ul style="margin-top: 4px;">
+              <li><span class="hl-amber">SQL & Stored Procedure Decoupler:</span> Decouples row-locking SQL stored procedures into modern Saga/Outbox microservice patterns.</li>
+              <li><span class="hl-rose" style="color:#f43f5e; font-weight:600;">Provenance Test Synthesizer:</span> Generates xUnit/JUnit regression suites directly from verified business rules to mathematically verify behavioral parity.</li>
+              <li><span class="hl-cyan">Strangler-Fig Deployer:</span> Orchestrates canary traffic routing at API gateways between legacy and cloud-native services.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5: Benchmark Validation -->
+      <div class="card">
+        <div class="card-title">🏢 5. Validated Benchmark Dataset</div>
+        <p>Tested on <strong>ClaimCore v2.4</strong> (P&C Insurance Adjudication):</p>
+        <ul style="margin-top: 6px;">
+          <li><strong>Legacy Monolith:</strong> Java JDBC services, Oracle SQL schema, PL/SQL stored procedures (`SP_PROCESS_CLAIM`).</li>
+          <li><strong>Graph Dimensions:</strong> 21 verified nodes, 29 semantic edges, 5 business rules (`BR-01` to `BR-05`).</li>
+          <li><strong>Discrepancy Catch:</strong> Uncovered 15-day billing cutoff in SME notes contradicting 30-day spec rule.</li>
+        </ul>
+      </div>
+
+      <!-- Mandatory Limitation & Environment Banner -->
+      <div class="corporate-limitation-banner">
+        <div class="warning-icon-wrap">
+          <span class="warning-badge">⚠️ Production & Demo Limitation</span>
+          <div class="warning-text">
+            <strong>Cognizant Corporate Environment Constraint:</strong>
+            ModernizeAI requires external GenAI API keys (OpenAI, Anthropic, or Google Gemini) for the 20% LLM reasoning swarm. 
+            Currently, <strong>Zscaler (Scalar) on Cognizant production laptops blocks all external generative AI calls and API endpoints</strong>.
+            Consequently, live multi-agent chat and LLM generation cannot be executed locally on corporate PCs without a dedicated cloud sandbox or network proxy exemption.
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Slide Footer -->
+    <footer class="slide-footer">
+      <div>Project: ModernizeAI | Cognizant AI Lab &bull; Neuro SAN Studio Accelerator | Apache 2.0</div>
+      <div>Confidential &bull; Enterprise Cloud Modernization &bull; Single Page PPT Summary</div>
+      <button class="btn-print" onclick="window.print()">Print / Export Slide (PDF)</button>
+    </footer>
+  </div>
+
+</body>
+</html>

@@ -93,7 +93,7 @@
 ## Simple agent network
 
 The `music_nerd` agent network is the simplest agent network possible: it contains a single agent
-that answers questions about music since the 60s. See its description here: [docs/examples/music_nerd.md](examples/basic/music_nerd.md).
+that answers questions about music since the 60s. See its description here: `music_nerd` (see [examples.md](examples.md)).
 
 The steps to start the server and the client are described in the [README](../README.md).
 When starting, the first thing the server will do is load the agent network configurations
@@ -118,7 +118,7 @@ This tells the server to load the `music_nerd.hocon` file from the same `/regist
 
 Setting the value to `false` would make the server ignore this agent network.
 
-Open [../registries/basic/music_nerd.hocon](../registries/basic/music_nerd.hocon) and have a look at it.
+Open `registries/basic/music_nerd.hocon` and have a look at it.
 For now just note that it contains:
 
 - an `llm_config` section that specifies which LLM to use by default for the agents in this file
@@ -202,8 +202,8 @@ Also note that if you're using json notation you need to put the include with th
 ```
 
 You can see working examples here:
-- Using json notation: [registries/basic/smart_home.hocon](../registries/basic/smart_home.hocon)
-- Using hocon notation: [registries/basic/coffee_finder.hocon](../registries/basic/coffee_finder.hocon)
+- Using json notation: `registries/basic/smart_home.hocon`
+- Using hocon notation: `registries/basic/coffee_finder.hocon`
 
 For more details, please see [https://github.com/lightbend/config/blob/main/HOCON.md#substitutions](https://github.com/lightbend/config/blob/main/HOCON.md#substitutions)
 
@@ -295,7 +295,7 @@ You can specify it at two levels:
 - **Agent-level**: Overrides the network-level configuration for a specific agent.
 
 For a full working example of per-agent configuration using different Anthropic models, see the
-[Book Recommender with Multiple LLM Configs](examples/basic/book_recommender_multiple_llm_configs.md) example.
+Book Recommender example.
 
 Neuro-SAN includes several predefined LLM providers and models. To use one of these, set the `model_name` key to
 the name of the model you want. In addition, model-specific parameters (such as `temperature`, `max_tokens`, etc.)
@@ -320,7 +320,7 @@ and specify which model to use in the `model_name` field:
     }
 ```
 
-See [./examples/music_nerd.md](examples/basic/music_nerd.md) for an example.
+See `music_nerd.md` for an example.
 
 ### AzureOpenAI
 
@@ -701,7 +701,7 @@ see [Ollama python SDK](https://github.com/ollama/ollama-python/blob/main/ollama
 
 #### Example agent network
 
-See the [./examples/music_nerd_pro_local.md](examples/basic/music_nerd_pro_local.md) for a complete working example.
+See the `music_nerd_pro_local.md` for a complete working example.
 
 For more information about how to use Ollama with LangChain,
 see [this page](https://python.langchain.com/docs/integrations/chat/ollama/)
@@ -793,7 +793,7 @@ Neuro-SAN supports LLM fallbacks, which allow you to specify a list of LLMs to u
 In the `llm_config` block, put each LLM configuration in a `fallbacks` list.
 The list of LLM configs is tried in order until one succeeds.
 
-In this example, as seen in [./examples/music_nerd_llm_fallbacks.md](examples/basic/music_nerd_llm_fallbacks.md),
+In this example, as seen in `music_nerd_llm_fallbacks.md`,
 the agent network will use OpenAI's `gpt-5.2` model first,
 and if that fails (for example, due to rate limits or service outages),
 it will automatically fall back to Anthropic's `claude-3-7-sonnet` model:
@@ -1427,7 +1427,7 @@ following methods.
        - `"required": []` → nothing is gated, but tokens are still injected opportunistically; use this
         when the server also accepts an API key (via `MCP_SERVERS_INFO_FILE`) or needs no auth.
        - List specific URLs → only those URLs are gated.
-   - For a complete example see [you_search.hocon](../registries/tools/you_search.hocon); for the client
+   - For a complete example see `you_search.hocon`; for the client
     side (Connectors tab, token storage, redirect URI, troubleshooting) see nsflow's
     [MCP OAuth Connectors guide](https://github.com/cognizant-ai-lab/nsflow/blob/main/docs/MCP_OAUTH.md).
 
@@ -1435,7 +1435,7 @@ following methods.
 
 For a configured example in this repo — an agent network wired to the You.com MCP server, with the
 OAuth bearer-token `sly_data_schema` setup described above and comments walking through the auth
-options — see [you_search.hocon](../registries/tools/you_search.hocon).
+options — see `you_search.hocon`.
 
 For simple examples of MCP servers in various languages (e.g. Python, Java) and connecting them to neuro-san,
 please visit this repo: [neuro-san-mcp-examples](https://github.com/kaushik-cognizant/neuro-san-mcp-examples)
@@ -1452,7 +1452,7 @@ When multiple middleware are listed, order of appearance matters — they are ap
 
 For an overview of middleware, see the [Overview](https://docs.langchain.com/oss/python/langchain/middleware/overview).
 
-For a working example, see [pii_middleware.hocon](../registries/basic/pii_middleware.hocon).
+For a working example, see `pii_middleware.hocon`.
 
 ### class
 
@@ -1549,7 +1549,7 @@ in both the middleware dictionary and the class constructor signature:
     }
     ```
 
-    See [Agent Network Designer](../registries/agent_network_designer.hocon) for an example.
+    See Agent Network Designer for an example.
 - **`sly_data`** — the agent's `sly_data` dictionary, shared across all middleware and coded tools for
   the current request. See [Sly data](#sly-data) for more information.
 
@@ -1590,7 +1590,7 @@ from both inputs and outputs:
 }
 ```
 
-See [pii_middleware.hocon](../registries/basic/pii_middleware.hocon) for the full working network.
+See `pii_middleware.hocon` for the full working network.
 
 ## Agent Skills
 
@@ -1686,8 +1686,8 @@ history after being loaded:
 - `http_timeout` indicates timeout in seconds for HTTP requests. Only used for remote skills.
 
 For working examples, see:
-- [job_guessing_skill.hocon](../registries/basic/job_guessing_skill.hocon) — local skill source
-- [internal_communication_skill.hocon](../registries/basic/internal_communication_skill.hocon)
+- `job_guessing_skill.hocon` — local skill source
+- `internal_communication_skill.hocon`
 
 ## Logging
 
@@ -1753,7 +1753,7 @@ Reference:
 [Iterative Statistical Language Model Generation for Use with an
 Agent-Oriented Natural Language Interface](https://www.sri.com/wp-content/uploads/2021/12/iterative_statistical_language_model_generation_for_use.pdf)
 
-Look at [../registries/basic/smart_home.hocon](../registries/basic/smart_home.hocon) and in particular:
+Look at `registries/basic/smart_home.hocon` and in particular:
 
 - aaosa_instructions
 - aaosa_call
@@ -1780,7 +1780,7 @@ at IP address `192.168.1.1` and port `8080`.
 
 This enables entire ecosystems of agent webs.
 
-Look at [Consumer Decision Assistant](examples/industry/consumer_decision_assistant.md) for an example.
+Look at Consumer Decision Assistant for an example.
 
 ### Memory
 
@@ -1821,8 +1821,8 @@ adding a `summarization` block to `memory_config`.
 Minimal configuration — only `class` is required, and the backend defaults
 to `json_file`. To use `markdown_file` or `mem0`, set the backend explicitly.
 
-See the [file-backed configuration reference](./examples/tools/persistent_memory_local.md#configuration)
-and the [Mem0 configuration reference](./examples/tools/persistent_memory_mem0.md#configuration)
+See the file-backed configuration reference
+and the Mem0 configuration reference
 for all available options.
 
 File-backed (default — `json_file`):
@@ -1855,25 +1855,25 @@ forward `user_id` per request:
 For a complete walkthrough of the file-backed backends — including HOCON
 configuration, a sample conversation, backend trade-offs, summarizer tuning,
 and debugging tips — see the
-[Persistent Memory (Local) documentation](./examples/tools/persistent_memory_local.md). A minimal
+Persistent Memory (Local). A minimal
 working network is available at
-[persistent_memory_local.hocon](../registries/tools/persistent_memory_local.hocon).
+`persistent_memory_local.hocon`.
 
 For the cloud-hosted variant with per-user scoping, see the
-[Persistent Memory (Mem0) documentation](./examples/tools/persistent_memory_mem0.md) and its
+Persistent Memory (Mem0) and its
 reference network at
-[persistent_memory_mem0.hocon](../registries/tools/persistent_memory_mem0.hocon).
+`persistent_memory_mem0.hocon`.
 
 ## Connect with other agent frameworks
 
-- MCP: [MCP BMI SSE](./examples/tools/mcp_bmi_streamable_http.md) is an example of an agent network that uses [MCP](https://www.anthropic.com/news/model-context-protocol)
+- MCP: MCP BMI SSE is an example of an agent network that uses [MCP](https://www.anthropic.com/news/model-context-protocol)
 to call an agent that calculates the body mass index (BMI).
-- A2A: [A2A research report](./examples/tools/a2a_research_report.md) is an example of an agent network that uses
+- A2A: A2A research report is an example of an agent network that uses
 a coded tool as an A2A client to connect to CrewAI agents running in an A2A server to write a report on a provided topic.
 - CrewAI: see the A2A example above.
-- Agentforce: [Agentforce](./examples/tools/agentforce.md) is an agent network that delegates queries to a [Salesforce Agentforce](https://www.salesforce.com/agentforce/)
+- Agentforce: Agentforce is an agent network that delegates queries to a [Salesforce Agentforce](https://www.salesforce.com/agentforce/)
 agent to interact with a CRM system.
-- Agentspace: [Agentspace_adapter](./examples/tools/agentspace_adapter.md) is an agent network adapter that delegates queries
+- Agentspace: Agentspace adapter is an agent network adapter that delegates queries
 to a [Google Agentspace](https://docs.cloud.google.com/gemini/enterprise/docs/agents-overview) agent to interact with
 different data store connectors on google cloud.
 
@@ -1908,7 +1908,7 @@ The full schema is documented in the
 [test case HOCON reference](https://github.com/cognizant-ai-lab/neuro-san/blob/main/docs/test_case_hocon_reference.md).
 
 There are two ways to create a test case: automatically with the
-[Agent Network Test Generator](agent_network_test_generator.md),
+Agent Network Test Generator,
 
 or manually.
 
@@ -1920,7 +1920,7 @@ produce test fixtures automatically. Start the server, select
 `Generate test cases for basic/coffee_finder_advanced`.
 
 For test levels, example prompts, and review tips, see the full
-[Agent Network Test Generator](agent_network_test_generator.md) documentation.
+Agent Network Test Generator documentation.
 
 ##### Manual creation
 
@@ -1935,7 +1935,7 @@ For existing examples, look at the fixtures under `tests/fixtures/` in this repo
 ##### Register the fixture
 
 Generated and manually created fixtures are **not** automatically picked up by CI.
-See [Running a Generated Test Fixture — Option B](agent_network_test_generator.md#option-b-register-in-the-integration-test-suite)
+See Running a Generated Test Fixture — Option B
 for how to add them to the integration test suite.
 
 #### Run test

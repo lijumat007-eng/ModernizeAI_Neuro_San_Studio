@@ -1,5 +1,12 @@
 # ModernizeAI: Hybrid Agentic Graph-RAG Knowledge Fabric Guide
 
+> **Status note:** the parser and ingestion layers described below as
+> "regex symbol extractors" and a single ingested source have been rebuilt
+> on branch `feature/multilang-parsers` with real tree-sitter/sqlglot
+> grammars and a multi-source project model. See
+> [`MODERNIZE_PROGRESS_AND_ROADMAP.md`](MODERNIZE_PROGRESS_AND_ROADMAP.md)
+> for what's actually built and verified today, and what's still ahead.
+
 ## 1. Overview & Vision
 
 **ModernizeAI** is an Agentic Knowledge Factory and Hybrid Agentic Graph-RAG platform engineered to solve enterprise legacy application modernization and reverse engineering.
@@ -156,8 +163,13 @@ python scripts/run_modernize_cli.py
  
 ---
  
-### 5.1 Phase 1 Implementation & Optimization Milestone
+### 5.1 Phase 1 Implementation & Optimization Milestone (original prototype — superseded)
  
+> This section documents the original regex-based prototype milestone.
+> "AST parsing" here was in practice regex over hand-written demo files, not
+> a real grammar, and ingestion was single-source. Both have since been
+> rebuilt; see [`MODERNIZE_PROGRESS_AND_ROADMAP.md`](MODERNIZE_PROGRESS_AND_ROADMAP.md).
+
 ModernizeAI has completed its Phase 1 foundational overhaul, transitioning from initial prototypes to a production-grade, zero-mock deterministic knowledge fabric:
  
 1. **Dynamic AST Rules Extraction (`business_rules_agent`)**:

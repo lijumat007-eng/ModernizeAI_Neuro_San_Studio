@@ -11,6 +11,15 @@
 
 ---
 
+> **Active rebuild in progress** (branch `feature/multilang-parsers`): the
+> "AST parsing" and single-source ingestion described below are the original
+> prototype. Both are being replaced with real tree-sitter/sqlglot grammars
+> (Java, C/C++, SQL/PL-SQL across Oracle/T-SQL/Postgres done; C#, COBOL/JCL
+> pending) and a multi-source Project model (many Git repos/S3/local folders
+> scanned into one graph without overwriting each other). See
+> [`docs/generated/MODERNIZE_PROGRESS_AND_ROADMAP.md`](docs/generated/MODERNIZE_PROGRESS_AND_ROADMAP.md)
+> for exactly what's built, verified, and still ahead.
+
 ## 🌟 What is ModernizeAI?
 
 **ModernizeAI** is an enterprise-grade **Agentic Knowledge Factory** and **Hybrid Agentic Graph-RAG platform** built on the **Neuro SAN Studio** multi-agent orchestration framework. It is specifically engineered to solve the complexity, risk, and high failure rates associated with enterprise legacy application reverse-engineering and cloud migration.
@@ -294,7 +303,7 @@ The sections below provide a structured, high-level manifest of which files, dir
 | [`registries/generated/`](registries/generated/) | **Declarative Multi-Agent Registry**: HOCON definitions for the 11-agent network (`modernizeai.hocon`) and network discovery manifest (`manifest.hocon`). |
 | [`artifacts/`](artifacts/) | **Synthesized Knowledge Artifacts**: Generated knowledge graph exports (interactive HTML, JSON, GraphML) and generated Markdown intelligence reports. |
 | [`data/insurance_claims_app/`](data/insurance_claims_app/) | **Benchmark Enterprise Dataset**: `ClaimCore v2.4` legacy monolith (Java source, Oracle SQL DDL, architecture spec, adjuster notes). |
-| [`docs/generated/`](docs/generated/) | **ModernizeAI Guides & Specifications**: Architectural deep dive (`MODERNIZE_AI_GUIDE.md`) and benchmark validation inventory (`MODERNIZE_DEMO_DATA_POINTS.md`). |
+| [`docs/generated/`](docs/generated/) | **ModernizeAI Guides & Specifications**: Architectural deep dive (`MODERNIZE_AI_GUIDE.md`), benchmark validation inventory (`MODERNIZE_DEMO_DATA_POINTS.md`), and the current, accurate build status (`MODERNIZE_PROGRESS_AND_ROADMAP.md`). |
 | [`scripts/`](scripts/) | **CLI Automation**: Standalone CLI runner script (`run_modernize_cli.py`) for terminal workflows and headless CI/CD execution. |
 | [`tests/coded_tools/modernize/`](tests/coded_tools/modernize/) | **Unit Test Suite**: ModernizeAI test harness (`test_modernize_fabric.py`) validating parsers, memory tiers, graph algorithms, and reports. |
 
@@ -389,6 +398,7 @@ ModernizeAI includes an out-of-the-box legacy enterprise benchmark application (
 
 * [`docs/generated/MODERNIZE_AI_GUIDE.md`](docs/generated/MODERNIZE_AI_GUIDE.md): Complete architecture specification, 11-agent breakdown, 5-tier memory guide, and deployment handbook.
 * [`docs/generated/MODERNIZE_DEMO_DATA_POINTS.md`](docs/generated/MODERNIZE_DEMO_DATA_POINTS.md): Data inventory, graph nodes/edges metrics, and benchmark validation points.
+* [`docs/generated/MODERNIZE_PROGRESS_AND_ROADMAP.md`](docs/generated/MODERNIZE_PROGRESS_AND_ROADMAP.md): **Start here for current status.** What's actually built and verified vs. what the two docs above describe as the original prototype, plus the roadmap ahead.
 
 ---
 

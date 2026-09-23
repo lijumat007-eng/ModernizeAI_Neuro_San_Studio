@@ -70,3 +70,9 @@ fastapi>=0.115.0
 uvicorn>=0.30.0
 pydantic>=2.7.0
 
+# ModernizeAI multi-language parsers: real grammars instead of regex
+# (Java, C#, C, C++ via tree-sitter; all SQL dialects via sqlglot)
+tree-sitter>=0.23.0
+tree-sitter-language-pack>=0.20.0
+sqlglot>=25.0.0
+

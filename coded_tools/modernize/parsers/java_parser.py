@@ -1,136 +1,90 @@
 # Copyright © 2025-2026 Cognizant Technology Solutions Corp, www.cognizant.com.
 """
-Deterministic Java AST & Regex Parser.
-Extracts classes, methods, imports, inter-service calls, and embedded SQL queries.
+Backward-compatible shim over the real tree-sitter Java parser
+(coded_tools.modernize.parsers.lang.java.JavaParser).
+
+Existing callers (RulesExtractor, KnowledgeGraphTool, MemoryManagerTool, the
+test suite) call `JavaParser.parse_file(path, content)` and expect a single
+flat dict describing "the" class in the file. The new parser is IR-based and
+handles multiple/nested top-level types per file, so this shim picks the
+first top-level type as "the class" (matching the old regex parser's
+behavior) and flattens the IR back into the legacy shape.
+
+New code should prefer `coded_tools.modernize.parsers.pipeline.parse_repository`
+and the richer IR directly; this module exists only to avoid a breaking
+rewrite of every call site in one step.
 """
 
 import os
-import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
+
+from coded_tools.modernize.parsers.lang.java import JavaParser as _TreeSitterJavaParser
+
+_PARSER = _TreeSitterJavaParser()
 
 
 class JavaParser:
-    """
-    Deterministic parser for legacy Java source code files.
-    """
+    """Legacy-shaped facade over the tree-sitter-backed Java parser."""
 
     @staticmethod
     def parse_file(file_path: str, content: str) -> Dict[str, Any]:
-        lines = content.splitlines()
+        result = _PARSER.parse(file_path, content)
         rel_path = file_path.replace("\\", "/")
 
-        # 1. Package
-        package_match = re.search(r"^\s*package\s+([a-zA-Z0-9_.]+);", content, re.MULTILINE)
-        package = package_match.group(1) if package_match else ""
+        top_level = [s for s in result.symbols if s.parent is None and s.kind in ("CLASS", "INTERFACE", "ENUM", "RECORD")]
+        package = top_level[0].qualified_name.rsplit("." + top_level[0].name, 1)[0] if top_level and "." in top_level[0].qualified_name else ""
+        main_class = top_level[0] if top_level else None
+        class_name = main_class.name if main_class else os.path.basename(file_path).replace(".java", "")
+        class_qname = main_class.qualified_name if main_class else class_name
 
-        # 2. Imports
-        imports = re.findall(r"^\s*import\s+([a-zA-Z0-9_.*]+);", content, re.MULTILINE)
+        imports = [r.target_name for r in result.references if r.kind == "IMPORTS"]
 
-        # 3. Class name and line range
-        class_match = re.search(
-            r"^\s*(?:public\s+|abstract\s+|final\s+)*class\s+([A-Za-z0-9_]+)",
-            content,
-            re.MULTILINE,
-        )
-        class_name = class_match.group(1) if class_match else os.path.basename(file_path).replace(".java", "")
-        
-        class_start = 1
-        if class_match:
-            class_start = content[: class_match.start()].count("\n") + 1
-        class_end = len(lines)
-
-        # 4. Fields
-        fields = []
-        field_pattern = re.compile(
-            r"^\s*(?:private|protected|public)?\s+(?:static\s+|final\s+)*([A-Za-z0-9_<>]+)\s+([A-Za-z0-9_]+)\s*(?:=.*?)?;",
-            re.MULTILINE,
-        )
-        for m in field_pattern.finditer(content):
-            f_type, f_name = m.groups()
-            line_no = content[: m.start()].count("\n") + 1
-            if f_name not in ("class", "return"):
-                fields.append({
-                    "name": f_name,
-                    "type": f_type,
-                    "line": line_no,
-                })
-
-        # 5. Methods
-        methods = []
-        method_pattern = re.compile(
-            r"^\s*(?:public|protected|private)?\s*(?:static\s+|final\s+)*([A-Za-z0-9_<>]+)\s+([A-Za-z0-9_]+)\s*\(([^)]*)\)\s*(?:throws\s+[A-Za-z0-9_,\s]+)?\s*\{",
-            re.MULTILINE,
-        )
-        for m in method_pattern.finditer(content):
-            ret_type, m_name, params = m.groups()
-            line_no = content[: m.start()].count("\n") + 1
-            if m_name not in ("if", "while", "switch", "for", "catch"):
-                methods.append({
-                    "name": m_name,
-                    "return_type": ret_type,
-                    "parameters": params.strip(),
-                    "line": line_no,
-                })
-
-        # 6. Embedded SQL detection
-        sql_statements = []
-        sql_pattern = re.compile(
-            r'"\s*(SELECT|INSERT|UPDATE|DELETE|\{call)\s+([^"]+)"',
-            re.IGNORECASE | re.DOTALL,
-        )
-        for m in sql_pattern.finditer(content):
-            verb = m.group(1).upper()
-            full_sql = m.group(0).strip('"')
-            line_no = content[: m.start()].count("\n") + 1
-            
-            # Extract target table name
-            table_match = re.search(r"(?:FROM|INTO|UPDATE|call)\s+([A-Za-z0-9_]+)", full_sql, re.IGNORECASE)
-            table_name = table_match.group(1).upper() if table_match else "UNKNOWN"
-
-            sql_statements.append({
-                "verb": verb,
-                "table": table_name,
-                "sql": full_sql.replace("\n", " ").strip(),
-                "line": line_no,
-            })
-
-        # 7. Inter-service and component calls and instantiation
-        service_calls = []
-        instantiation_pattern = re.compile(
-            r"new\s+([A-Za-z0-9_]+(?:Service|ValidationService|Controller|Repository|Dao|Manager|Handler|Client|Processor))\s*\(",
-            re.MULTILINE,
-        )
-        for m in instantiation_pattern.finditer(content):
-            called_service = m.group(1)
-            line_no = content[: m.start()].count("\n") + 1
-            service_calls.append({
-                "target_service": called_service,
-                "call_type": "INSTANTIATION",
-                "line": line_no,
-            })
-
-        method_call_pattern = re.compile(
-            r"([A-Za-z0-9_]+(?:Service|Controller|Repository|Dao|Manager|Handler|Client|Processor))\.[a-zA-Z0-9_]+\(",
-            re.MULTILINE,
-        )
-        for m in method_call_pattern.finditer(content):
-            target_srv = m.group(1)
-            line_no = content[: m.start()].count("\n") + 1
-            service_calls.append({
-                "target_service": target_srv,
-                "call_type": "INVOCATION",
-                "line": line_no,
-            })
+        fields = [
+            {"name": s.name, "type": s.return_type, "line": s.line_start}
+            for s in result.symbols
+            if s.kind == "FIELD" and s.parent == class_qname
+        ]
+        methods = [
+            {
+                "name": s.name,
+                "return_type": s.return_type,
+                "parameters": s.signature.split("(", 1)[-1].rstrip(")") if s.signature else "",
+                "line": s.line_start,
+            }
+            for s in result.symbols
+            if s.kind == "METHOD" and s.parent == class_qname
+        ]
+        sql_statements = [
+            {
+                "verb": sql.verb,
+                "table": sql.tables[0] if sql.tables else "UNKNOWN",
+                "tables": sql.tables,
+                "sql": sql.snippet,
+                "line": sql.line,
+            }
+            for sql in result.sql_accesses
+        ]
+        service_calls = [
+            {
+                "target_service": ref.target_name,
+                "call_type": "INSTANTIATION" if ref.kind == "INSTANTIATES" else "INVOCATION",
+                "line": ref.line,
+            }
+            for ref in result.references
+            if ref.kind in ("CALLS", "INSTANTIATES")
+        ]
 
         return {
             "class_name": class_name,
             "package": package,
             "file_path": rel_path,
-            "start_line": class_start,
-            "end_line": class_end,
+            "start_line": main_class.line_start if main_class else 1,
+            "end_line": main_class.line_end if main_class else len(content.splitlines()),
             "imports": imports,
             "fields": fields,
             "methods": methods,
             "sql_statements": sql_statements,
             "service_calls": service_calls,
+            "parse_coverage": result.parse_coverage,
+            "diagnostics": [d.to_dict() for d in result.diagnostics],
         }

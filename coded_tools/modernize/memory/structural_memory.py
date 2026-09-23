@@ -18,6 +18,14 @@ class StructuralMemory:
         self.procedures: Dict[str, Dict[str, Any]] = {}
         self.endpoints: Dict[str, Dict[str, Any]] = {}
 
+        # Generic multi-language IR stores (coded_tools.modernize.parsers.ir),
+        # populated by the parser pipeline for any language (Java, C#, SQL,
+        # COBOL, C/C++, ...). The typed dict stores above are kept as a
+        # Java/SQL-shaped convenience view for existing callers.
+        self.symbols: Dict[str, Dict[str, Any]] = {}
+        self.references: List[Dict[str, Any]] = []
+        self.ir_endpoints: List[Dict[str, Any]] = []
+
     def register_class(
         self,
         class_name: str,
@@ -105,6 +113,20 @@ class StructuralMemory:
             "end_line": end_line,
         }
 
+    def register_symbol(self, symbol_dict: Dict[str, Any]) -> None:
+        """Registers one IR Symbol (see parsers/ir.py) by its qualified_name."""
+        self.symbols[symbol_dict["qualified_name"]] = symbol_dict
+
+    def register_reference(self, reference_dict: Dict[str, Any]) -> None:
+        """Records one IR Reference (see parsers/ir.py), post-linking."""
+        self.references.append(reference_dict)
+
+    def register_ir_endpoint(self, endpoint_dict: Dict[str, Any]) -> None:
+        self.ir_endpoints.append(endpoint_dict)
+
+    def get_symbol(self, qualified_name: str) -> Optional[Dict[str, Any]]:
+        return self.symbols.get(qualified_name)
+
     def get_class(self, name: str) -> Optional[Dict[str, Any]]:
         if name in self.classes:
             return self.classes[name]
@@ -125,4 +147,7 @@ class StructuralMemory:
             "tables": self.tables,
             "procedures": self.procedures,
             "endpoints": self.endpoints,
+            "symbols": self.symbols,
+            "references": self.references,
+            "ir_endpoints": self.ir_endpoints,
         }

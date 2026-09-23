@@ -109,6 +109,7 @@ class SqlAccess:
     snippet: str
     owner_symbol: Optional[str] = None  # qualified_name of the enclosing method/procedure
     confidence: float = 1.0
+    locking: bool = False  # true for a pessimistic lock, e.g. `SELECT ... FOR UPDATE`
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -119,6 +120,7 @@ class SqlAccess:
             "snippet": self.snippet,
             "owner_symbol": self.owner_symbol,
             "confidence": self.confidence,
+            "locking": self.locking,
         }
 
 

@@ -49,6 +49,13 @@ class ParserRegistry:
         except ImportError:
             pass
 
+        try:
+            from coded_tools.modernize.parsers.lang.sql import SqlParser
+
+            self.register(SqlParser())
+        except ImportError:
+            pass
+
     def register(self, parser: LanguageParser) -> None:
         for ext in parser.extensions:
             self._by_extension[ext.lower()] = parser

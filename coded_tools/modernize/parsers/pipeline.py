@@ -9,9 +9,40 @@ directly and re-implementing ingestion/registration itself.
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
-from coded_tools.modernize.parsers.ir import ParseResult
+from coded_tools.modernize.parsers.ir import ParseResult, Reference
 from coded_tools.modernize.parsers.linker import Linker
 from coded_tools.modernize.parsers.registry import ParserRegistry, get_default_registry
+
+_SQL_VERB_TO_EDGE_KIND = {
+    "SELECT": "READS_FROM",
+    "INSERT": "WRITES_TO",
+    "UPDATE": "WRITES_TO",
+    "DELETE": "WRITES_TO",
+    "MERGE": "WRITES_TO",
+    "CALL": "EXECUTES",
+    "EXEC": "EXECUTES",
+    "EXECUTE": "EXECUTES",
+}
+
+
+def _sql_accesses_to_references(result: ParseResult) -> List[Reference]:
+    """Embedded SQL found inside host-language code (Java/C#/C/C++ string
+    literals) only ever produces a SqlAccess, never a Reference - unlike a
+    native .sql file's own procedure body, which the SQL parser already turns
+    into References directly. This bridges the two so GraphBuilder sees table
+    lineage the same way regardless of which language it came from."""
+    derived = []
+    for access in result.sql_accesses:
+        edge_kind = _SQL_VERB_TO_EDGE_KIND.get(access.verb)
+        if edge_kind is None or not access.owner_symbol:
+            continue
+        for table in access.tables:
+            derived.append(Reference(
+                from_symbol=access.owner_symbol, target_name=table, kind=edge_kind,
+                file_path=access.file_path, line=access.line, evidence=access.snippet,
+                confidence=access.confidence, resolved_target=table,  # a bare table name IS its own canonical id
+            ))
+    return derived
 
 
 @dataclass
@@ -55,8 +86,13 @@ def parse_repository(fabric, registry: ParserRegistry = None) -> ParseReport:
     report = ParseReport()
     results: List[ParseResult] = []
 
-    for path, rec in fabric.raw._files.items():
+    for rec in fabric.raw._files.values():
         report.files_seen += 1
+        # Use the record's own clean rel_path, not the RawMemory dict key: a
+        # source-qualified record's key is "<source_id>::<rel_path>" (see
+        # raw_memory.py), and using that compound key as the file path would
+        # leak into every Symbol/Reference's file_path/source_file provenance.
+        path = rec.rel_path
         content = rec.get_lines(1, rec.line_count)
         result = registry.parse_file(path, content)
         if result is None:
@@ -76,7 +112,9 @@ def parse_repository(fabric, registry: ParserRegistry = None) -> ParseReport:
             fabric.structural.register_symbol(symbol.to_dict())
         for endpoint in result.endpoints:
             fabric.structural.register_ir_endpoint(endpoint.to_dict())
-        for ref in result.references:
+
+        all_refs = list(result.references) + _sql_accesses_to_references(result)
+        for ref in all_refs:
             fabric.structural.register_reference(ref.to_dict())
             if ref.kind == "IMPORTS":
                 continue  # a statement of intent, not a resolvable link target

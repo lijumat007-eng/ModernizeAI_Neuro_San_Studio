@@ -76,3 +76,14 @@ tree-sitter>=0.23.0
 tree-sitter-language-pack>=0.20.0
 sqlglot>=25.0.0
 
+# ModernizeAI multi-source ingestion: Git (subprocess, no extra dep), S3,
+# SSH/SFTP, Office documents. botocore is pinned to satisfy aiobotocore's
+# existing constraint above (<1.43.57) - bump both together if that changes.
+boto3>=1.43.3,<1.43.100
+botocore>=1.43.3,<1.43.57
+paramiko>=3.4.0
+python-docx>=1.1.0
+
+# For mocking S3 in the source-connector test suite; not used in deployment
+moto[s3]>=5.0.0
+

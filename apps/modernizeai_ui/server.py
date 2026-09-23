@@ -25,9 +25,13 @@ for p in (WORKSPACE_ROOT, CODED_TOOLS_DIR):
 from coded_tools.modernize.advisor.modernization_scoring import ModernizationScoring
 from coded_tools.modernize.graph.algorithms import GraphAlgorithms
 from coded_tools.modernize.graph.knowledge_graph_tool import KnowledgeGraphTool, get_knowledge_graph
+from coded_tools.modernize.graph.store import SqliteGraphStore
 from coded_tools.modernize.memory.memory_manager_tool import MemoryManagerTool, get_memory_fabric
 from coded_tools.modernize.qa.provenance_validator import ProvenanceValidator
 from coded_tools.modernize.reports.report_generator import ReportGenerator
+from coded_tools.modernize.sources.models import Project, ProjectStore, Source
+from coded_tools.modernize.sources.registry import supported_types
+from coded_tools.modernize.sources.scanner import ProjectScanner
 from coded_tools.modernize.swarm_coordinator import ModernizeSwarmCoordinator
 
 app = FastAPI(title="ModernizeAI Knowledge Fabric", version="1.0.0")
@@ -55,6 +59,15 @@ app.mount("/artifacts", StaticFiles(directory=ARTIFACTS_DIR), name="artifacts")
 # Global coordinator instance
 coordinator = ModernizeSwarmCoordinator()
 
+# Multi-source project layer (see coded_tools/modernize/sources/). Kept
+# alongside the single-repo demo endpoints below rather than replacing them,
+# so the existing dashboard keeps working while a Sources-panel UI for this
+# is built out.
+PROJECTS_ROOT = os.path.join(WORKSPACE_ROOT, "projects")
+project_store = ProjectStore(root_dir=PROJECTS_ROOT)
+graph_store = SqliteGraphStore(root_dir=PROJECTS_ROOT)
+project_scanner = ProjectScanner(project_store=project_store, graph_store=graph_store)
+
 
 import subprocess
 import shutil
@@ -76,6 +89,22 @@ class QueryRequest(BaseModel):
 class BlastRadiusRequest(BaseModel):
     target_entity: str
     max_depth: Optional[int] = 2
+
+
+class CreateProjectRequest(BaseModel):
+    name: str
+
+
+class AddSourceRequest(BaseModel):
+    source_id: str
+    type: str
+    config: Dict[str, Any] = {}
+    credential_ref: Optional[str] = None
+    db_alias: Optional[str] = None
+
+
+class ScanRequestV2(BaseModel):
+    force_full: bool = False
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -355,6 +384,129 @@ async def get_artifact_content(artifact_name: str):
         content = f.read()
 
     return {"artifact_name": artifact_name, "content": content}
+
+
+### ------------------------------------------------------------------- ###
+### Multi-source Project API (coded_tools/modernize/sources/)
+###
+### Unlike /api/scan above, scanning a Source here never clears anyone
+### else's contribution: each Source owns only the graph nodes whose id it
+### qualifies, and rescanning it removes and rebuilds just those (see
+### GraphBuilder.remove_source_nodes). Several projects can coexist, each
+### persisted to its own SQLite-backed graph store under `projects/<name>/`.
+### ------------------------------------------------------------------- ###
+
+
+@app.get("/api/source_types")
+async def list_source_types():
+    return {"types": supported_types()}
+
+
+@app.get("/api/projects")
+async def list_projects():
+    return {"projects": project_store.list_projects()}
+
+
+@app.post("/api/projects")
+async def create_project(req: CreateProjectRequest):
+    try:
+        project = project_store.create(req.name)
+    except ValueError as e:
+        return JSONResponse({"error": str(e)}, status_code=409)
+    return project.to_dict()
+
+
+@app.get("/api/projects/{project_name}")
+async def get_project(project_name: str):
+    try:
+        project = project_store.load(project_name)
+    except FileNotFoundError:
+        return JSONResponse({"error": f"Project '{project_name}' not found"}, status_code=404)
+    return project.to_dict()
+
+
+@app.delete("/api/projects/{project_name}")
+async def delete_project(project_name: str):
+    if not project_store.exists(project_name):
+        return JSONResponse({"error": f"Project '{project_name}' not found"}, status_code=404)
+    project_store.delete(project_name)
+    graph_store.delete(project_name)
+    return {"status": "deleted", "project_name": project_name}
+
+
+@app.post("/api/projects/{project_name}/sources")
+async def add_source(project_name: str, req: AddSourceRequest):
+    try:
+        project = project_store.load(project_name)
+    except FileNotFoundError:
+        return JSONResponse({"error": f"Project '{project_name}' not found"}, status_code=404)
+    try:
+        project.add_source(Source(
+            source_id=req.source_id, type=req.type, config=req.config,
+            credential_ref=req.credential_ref, db_alias=req.db_alias,
+        ))
+    except ValueError as e:
+        return JSONResponse({"error": str(e)}, status_code=409)
+    project_store.save(project)
+    return project.to_dict()
+
+
+@app.delete("/api/projects/{project_name}/sources/{source_id}")
+async def remove_source(project_name: str, source_id: str):
+    try:
+        project = project_store.load(project_name)
+    except FileNotFoundError:
+        return JSONResponse({"error": f"Project '{project_name}' not found"}, status_code=404)
+    if not project.remove_source(source_id):
+        return JSONResponse({"error": f"Source '{source_id}' not found"}, status_code=404)
+    project_store.save(project)
+    # The source's own nodes are pruned on the next full graph rebuild rather
+    # than here, so removing a source is instant and the graph stays
+    # consistent with whatever the last successful scan produced.
+    return project.to_dict()
+
+
+@app.post("/api/projects/{project_name}/sources/{source_id}/test")
+async def test_source(project_name: str, source_id: str):
+    result = project_scanner.test_source(project_name, source_id)
+    return {"ok": result.ok, "message": result.message, "details": result.details}
+
+
+@app.post("/api/projects/{project_name}/sources/{source_id}/scan")
+async def scan_one_source(project_name: str, source_id: str, req: ScanRequestV2 = ScanRequestV2()):
+    try:
+        result = project_scanner.scan_source(project_name, source_id, force_full=req.force_full)
+    except ValueError as e:
+        return JSONResponse({"error": str(e)}, status_code=404)
+    return result.to_dict()
+
+
+@app.post("/api/projects/{project_name}/scan")
+async def scan_all_sources(project_name: str, req: ScanRequestV2 = ScanRequestV2()):
+    if not project_store.exists(project_name):
+        return JSONResponse({"error": f"Project '{project_name}' not found"}, status_code=404)
+    results = project_scanner.scan_all(project_name, force_full=req.force_full)
+    return {source_id: r.to_dict() for source_id, r in results.items()}
+
+
+@app.get("/api/projects/{project_name}/graph")
+async def get_project_graph(project_name: str):
+    if not graph_store.exists(project_name):
+        return {"total_nodes": 0, "total_edges": 0, "node_types": []}
+    kg = graph_store.load(project_name)
+    return {
+        "total_nodes": kg.graph.number_of_nodes(),
+        "total_edges": kg.graph.number_of_edges(),
+        "node_types": sorted(set(d.get("node_type") for _, d in kg.graph.nodes(data=True))),
+    }
+
+
+@app.get("/api/projects/{project_name}/graph/export")
+async def export_project_graph(project_name: str):
+    if not graph_store.exists(project_name):
+        return JSONResponse({"error": f"Project '{project_name}' has no graph yet"}, status_code=404)
+    kg = graph_store.load(project_name)
+    return kg.to_json_dict()
 
 
 def run_server(port: int = 8000):

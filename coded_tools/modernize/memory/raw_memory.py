@@ -15,7 +15,10 @@ by bare `rel_path`, exactly as before.
 
 import hashlib
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
 
 
 class RawFileRecord:
@@ -93,8 +96,12 @@ class RawMemory:
         Used by the multi-source project scanner; `ingest_file`/`ingest_directory`
         remain the single-source entry points used by every existing tool."""
         return self.ingest_file(
-            rel_path=doc.path, abs_path=doc.uri or doc.path, content=doc.content,
-            source_id=source_id, source_type=source_type, uri=doc.uri,
+            rel_path=doc.path,
+            abs_path=doc.uri or doc.path,
+            content=doc.content,
+            source_id=source_id,
+            source_type=source_type,
+            uri=doc.uri,
         )
 
     def ingest_directory(self, root_dir: str, extensions: Optional[List[str]] = None) -> List[RawFileRecord]:

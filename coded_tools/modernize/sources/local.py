@@ -9,14 +9,30 @@ sit under `data/`.
 import fnmatch
 import hashlib
 import os
-from typing import List, Optional, Tuple
+from typing import List
+from typing import Optional
+from typing import Tuple
 
 from coded_tools.modernize.parsers.registry import get_default_registry
-from coded_tools.modernize.sources.base import ConnectionTestResult, SourceConnector, SourceDocument
+from coded_tools.modernize.sources.base import ConnectionTestResult
+from coded_tools.modernize.sources.base import SourceConnector
+from coded_tools.modernize.sources.base import SourceDocument
 
 _DEFAULT_EXCLUDES = (
-    ".git", ".svn", ".hg", "__pycache__", "node_modules", ".venv", "venv",
-    "bin", "obj", "target", "build", "dist", ".idea", ".vscode",
+    ".git",
+    ".svn",
+    ".hg",
+    "__pycache__",
+    "node_modules",
+    ".venv",
+    "venv",
+    "bin",
+    "obj",
+    "target",
+    "build",
+    "dist",
+    ".idea",
+    ".vscode",
 )
 _DOC_EXTENSIONS = (".md", ".txt", ".rst")
 _MAX_FILE_BYTES = 5 * 1024 * 1024  # 5 MB: skip binaries/generated blobs that slipped past the extension filter
@@ -93,13 +109,15 @@ class LocalConnector(SourceConnector):
                 except OSError:
                     continue
 
-                documents.append(SourceDocument(
-                    path=rel_path,
-                    content=content,
-                    kind="doc" if ext in _DOC_EXTENSIONS else "file",
-                    uri=f"file://{abs_path.replace(os.sep, '/')}",
-                    metadata={"mtime": stat.st_mtime, "size": stat.st_size},
-                ))
+                documents.append(
+                    SourceDocument(
+                        path=rel_path,
+                        content=content,
+                        kind="doc" if ext in _DOC_EXTENSIONS else "file",
+                        uri=f"file://{abs_path.replace(os.sep, '/')}",
+                        metadata={"mtime": stat.st_mtime, "size": stat.st_size},
+                    )
+                )
                 fingerprint_parts.append(f"{rel_path}:{stat.st_mtime}:{stat.st_size}")
 
         fingerprint = hashlib.sha256("\n".join(sorted(fingerprint_parts)).encode("utf-8")).hexdigest()

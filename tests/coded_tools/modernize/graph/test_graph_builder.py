@@ -49,12 +49,13 @@ def _build_fabric(files: dict) -> MemoryFabric:
 
 
 class TestGraphBuilderBasics(unittest.TestCase):
-
     def setUp(self):
-        self.fabric = _build_fabric({
-            "OrderService.java": JAVA_SOURCE,
-            "PaymentGateway.java": GATEWAY_SOURCE,
-        })
+        self.fabric = _build_fabric(
+            {
+                "OrderService.java": JAVA_SOURCE,
+                "PaymentGateway.java": GATEWAY_SOURCE,
+            }
+        )
         parse_repository(self.fabric)
         self.kg = KnowledgeGraphEngine()
         self.stats = GraphBuilder.build(self.kg, self.fabric, source_id="repoA")
@@ -65,7 +66,9 @@ class TestGraphBuilderBasics(unittest.TestCase):
 
     def test_repeated_calls_merge_into_one_weighted_edge(self):
         edge = self.kg.graph.get_edge_data(
-            "repoA::com.acme.OrderService", "repoA::com.acme.PaymentGateway", key="CALLS",
+            "repoA::com.acme.OrderService",
+            "repoA::com.acme.PaymentGateway",
+            key="CALLS",
         )
         self.assertIsNotNone(edge)
         self.assertEqual(edge["weight"], 2)  # gateway.charge() called twice

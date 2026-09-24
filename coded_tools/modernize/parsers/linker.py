@@ -20,9 +20,11 @@ Resolution rules, in order:
      genuinely outside the scanned repo), confidence unchanged, `external=True`.
 """
 
-from typing import Dict, List
+from typing import Dict
+from typing import List
 
-from coded_tools.modernize.parsers.ir import ParseResult, Symbol
+from coded_tools.modernize.parsers.ir import ParseResult
+from coded_tools.modernize.parsers.ir import Symbol
 
 # Symbol kinds that can be the *target* of a CALLS/INSTANTIATES/INHERITS/IMPLEMENTS
 # reference. Fields, methods, and parameters are never link targets themselves.

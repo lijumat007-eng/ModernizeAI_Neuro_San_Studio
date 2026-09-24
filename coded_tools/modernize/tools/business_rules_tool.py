@@ -5,9 +5,12 @@ Dynamically extracts, formalizes, and catalogs enterprise business rules from so
 SQL stored procedures, and specifications.
 """
 
-from coded_tools.modernize.tool_base import CodedTool
+from typing import Any
+from typing import Dict
+
 from coded_tools.modernize.memory.memory_manager_tool import get_memory_fabric
 from coded_tools.modernize.parsers.rules_extractor import RulesExtractor
+from coded_tools.modernize.tool_base import CodedTool
 
 
 class BusinessRulesTool(CodedTool):
@@ -30,7 +33,9 @@ class BusinessRulesTool(CodedTool):
                 "status": "success",
                 "total_rules_extracted": len(rules),
                 "rules": rules,
-                "summary": f"Dynamically extracted {len(rules)} business rules from code AST, stored procedures, and specs.",
+                "summary": (
+                    f"Dynamically extracted {len(rules)} business rules from code AST, stored procedures, and specs."
+                ),
             }
 
         elif action == "get_rule":

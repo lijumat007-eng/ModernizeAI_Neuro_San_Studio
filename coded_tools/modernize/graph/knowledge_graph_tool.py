@@ -5,18 +5,19 @@ Builds, queries, traverses, and visualizes the Knowledge Graph Fabric.
 """
 
 import os
-from coded_tools.modernize.tool_base import CodedTool
+from typing import Any
+from typing import Dict
+from typing import Optional
 
 from coded_tools.modernize.graph.algorithms import GraphAlgorithms
 from coded_tools.modernize.graph.graph_engine import KnowledgeGraphEngine
 from coded_tools.modernize.graph.visualizer import GraphVisualizer
 from coded_tools.modernize.memory.memory_manager_tool import get_memory_fabric
 from coded_tools.modernize.parsers.ddl_parser import DdlParser
-from coded_tools.modernize.parsers.doc_parser import DocParser
 from coded_tools.modernize.parsers.java_parser import JavaParser
 from coded_tools.modernize.parsers.rules_extractor import RulesExtractor
 from coded_tools.modernize.qa.provenance_validator import ProvenanceValidator
-
+from coded_tools.modernize.tool_base import CodedTool
 
 # Global graph instance for shared local access
 _GLOBAL_KG = KnowledgeGraphEngine()
@@ -87,7 +88,9 @@ class KnowledgeGraphTool(CodedTool):
                                     line_start=tbl.get("start_line", 1),
                                     line_end=tbl.get("end_line", 1),
                                     extractor="ddl_parser",
-                                    evidence_snippet=f"CREATE TABLE {t_name} with primary key {tbl.get('primary_key')}",
+                                    evidence_snippet=(
+                                        f"CREATE TABLE {t_name} with primary key {tbl.get('primary_key')}"
+                                    ),
                                 )
                                 kg.add_edge(
                                     app_node_id,
@@ -209,7 +212,6 @@ class KnowledgeGraphTool(CodedTool):
                 src_f = r["source_file"]
                 ls = r["line_start"]
                 le = r["line_end"]
-                impl_class = r.get("method_name", "PolicyValidationService")
 
                 kg.add_node(
                     node_id=r_id,
@@ -259,7 +261,9 @@ class KnowledgeGraphTool(CodedTool):
                         line_start=1,
                         line_end=min(50, rec.line_count),
                         extractor="doc_parser",
-                        evidence_snippet=f"SME interview and operational tribal knowledge notes ({rec.line_count} lines).",
+                        evidence_snippet=(
+                            f"SME interview and operational tribal knowledge notes ({rec.line_count} lines)."
+                        ),
                     )
 
             # 8. Dynamically Detect Architectural Risks and Discrepancies
@@ -309,13 +313,13 @@ class KnowledgeGraphTool(CodedTool):
                     for n in kg.graph.nodes():
                         if n.lower() in s["content"].lower():
                             seeds.append(n)
-            
+
             if not seeds:
                 seeds = ["ClaimService", "POLICY_MASTER"]
 
             # 3. Compute Personalized PageRank
             ppr_scores = GraphAlgorithms.personalized_pagerank(kg.graph, seeds)
-            
+
             # 4. Hybrid Reciprocal Rank Fusion
             hybrid_context = GraphAlgorithms.hybrid_rrf_retrieval(sem_results, ppr_scores, kg.graph, top_n=6)
             return {

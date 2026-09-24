@@ -17,7 +17,8 @@ import unittest
 sys.path.insert(0, os.path.abspath("."))
 
 from coded_tools.modernize.graph.store import SqliteGraphStore
-from coded_tools.modernize.sources.models import ProjectStore, Source
+from coded_tools.modernize.sources.models import ProjectStore
+from coded_tools.modernize.sources.models import Source
 from coded_tools.modernize.sources.scanner import ProjectScanner
 
 JAVA_A = "package com.a;\npublic class Foo { void m() { new Bar(); } }\n"
@@ -26,7 +27,6 @@ JAVA_B = "package com.b;\npublic class Baz { }\n"
 
 
 class TestProjectScanner(unittest.TestCase):
-
     def setUp(self):
         self.tmp_dir = tempfile.mkdtemp(prefix="modernize_scanner_")
         self.repo_a_dir = os.path.join(self.tmp_dir, "repo_a")

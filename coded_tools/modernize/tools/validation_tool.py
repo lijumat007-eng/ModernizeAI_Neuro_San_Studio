@@ -5,10 +5,13 @@ Verifies source line citations, checks SHA-256 integrity, and algorithmically fl
 cross-artifact discrepancies between documentation, code, and SME notes.
 """
 
-from coded_tools.modernize.tool_base import CodedTool
+from typing import Any
+from typing import Dict
+
 from coded_tools.modernize.graph.knowledge_graph_tool import get_knowledge_graph
 from coded_tools.modernize.memory.memory_manager_tool import get_memory_fabric
 from coded_tools.modernize.qa.provenance_validator import ProvenanceValidator
+from coded_tools.modernize.tool_base import CodedTool
 
 
 class ValidationTool(CodedTool):
@@ -80,7 +83,10 @@ class ValidationTool(CodedTool):
 
         return {
             "status": "error",
-            "message": f"Unknown action: {action}. Supported actions: detect_discrepancies, verify_provenance, validate_knowledge_fabric",
+            "message": (
+                f"Unknown action: {action}. Supported actions: "
+                "detect_discrepancies, verify_provenance, validate_knowledge_fabric"
+            ),
         }
 
     async def async_invoke(self, args: Dict[str, Any], sly_data: Dict[str, Any]) -> Any:

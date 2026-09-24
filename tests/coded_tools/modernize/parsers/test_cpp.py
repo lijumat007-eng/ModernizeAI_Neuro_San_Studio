@@ -15,10 +15,12 @@ import unittest
 
 sys.path.insert(0, os.path.abspath("."))
 
-from coded_tools.modernize.parsers.lang.cpp import CParser, CppParser, simple_type_name
+from coded_tools.modernize.parsers.lang.cpp import CParser
+from coded_tools.modernize.parsers.lang.cpp import CppParser
+from coded_tools.modernize.parsers.lang.cpp import simple_type_name
 from coded_tools.modernize.parsers.registry import ParserRegistry
 
-CPP_SOURCE = '''#include <string>
+CPP_SOURCE = """#include <string>
 #include "PaymentGateway.h"
 
 namespace acme {
@@ -45,9 +47,9 @@ Order OrderService::findOrder(std::string id, bool includeLines) {
 }
 
 }  // namespace acme
-'''
+"""
 
-C_SOURCE = '''#include <stdio.h>
+C_SOURCE = """#include <stdio.h>
 #include "db.h"
 
 struct Order {
@@ -61,11 +63,10 @@ int findOrder(int id) {
     execSql(sql);
     return 0;
 }
-'''
+"""
 
 
 class TestCppParser(unittest.TestCase):
-
     def setUp(self):
         self.result = CppParser().parse("OrderService.cpp", CPP_SOURCE)
 
@@ -85,7 +86,8 @@ class TestCppParser(unittest.TestCase):
 
     def test_out_of_line_method_attached_to_class(self):
         methods = [
-            s for s in self.result.symbols
+            s
+            for s in self.result.symbols
             if s.kind == "METHOD" and s.name == "findOrder" and s.parent == "acme::OrderService"
         ]
         self.assertTrue(methods, "out-of-line Class::method definition must be attached to its class")
@@ -124,7 +126,6 @@ class TestCppParser(unittest.TestCase):
 
 
 class TestCParser(unittest.TestCase):
-
     def setUp(self):
         self.result = CParser().parse("legacy.c", C_SOURCE)
 
@@ -149,7 +150,6 @@ class TestCParser(unittest.TestCase):
 
 
 class TestHeaderSniffing(unittest.TestCase):
-
     def setUp(self):
         self.registry = ParserRegistry()
 
@@ -159,7 +159,8 @@ class TestHeaderSniffing(unittest.TestCase):
 
     def test_cpp_header_dispatches_to_cpp_parser(self):
         parser = self.registry.parser_for(
-            "Gateway.h", "namespace acme {\nclass Gateway {\npublic:\n  void charge();\n};\n}\n",
+            "Gateway.h",
+            "namespace acme {\nclass Gateway {\npublic:\n  void charge();\n};\n}\n",
         )
         self.assertEqual(parser.language, "cpp")
 

@@ -16,16 +16,15 @@ import unittest
 sys.path.insert(0, os.path.abspath("."))
 sys.path.insert(0, os.path.abspath("apps/modernizeai_ui"))
 
+import server  # apps/modernizeai_ui/server.py
 from fastapi.testclient import TestClient
 
-import server  # apps/modernizeai_ui/server.py
 from coded_tools.modernize.graph.store import SqliteGraphStore
 from coded_tools.modernize.sources.models import ProjectStore
 from coded_tools.modernize.sources.scanner import ProjectScanner
 
 
 class TestProjectApi(unittest.TestCase):
-
     def setUp(self):
         self.tmp_dir = tempfile.mkdtemp(prefix="modernize_api_")
         self._orig_project_store = server.project_store
@@ -66,9 +65,14 @@ class TestProjectApi(unittest.TestCase):
 
     def test_add_source_and_scan_it(self):
         self.client.post("/api/projects", json={"name": "demo"})
-        res = self.client.post("/api/projects/demo/sources", json={
-            "source_id": "repoA", "type": "local", "config": {"root_path": self.repo_dir},
-        })
+        res = self.client.post(
+            "/api/projects/demo/sources",
+            json={
+                "source_id": "repoA",
+                "type": "local",
+                "config": {"root_path": self.repo_dir},
+            },
+        )
         self.assertEqual(res.status_code, 200)
         self.assertEqual(len(res.json()["sources"]), 1)
 
@@ -86,12 +90,22 @@ class TestProjectApi(unittest.TestCase):
             f.write("package com.b;\npublic class Bar {}\n")
 
         self.client.post("/api/projects", json={"name": "demo"})
-        self.client.post("/api/projects/demo/sources", json={
-            "source_id": "repoA", "type": "local", "config": {"root_path": self.repo_dir},
-        })
-        self.client.post("/api/projects/demo/sources", json={
-            "source_id": "repoB", "type": "local", "config": {"root_path": second_repo},
-        })
+        self.client.post(
+            "/api/projects/demo/sources",
+            json={
+                "source_id": "repoA",
+                "type": "local",
+                "config": {"root_path": self.repo_dir},
+            },
+        )
+        self.client.post(
+            "/api/projects/demo/sources",
+            json={
+                "source_id": "repoB",
+                "type": "local",
+                "config": {"root_path": second_repo},
+            },
+        )
 
         self.client.post("/api/projects/demo/sources/repoA/scan")
         self.client.post("/api/projects/demo/sources/repoB/scan")
@@ -103,34 +117,54 @@ class TestProjectApi(unittest.TestCase):
 
     def test_scan_all_endpoint(self):
         self.client.post("/api/projects", json={"name": "demo"})
-        self.client.post("/api/projects/demo/sources", json={
-            "source_id": "repoA", "type": "local", "config": {"root_path": self.repo_dir},
-        })
+        self.client.post(
+            "/api/projects/demo/sources",
+            json={
+                "source_id": "repoA",
+                "type": "local",
+                "config": {"root_path": self.repo_dir},
+            },
+        )
         res = self.client.post("/api/projects/demo/scan")
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.json()["repoA"]["status"], "scanned")
 
     def test_test_source_endpoint(self):
         self.client.post("/api/projects", json={"name": "demo"})
-        self.client.post("/api/projects/demo/sources", json={
-            "source_id": "repoA", "type": "local", "config": {"root_path": self.repo_dir},
-        })
+        self.client.post(
+            "/api/projects/demo/sources",
+            json={
+                "source_id": "repoA",
+                "type": "local",
+                "config": {"root_path": self.repo_dir},
+            },
+        )
         res = self.client.post("/api/projects/demo/sources/repoA/test")
         self.assertTrue(res.json()["ok"])
 
     def test_remove_source(self):
         self.client.post("/api/projects", json={"name": "demo"})
-        self.client.post("/api/projects/demo/sources", json={
-            "source_id": "repoA", "type": "local", "config": {"root_path": self.repo_dir},
-        })
+        self.client.post(
+            "/api/projects/demo/sources",
+            json={
+                "source_id": "repoA",
+                "type": "local",
+                "config": {"root_path": self.repo_dir},
+            },
+        )
         res = self.client.delete("/api/projects/demo/sources/repoA")
         self.assertEqual(res.json()["sources"], [])
 
     def test_delete_project_removes_its_graph_too(self):
         self.client.post("/api/projects", json={"name": "demo"})
-        self.client.post("/api/projects/demo/sources", json={
-            "source_id": "repoA", "type": "local", "config": {"root_path": self.repo_dir},
-        })
+        self.client.post(
+            "/api/projects/demo/sources",
+            json={
+                "source_id": "repoA",
+                "type": "local",
+                "config": {"root_path": self.repo_dir},
+            },
+        )
         self.client.post("/api/projects/demo/sources/repoA/scan")
         self.assertTrue(server.graph_store.exists("demo"))
 

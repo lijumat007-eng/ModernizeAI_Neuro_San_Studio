@@ -6,7 +6,11 @@ Maintains nodes, edges, and strict 80/20 evidence metadata.
 
 import json
 import os
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+
 import networkx as nx
 
 
@@ -78,16 +82,18 @@ class KnowledgeGraphEngine:
             raise ValueError(f"Invalid node_type: {node_type}. Must be in {self.NODE_TYPES}")
 
         props = properties or {}
-        props.update({
-            "node_type": node_type,
-            "label": label or node_id,
-            "source_file": source_file.replace("\\", "/"),
-            "line_start": line_start,
-            "line_end": line_end,
-            "confidence": confidence,
-            "extractor": extractor,
-            "evidence_snippet": evidence_snippet,
-        })
+        props.update(
+            {
+                "node_type": node_type,
+                "label": label or node_id,
+                "source_file": source_file.replace("\\", "/"),
+                "line_start": line_start,
+                "line_end": line_end,
+                "confidence": confidence,
+                "extractor": extractor,
+                "evidence_snippet": evidence_snippet,
+            }
+        )
         self.graph.add_node(node_id, **props)
         return node_id
 
@@ -114,15 +120,17 @@ class KnowledgeGraphEngine:
             raise KeyError(f"Target node '{target_id}' does not exist in graph.")
 
         props = properties or {}
-        props.update({
-            "edge_type": edge_type,
-            "source_file": source_file.replace("\\", "/"),
-            "line_start": line_start,
-            "line_end": line_end,
-            "confidence": confidence,
-            "extractor": extractor,
-            "evidence_snippet": evidence_snippet,
-        })
+        props.update(
+            {
+                "edge_type": edge_type,
+                "source_file": source_file.replace("\\", "/"),
+                "line_start": line_start,
+                "line_end": line_end,
+                "confidence": confidence,
+                "extractor": extractor,
+                "evidence_snippet": evidence_snippet,
+            }
+        )
         self.graph.add_edge(source_id, target_id, key=edge_type, **props)
 
     def get_node(self, node_id: str) -> Optional[Dict[str, Any]]:
@@ -138,22 +146,26 @@ class KnowledgeGraphEngine:
         neighbors = []
         if direction in ("out", "both"):
             for _, target, key, data in self.graph.out_edges(node_id, keys=True, data=True):
-                neighbors.append({
-                    "direction": "out",
-                    "edge_type": key,
-                    "target_id": target,
-                    "target_data": dict(self.graph.nodes[target]),
-                    "edge_data": data,
-                })
+                neighbors.append(
+                    {
+                        "direction": "out",
+                        "edge_type": key,
+                        "target_id": target,
+                        "target_data": dict(self.graph.nodes[target]),
+                        "edge_data": data,
+                    }
+                )
         if direction in ("in", "both"):
             for source, _, key, data in self.graph.in_edges(node_id, keys=True, data=True):
-                neighbors.append({
-                    "direction": "in",
-                    "edge_type": key,
-                    "source_id": source,
-                    "source_data": dict(self.graph.nodes[source]),
-                    "edge_data": data,
-                })
+                neighbors.append(
+                    {
+                        "direction": "in",
+                        "edge_type": key,
+                        "source_id": source,
+                        "source_data": dict(self.graph.nodes[source]),
+                        "edge_data": data,
+                    }
+                )
         return neighbors
 
     def to_json_dict(self) -> Dict[str, Any]:
@@ -200,21 +212,20 @@ class KnowledgeGraphEngine:
         """Loads a graph from a previously exported JSON file."""
         if not os.path.exists(input_path):
             raise FileNotFoundError(f"Knowledge graph JSON file not found at {input_path}")
-        
+
         with open(input_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-            
+
         self.graph.clear()
-        
+
         for n in data.get("nodes", []):
             n_copy = n.copy()
             node_id = n_copy.pop("id")
             self.graph.add_node(node_id, **n_copy)
-            
+
         for e in data.get("edges", []):
             e_copy = e.copy()
             u = e_copy.pop("source")
             v = e_copy.pop("target")
             k = e_copy.pop("key", None)
             self.graph.add_edge(u, v, key=k, **e_copy)
-

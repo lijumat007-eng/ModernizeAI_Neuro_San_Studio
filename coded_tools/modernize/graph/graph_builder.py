@@ -21,15 +21,26 @@ placeholder node instead of a crash, since the DDL that truly defines it may
 live in a source that hasn't been scanned yet.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
 
 # Symbol kinds that become their own graph node. Everything else (METHOD,
 # FUNCTION, PARAGRAPH, FIELD, PROPERTY, NAMESPACE, PACKAGE-as-symbol-only-
 # grouping is still included below since packages DO get a node) rolls up to
 # the nearest ancestor of one of these kinds.
 _GRAPH_NODE_KINDS = {
-    "CLASS", "INTERFACE", "STRUCT", "ENUM", "RECORD",
-    "PROGRAM", "TABLE", "VIEW", "PROCEDURE", "TRIGGER",
+    "CLASS",
+    "INTERFACE",
+    "STRUCT",
+    "ENUM",
+    "RECORD",
+    "PROGRAM",
+    "TABLE",
+    "VIEW",
+    "PROCEDURE",
+    "TRIGGER",
 }
 
 # Shared-resource kinds are canonical across sources (a table a Java repo reads
@@ -40,7 +51,10 @@ _GRAPH_NODE_KINDS = {
 _CANONICAL_KINDS = {"TABLE", "VIEW", "PROCEDURE", "TRIGGER"}
 
 _NODE_TYPE_MAP = {
-    "CLASS": "Class", "STRUCT": "Class", "RECORD": "Class", "ENUM": "Class",
+    "CLASS": "Class",
+    "STRUCT": "Class",
+    "RECORD": "Class",
+    "ENUM": "Class",
     "INTERFACE": "Interface",
     "PROGRAM": "Program",
     "TABLE": "DatabaseTable",
@@ -181,9 +195,14 @@ class GraphBuilder:
                 continue
 
             merged = cls._add_or_merge_edge(
-                kg, src_node, target_node, edge_type,
-                file_path=ref.get("file_path", ""), line=ref.get("line", 1),
-                evidence=ref.get("evidence", ""), confidence=confidence,
+                kg,
+                src_node,
+                target_node,
+                edge_type,
+                file_path=ref.get("file_path", ""),
+                line=ref.get("line", 1),
+                evidence=ref.get("evidence", ""),
+                confidence=confidence,
             )
             stats["edges_merged" if merged else "edges_added"] += 1
 
@@ -194,9 +213,14 @@ class GraphBuilder:
         if kg.graph.has_node(table_name):
             return
         kg.add_node(
-            node_id=table_name, node_type="DatabaseTable", label=f"Table: {table_name}",
-            source_file=ref.get("file_path", ""), line_start=ref.get("line", 1), line_end=ref.get("line", 1),
-            confidence=0.5, extractor="inferred_from_reference",
+            node_id=table_name,
+            node_type="DatabaseTable",
+            label=f"Table: {table_name}",
+            source_file=ref.get("file_path", ""),
+            line_start=ref.get("line", 1),
+            line_end=ref.get("line", 1),
+            confidence=0.5,
+            extractor="inferred_from_reference",
             evidence_snippet=f"Referenced via {ref.get('kind')} before its own definition was scanned.",
         )
 
@@ -205,8 +229,11 @@ class GraphBuilder:
         node_id = f"external::{target_name}"
         if not kg.graph.has_node(node_id):
             kg.add_node(
-                node_id=node_id, node_type="External", label=target_name,
-                confidence=0.3, extractor="unresolved_reference",
+                node_id=node_id,
+                node_type="External",
+                label=target_name,
+                confidence=0.3,
+                extractor="unresolved_reference",
                 evidence_snippet=f"Referenced as '{target_name}' but not found among scanned sources "
                 f"(likely a framework/library type, or a source not yet added to this project).",
             )
@@ -214,7 +241,14 @@ class GraphBuilder:
 
     @staticmethod
     def _add_or_merge_edge(
-        kg: Any, src: str, tgt: str, edge_type: str, file_path: str, line: int, evidence: str, confidence: float,
+        kg: Any,
+        src: str,
+        tgt: str,
+        edge_type: str,
+        file_path: str,
+        line: int,
+        evidence: str,
+        confidence: float,
     ) -> bool:
         """Returns True if an existing edge was merged into, False if a new one was created."""
         existing = kg.graph.get_edge_data(src, tgt, key=edge_type)
@@ -225,17 +259,29 @@ class GraphBuilder:
             if entry not in evidence_list:
                 evidence_list.append(entry)
             kg.add_edge(
-                src, tgt, edge_type, source_file=existing.get("source_file", file_path),
-                line_start=existing.get("line_start", line), line_end=line,
+                src,
+                tgt,
+                edge_type,
+                source_file=existing.get("source_file", file_path),
+                line_start=existing.get("line_start", line),
+                line_end=line,
                 confidence=max(existing.get("confidence", confidence), confidence),
-                extractor="graph_builder", evidence_snippet=existing.get("evidence_snippet", evidence)[:200],
+                extractor="graph_builder",
+                evidence_snippet=existing.get("evidence_snippet", evidence)[:200],
                 properties={"weight": weight, "evidence_list": evidence_list[-25:]},
             )
             return True
 
         kg.add_edge(
-            src, tgt, edge_type, source_file=file_path, line_start=line, line_end=line,
-            confidence=confidence, extractor="graph_builder", evidence_snippet=evidence[:200],
+            src,
+            tgt,
+            edge_type,
+            source_file=file_path,
+            line_start=line,
+            line_end=line,
+            confidence=confidence,
+            extractor="graph_builder",
+            evidence_snippet=evidence[:200],
             properties={"weight": 1, "evidence_list": [entry]},
         )
         return False

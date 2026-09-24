@@ -13,7 +13,6 @@ from coded_tools.modernize.sources.local import LocalConnector
 
 
 class TestLocalConnector(unittest.TestCase):
-
     def setUp(self):
         self.tmp_dir = tempfile.mkdtemp(prefix="modernize_local_src_")
         os.makedirs(os.path.join(self.tmp_dir, "src"))

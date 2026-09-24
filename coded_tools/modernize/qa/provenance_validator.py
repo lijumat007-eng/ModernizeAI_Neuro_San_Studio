@@ -7,7 +7,11 @@ and dynamically detects cross-artifact discrepancies between documentation, code
 
 import os
 import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+
 from coded_tools.modernize.memory.memory_manager_tool import MemoryFabric
 
 
@@ -112,24 +116,29 @@ class ProvenanceValidator:
                 }
 
         if evidence_30 and evidence_15:
-            discrepancies.append({
-                "discrepancy_id": "DISC-01",
-                "title": "Grace Period Constraint Conflict (Documentation vs Tribal Reality)",
-                "severity": "HIGH",
-                "component": "PolicyValidationService",
-                "description": (
-                    f"Architecture specification claims a {evidence_30['days']}-day grace period ({evidence_30['file']}:{evidence_30['line']}), "
-                    f"but operational SME notes ({evidence_15['file']}:{evidence_15['line']}) reveal the nightly billing batch job "
-                    f"only enforces a {evidence_15['days']}-day cutoff, prematurely lapsing valid policies."
-                ),
-                "doc_evidence": f"{evidence_30['file']}:{evidence_30['line']} -> \"{evidence_30['snippet']}\"",
-                "tribal_evidence": f"{evidence_15['file']}:{evidence_15['line']} -> \"{evidence_15['snippet']}\"",
-                "code_reality": "PolicyValidationService.java:27 -> delegates status to database flag 'GRACE_PERIOD'",
-                "recommendation": (
-                    "Reconcile underwriting contract terms with the billing batch schedule. "
-                    "In the target cloud microservice, implement a deterministic policy expiration saga."
-                ),
-            })
+            discrepancies.append(
+                {
+                    "discrepancy_id": "DISC-01",
+                    "title": "Grace Period Constraint Conflict (Documentation vs Tribal Reality)",
+                    "severity": "HIGH",
+                    "component": "PolicyValidationService",
+                    "description": (
+                        f"Architecture specification claims a {evidence_30['days']}-day grace period "
+                        f"({evidence_30['file']}:{evidence_30['line']}), but operational SME notes "
+                        f"({evidence_15['file']}:{evidence_15['line']}) reveal the nightly billing batch job "
+                        f"only enforces a {evidence_15['days']}-day cutoff, prematurely lapsing valid policies."
+                    ),
+                    "doc_evidence": f'{evidence_30["file"]}:{evidence_30["line"]} -> "{evidence_30["snippet"]}"',
+                    "tribal_evidence": f'{evidence_15["file"]}:{evidence_15["line"]} -> "{evidence_15["snippet"]}"',
+                    "code_reality": (
+                        "PolicyValidationService.java:27 -> delegates status to database flag 'GRACE_PERIOD'"
+                    ),
+                    "recommendation": (
+                        "Reconcile underwriting contract terms with the billing batch schedule. "
+                        "In the target cloud microservice, implement a deterministic policy expiration saga."
+                    ),
+                }
+            )
 
         # 2. Database Row Locking Contention Risk
         sp_rec = next((r for p, r in fabric.raw._files.items() if "process_claim_sp.sql" in p), None)
@@ -137,18 +146,24 @@ class ProvenanceValidator:
             sp_content = sp_rec.get_lines(1, sp_rec.line_count)
             if "FOR UPDATE" in sp_content.upper():
                 m_line = sp_content[: sp_content.upper().find("FOR UPDATE")].count("\n") + 1
-                discrepancies.append({
-                    "discrepancy_id": "DISC-02",
-                    "title": "Pessimistic Row Locking in High-Volume Adjudication Procedure",
-                    "severity": "CRITICAL",
-                    "component": "SP_PROCESS_CLAIM",
-                    "description": (
-                        "SP_PROCESS_CLAIM executes 'SELECT ... FOR UPDATE' on POLICY_MASTER rows. "
-                        "During claim surges, this creates blocking database locks across concurrent customer requests."
-                    ),
-                    "code_evidence": f"{sp_rec.rel_path}:{m_line} -> SELECT ... FOR UPDATE",
-                    "recommendation": "Retire stored procedure; replace with optimistic concurrency or an asynchronous distributed Outbox saga.",
-                })
+                discrepancies.append(
+                    {
+                        "discrepancy_id": "DISC-02",
+                        "title": "Pessimistic Row Locking in High-Volume Adjudication Procedure",
+                        "severity": "CRITICAL",
+                        "component": "SP_PROCESS_CLAIM",
+                        "description": (
+                            "SP_PROCESS_CLAIM executes 'SELECT ... FOR UPDATE' on POLICY_MASTER rows. "
+                            "During claim surges, this creates blocking database locks across concurrent "
+                            "customer requests."
+                        ),
+                        "code_evidence": f"{sp_rec.rel_path}:{m_line} -> SELECT ... FOR UPDATE",
+                        "recommendation": (
+                            "Retire stored procedure; replace with optimistic concurrency or "
+                            "an asynchronous distributed Outbox saga."
+                        ),
+                    }
+                )
 
         # 3. Hardcoded Business Rule Constants in Service Code
         for path, rec in fabric.raw._files.items():
@@ -157,18 +172,23 @@ class ProvenanceValidator:
                 for const_val in ("2500", "50000"):
                     if const_val in content:
                         line_no = content[: content.find(const_val)].count("\n") + 1
-                        discrepancies.append({
-                            "discrepancy_id": f"DISC-03-{const_val}",
-                            "title": f"Hardcoded Threshold Constant (${const_val}) in Source Code",
-                            "severity": "MEDIUM",
-                            "component": "PolicyValidationService",
-                            "description": (
-                                f"Financial threshold value ${const_val} is hardcoded in Java service logic "
-                                f"instead of being configurable via enterprise rule engine."
-                            ),
-                            "code_evidence": f"{rec.rel_path}:{line_no}",
-                            "recommendation": "Extract threshold into centralized cloud configuration service (AWS AppConfig or Spring Cloud Config).",
-                        })
+                        discrepancies.append(
+                            {
+                                "discrepancy_id": f"DISC-03-{const_val}",
+                                "title": f"Hardcoded Threshold Constant (${const_val}) in Source Code",
+                                "severity": "MEDIUM",
+                                "component": "PolicyValidationService",
+                                "description": (
+                                    f"Financial threshold value ${const_val} is hardcoded in Java service logic "
+                                    f"instead of being configurable via enterprise rule engine."
+                                ),
+                                "code_evidence": f"{rec.rel_path}:{line_no}",
+                                "recommendation": (
+                                    "Extract threshold into centralized cloud configuration service "
+                                    "(AWS AppConfig or Spring Cloud Config)."
+                                ),
+                            }
+                        )
                         break
 
         return discrepancies

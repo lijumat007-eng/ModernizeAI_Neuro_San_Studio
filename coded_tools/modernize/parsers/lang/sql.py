@@ -16,14 +16,21 @@ work instead of an ad hoc "FROM <word>" guess.
 """
 
 import re
-from typing import Dict, List, Optional, Tuple
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
 
 import sqlglot
 from sqlglot import exp
 
 from coded_tools.modernize.parsers import embedded_sql
 from coded_tools.modernize.parsers.base import LanguageParser
-from coded_tools.modernize.parsers.ir import ParseDiagnostic, ParseResult, Reference, Symbol, SqlAccess
+from coded_tools.modernize.parsers.ir import ParseDiagnostic
+from coded_tools.modernize.parsers.ir import ParseResult
+from coded_tools.modernize.parsers.ir import Reference
+from coded_tools.modernize.parsers.ir import SqlAccess
+from coded_tools.modernize.parsers.ir import Symbol
 
 # --------------------------------------------------------------------------- #
 # Dialect sniffing
@@ -47,6 +54,7 @@ def sniff_dialect(content: str) -> str:
 # Character-level helpers: string/comment masking and statement splitting.
 # Shared by top-level DDL splitting and by procedure-body statement splitting.
 # --------------------------------------------------------------------------- #
+
 
 def _mask_strings_and_comments(text: str) -> str:
     """Returns a same-length copy of `text` with string-literal and `--` comment
@@ -359,7 +367,11 @@ def _strip_leading_control_keywords(stmt: str) -> str:
 
 
 def extract_body_sql_accesses(
-    body_text: str, file_path: str, body_start_line: int, owner_symbol: str, dialect: str,
+    body_text: str,
+    file_path: str,
+    body_start_line: int,
+    owner_symbol: str,
+    dialect: str,
 ) -> List[SqlAccess]:
     """Splits a procedure/trigger body into statements and extracts real table
     lineage (and row-locking) from each SELECT/INSERT/UPDATE/DELETE/MERGE/CALL."""
@@ -385,6 +397,7 @@ def extract_body_sql_accesses(
 # The parser
 # --------------------------------------------------------------------------- #
 
+
 class SqlParser(LanguageParser):
     language = "sql"
     extensions = [".sql", ".ddl"]
@@ -406,7 +419,17 @@ class SqlParser(LanguageParser):
             parsed_stmts += p
 
             self._handle_procedural_block(
-                kind, name, content, h_start, h_end, body_text, body_start, b_end, file_path, dialect, result,
+                kind,
+                name,
+                content,
+                h_start,
+                h_end,
+                body_text,
+                body_start,
+                b_end,
+                file_path,
+                dialect,
+                result,
             )
             cursor = b_end
 
@@ -420,7 +443,8 @@ class SqlParser(LanguageParser):
         if result.parse_coverage < 1.0:
             result.diagnostics.append(
                 ParseDiagnostic(
-                    file_path=file_path, severity="WARNING",
+                    file_path=file_path,
+                    severity="WARNING",
                     message=f"{total_stmts - parsed_stmts} of {total_stmts} top-level statement(s) "
                     f"could not be parsed by sqlglot (dialect={dialect}) and were skipped.",
                 )
@@ -432,7 +456,13 @@ class SqlParser(LanguageParser):
     # ------------------------------------------------------------------ #
 
     def _parse_plain_ddl(
-        self, content: str, start: int, end: int, file_path: str, dialect: str, result: ParseResult,
+        self,
+        content: str,
+        start: int,
+        end: int,
+        file_path: str,
+        dialect: str,
+        result: ParseResult,
     ) -> Tuple[int, int]:
         total = 0
         parsed = 0
@@ -471,9 +501,15 @@ class SqlParser(LanguageParser):
                         pk_col = col_name
                 result.symbols.append(
                     Symbol(
-                        kind="COLUMN", name=col_name, qualified_name=f"{table_name}.{col_name}",
-                        language=self.language, file_path=file_path, line_start=line, line_end=line,
-                        parent=table_name, return_type=str(col.args.get("kind") or ""),
+                        kind="COLUMN",
+                        name=col_name,
+                        qualified_name=f"{table_name}.{col_name}",
+                        language=self.language,
+                        file_path=file_path,
+                        line_start=line,
+                        line_end=line,
+                        parent=table_name,
+                        return_type=str(col.args.get("kind") or ""),
                     )
                 )
             elif isinstance(col, exp.Constraint):
@@ -484,8 +520,13 @@ class SqlParser(LanguageParser):
 
         result.symbols.append(
             Symbol(
-                kind="TABLE", name=table_name, qualified_name=table_name, language=self.language,
-                file_path=file_path, line_start=line, line_end=line,
+                kind="TABLE",
+                name=table_name,
+                qualified_name=table_name,
+                language=self.language,
+                file_path=file_path,
+                line_start=line,
+                line_end=line,
                 properties={"primary_key": pk_col, "columns": columns},
             )
         )
@@ -498,13 +539,19 @@ class SqlParser(LanguageParser):
             if ref is None:
                 continue
             ref_schema = ref.this
-            target_table = ref_schema.this.name.upper() if hasattr(ref_schema.this, "name") else str(ref_schema.this).upper()
+            target_table = (
+                ref_schema.this.name.upper() if hasattr(ref_schema.this, "name") else str(ref_schema.this).upper()
+            )
             fk_cols = [i.name for i in e.expressions]
             ref_cols = [i.name for i in ref_schema.expressions] if hasattr(ref_schema, "expressions") else []
             result.references.append(
                 Reference(
-                    from_symbol=table_name, target_name=target_table, kind="READS_FROM", file_path=file_path,
-                    line=line, evidence=f"FOREIGN KEY ({', '.join(fk_cols)}) REFERENCES {target_table}({', '.join(ref_cols)})",
+                    from_symbol=table_name,
+                    target_name=target_table,
+                    kind="READS_FROM",
+                    file_path=file_path,
+                    line=line,
+                    evidence=f"FOREIGN KEY ({', '.join(fk_cols)}) REFERENCES {target_table}({', '.join(ref_cols)})",
                     confidence=1.0,
                 )
             )
@@ -516,8 +563,14 @@ class SqlParser(LanguageParser):
         table_name = table.this.name.upper() if table is not None and hasattr(table.this, "name") else ""
         result.symbols.append(
             Symbol(
-                kind="TABLE", name=idx_name, qualified_name=idx_name, language=self.language,
-                file_path=file_path, line_start=line, line_end=line, parent=table_name,
+                kind="TABLE",
+                name=idx_name,
+                qualified_name=idx_name,
+                language=self.language,
+                file_path=file_path,
+                line_start=line,
+                line_end=line,
+                parent=table_name,
                 properties={"index_on": table_name, "is_index": True},
             )
         )
@@ -528,15 +581,25 @@ class SqlParser(LanguageParser):
         source_tables = [t.name.upper() for t in select.find_all(exp.Table)] if select is not None else []
         result.symbols.append(
             Symbol(
-                kind="VIEW", name=view_name, qualified_name=view_name, language=self.language,
-                file_path=file_path, line_start=line, line_end=line, properties={"source_tables": source_tables},
+                kind="VIEW",
+                name=view_name,
+                qualified_name=view_name,
+                language=self.language,
+                file_path=file_path,
+                line_start=line,
+                line_end=line,
+                properties={"source_tables": source_tables},
             )
         )
         for src in source_tables:
             result.references.append(
                 Reference(
-                    from_symbol=view_name, target_name=src, kind="READS_FROM",
-                    file_path=file_path, line=line, evidence=f"VIEW {view_name} selects from {src}",
+                    from_symbol=view_name,
+                    target_name=src,
+                    kind="READS_FROM",
+                    file_path=file_path,
+                    line=line,
+                    evidence=f"VIEW {view_name} selects from {src}",
                 )
             )
 
@@ -548,11 +611,17 @@ class SqlParser(LanguageParser):
                 if ref is None:
                     continue
                 ref_schema = ref.this
-                target = ref_schema.this.name.upper() if hasattr(ref_schema.this, "name") else str(ref_schema.this).upper()
+                target = (
+                    ref_schema.this.name.upper() if hasattr(ref_schema.this, "name") else str(ref_schema.this).upper()
+                )
                 result.references.append(
                     Reference(
-                        from_symbol=table_name, target_name=target, kind="READS_FROM",
-                        file_path=file_path, line=line, evidence=f"ALTER TABLE {table_name} ADD FOREIGN KEY ... REFERENCES {target}",
+                        from_symbol=table_name,
+                        target_name=target,
+                        kind="READS_FROM",
+                        file_path=file_path,
+                        line=line,
+                        evidence=f"ALTER TABLE {table_name} ADD FOREIGN KEY ... REFERENCES {target}",
                     )
                 )
 
@@ -561,9 +630,19 @@ class SqlParser(LanguageParser):
     # ------------------------------------------------------------------ #
 
     def _handle_procedural_block(
-        self, kind: str, name: str, content: str, h_start: int, h_end: int,
-        body_text: str, body_start: int, b_end: int,
-        file_path: str, dialect: str, result: ParseResult, parent: Optional[str] = None,
+        self,
+        kind: str,
+        name: str,
+        content: str,
+        h_start: int,
+        h_end: int,
+        body_text: str,
+        body_start: int,
+        b_end: int,
+        file_path: str,
+        dialect: str,
+        result: ParseResult,
+        parent: Optional[str] = None,
         line_offset: int = 0,
     ) -> None:
         """`line_offset` is (the file's real line number at content[0]) - 1: zero
@@ -583,8 +662,13 @@ class SqlParser(LanguageParser):
         if kind in ("PACKAGE", "PACKAGE BODY"):
             result.symbols.append(
                 Symbol(
-                    kind="PROCEDURE", name=name_upper, qualified_name=qname, language=self.language,
-                    file_path=file_path, line_start=line_start, line_end=line_end,
+                    kind="PROCEDURE",
+                    name=name_upper,
+                    qualified_name=qname,
+                    language=self.language,
+                    file_path=file_path,
+                    line_start=line_start,
+                    line_end=line_end,
                     properties={"package": True, "is_body": kind == "PACKAGE BODY"},
                 )
             )
@@ -596,9 +680,19 @@ class SqlParser(LanguageParser):
                     continue
                 member_body_text, member_body_start, member_end = member_result
                 self._handle_procedural_block(
-                    member_kind, member_name, body_text, m.start(), m.end(),
-                    member_body_text, member_body_start, member_end,
-                    file_path, dialect, result, parent=qname, line_offset=body_line_start - 1,
+                    member_kind,
+                    member_name,
+                    body_text,
+                    m.start(),
+                    m.end(),
+                    member_body_text,
+                    member_body_start,
+                    member_end,
+                    file_path,
+                    dialect,
+                    result,
+                    parent=qname,
+                    line_offset=body_line_start - 1,
                 )
             return
 
@@ -606,8 +700,14 @@ class SqlParser(LanguageParser):
         param_names = [p["name"] for p in params]
 
         symbol = Symbol(
-            kind=symbol_kind or "PROCEDURE", name=name_upper, qualified_name=qname, language=self.language,
-            file_path=file_path, line_start=line_start, line_end=line_end, parent=parent,
+            kind=symbol_kind or "PROCEDURE",
+            name=name_upper,
+            qualified_name=qname,
+            language=self.language,
+            file_path=file_path,
+            line_start=line_start,
+            line_end=line_end,
+            parent=parent,
             signature=f"{name_upper}({', '.join(param_names)})",
         )
 
@@ -625,8 +725,12 @@ class SqlParser(LanguageParser):
                 symbol.properties["table"] = target_table
                 result.references.append(
                     Reference(
-                        from_symbol=qname, target_name=target_table, kind="EXECUTES", file_path=file_path,
-                        line=line_start, evidence=f"TRIGGER {name_upper} ON {target_table}",
+                        from_symbol=qname,
+                        target_name=target_table,
+                        kind="EXECUTES",
+                        file_path=file_path,
+                        line=line_start,
+                        evidence=f"TRIGGER {name_upper} ON {target_table}",
                     )
                 )
 
@@ -638,7 +742,12 @@ class SqlParser(LanguageParser):
             for table in access.tables:
                 result.references.append(
                     Reference(
-                        from_symbol=qname, target_name=table, kind=edge_kind, file_path=file_path,
-                        line=access.line, evidence=access.snippet, confidence=access.confidence,
+                        from_symbol=qname,
+                        target_name=table,
+                        kind=edge_kind,
+                        file_path=file_path,
+                        line=access.line,
+                        evidence=access.snippet,
+                        confidence=access.confidence,
                     )
                 )

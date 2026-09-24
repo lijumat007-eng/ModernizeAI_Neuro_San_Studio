@@ -9,7 +9,10 @@ Includes:
 """
 
 from collections import deque
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
+from typing import Dict
+from typing import List
+
 import networkx as nx
 from networkx.algorithms.community import louvain_communities
 
@@ -91,20 +94,22 @@ class GraphAlgorithms:
                 data = graph.nodes.get(n, {})
                 nt = data.get("node_type", "Unknown")
                 node_types[nt] = node_types.get(nt, 0) + 1
-                nodes_data.append({
-                    "id": n,
-                    "type": nt,
-                    "label": data.get("label", n),
-                })
+                nodes_data.append(
+                    {
+                        "id": n,
+                        "type": nt,
+                        "label": data.get("label", n),
+                    }
+                )
 
-            # Formulate domain label
-            primary_type = max(node_types, key=node_types.get) if node_types else "Component"
-            results.append({
-                "community_id": f"Domain_{idx + 1}",
-                "size": len(comm),
-                "type_breakdown": node_types,
-                "nodes": nodes_data,
-            })
+            results.append(
+                {
+                    "community_id": f"Domain_{idx + 1}",
+                    "size": len(comm),
+                    "type_breakdown": node_types,
+                    "nodes": nodes_data,
+                }
+            )
 
         return results
 
@@ -141,20 +146,22 @@ class GraphAlgorithms:
                     edge_type = edge_data.get("edge_type", k)
                     step = f"{pred} --({edge_type})--> {curr}"
                     new_path = path + [step]
-                    
+
                     if pred not in visited_up:
                         visited_up.add(pred)
                         node_data = dict(graph.nodes[pred])
-                        upstream_impact.append({
-                            "node_id": pred,
-                            "node_type": node_data.get("node_type", "Unknown"),
-                            "hop_distance": depth + 1,
-                            "edge_type": edge_type,
-                            "path": " -> ".join(new_path),
-                            "source_file": node_data.get("source_file", ""),
-                            "line_start": node_data.get("line_start", 1),
-                            "line_end": node_data.get("line_end", 1),
-                        })
+                        upstream_impact.append(
+                            {
+                                "node_id": pred,
+                                "node_type": node_data.get("node_type", "Unknown"),
+                                "hop_distance": depth + 1,
+                                "edge_type": edge_type,
+                                "path": " -> ".join(new_path),
+                                "source_file": node_data.get("source_file", ""),
+                                "line_start": node_data.get("line_start", 1),
+                                "line_end": node_data.get("line_end", 1),
+                            }
+                        )
                         queue_up.append((pred, depth + 1, new_path))
 
         # 2. Downstream Impact (What does target_entity depend on or modify?)
@@ -173,20 +180,22 @@ class GraphAlgorithms:
                     edge_type = edge_data.get("edge_type", k)
                     step = f"{curr} --({edge_type})--> {succ}"
                     new_path = path + [step]
-                    
+
                     if succ not in visited_down:
                         visited_down.add(succ)
                         node_data = dict(graph.nodes[succ])
-                        downstream_impact.append({
-                            "node_id": succ,
-                            "node_type": node_data.get("node_type", "Unknown"),
-                            "hop_distance": depth + 1,
-                            "edge_type": edge_type,
-                            "path": " -> ".join(new_path),
-                            "source_file": node_data.get("source_file", ""),
-                            "line_start": node_data.get("line_start", 1),
-                            "line_end": node_data.get("line_end", 1),
-                        })
+                        downstream_impact.append(
+                            {
+                                "node_id": succ,
+                                "node_type": node_data.get("node_type", "Unknown"),
+                                "hop_distance": depth + 1,
+                                "edge_type": edge_type,
+                                "path": " -> ".join(new_path),
+                                "source_file": node_data.get("source_file", ""),
+                                "line_start": node_data.get("line_start", 1),
+                                "line_end": node_data.get("line_end", 1),
+                            }
+                        )
                         queue_down.append((succ, depth + 1, new_path))
 
         # 3. Detect Cycles / Strongly Connected Components
@@ -250,22 +259,25 @@ class GraphAlgorithms:
             entity_evidence[node_id] = {
                 "source": "knowledge_graph",
                 "label": f"[{node_data.get('node_type')}] {node_id}",
-                "content": node_data.get("evidence_snippet") or f"{node_data.get('node_type')} entity in {node_data.get('source_file')}",
+                "content": node_data.get("evidence_snippet")
+                or f"{node_data.get('node_type')} entity in {node_data.get('source_file')}",
                 "line": f"L{node_data.get('line_start', 1)}-{node_data.get('line_end', 1)}",
                 "raw_score": ppr,
             }
 
         sorted_entities = sorted(fused_scores.items(), key=lambda x: x[1], reverse=True)[:top_n]
-        
+
         results = []
         for entity_id, score in sorted_entities:
             ev = entity_evidence.get(entity_id, {})
-            results.append({
-                "entity_id": entity_id,
-                "rrf_score": round(score, 5),
-                "source": ev.get("source"),
-                "label": ev.get("label"),
-                "content": ev.get("content"),
-                "citation": f"{ev.get('label')} ({ev.get('line')})",
-            })
+            results.append(
+                {
+                    "entity_id": entity_id,
+                    "rrf_score": round(score, 5),
+                    "source": ev.get("source"),
+                    "label": ev.get("label"),
+                    "content": ev.get("content"),
+                    "citation": f"{ev.get('label')} ({ev.get('line')})",
+                }
+            )
         return results

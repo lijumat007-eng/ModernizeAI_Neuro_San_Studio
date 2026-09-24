@@ -16,7 +16,9 @@ rewrite of every call site in one step.
 """
 
 import re
-from typing import Any, Dict, List
+from typing import Any
+from typing import Dict
+from typing import List
 
 from coded_tools.modernize.parsers.lang.sql import SqlParser as _SqlParser
 
@@ -40,28 +42,33 @@ class DdlParser:
             pk = t.properties.get("primary_key")
             columns = [
                 {"name": c.name, "type": c.return_type, "is_primary": c.name == pk}
-                for c in column_symbols if c.parent == t.qualified_name
+                for c in column_symbols
+                if c.parent == t.qualified_name
             ]
             foreign_keys = []
             for ref in fk_refs:
                 if ref.from_symbol != t.qualified_name:
                     continue
                 m = _FK_EVIDENCE_RE.search(ref.evidence)
-                foreign_keys.append({
-                    "constraint_name": "",
-                    "column": m.group(1).strip().lower() if m else "",
-                    "target_table": ref.target_name,
-                    "target_column": m.group(2).strip().lower() if m else "",
-                })
-            tables.append({
-                "table_name": t.qualified_name,
-                "columns": columns,
-                "primary_key": pk,
-                "foreign_keys": foreign_keys,
-                "file_path": t.file_path,
-                "start_line": t.line_start,
-                "end_line": t.line_end,
-            })
+                foreign_keys.append(
+                    {
+                        "constraint_name": "",
+                        "column": m.group(1).strip().lower() if m else "",
+                        "target_table": ref.target_name,
+                        "target_column": m.group(2).strip().lower() if m else "",
+                    }
+                )
+            tables.append(
+                {
+                    "table_name": t.qualified_name,
+                    "columns": columns,
+                    "primary_key": pk,
+                    "foreign_keys": foreign_keys,
+                    "file_path": t.file_path,
+                    "start_line": t.line_start,
+                    "end_line": t.line_end,
+                }
+            )
 
         return {"tables": tables}
 
@@ -72,24 +79,32 @@ class DdlParser:
         proc_symbols = [s for s in result.symbols if s.kind == "PROCEDURE" and not s.properties.get("package")]
         procedures = []
         for s in proc_symbols:
-            reads = sorted({
-                r.target_name for r in result.references
-                if r.from_symbol == s.qualified_name and r.kind == "READS_FROM"
-            })
-            writes = sorted({
-                r.target_name for r in result.references
-                if r.from_symbol == s.qualified_name and r.kind == "WRITES_TO"
-            })
+            reads = sorted(
+                {
+                    r.target_name
+                    for r in result.references
+                    if r.from_symbol == s.qualified_name and r.kind == "READS_FROM"
+                }
+            )
+            writes = sorted(
+                {
+                    r.target_name
+                    for r in result.references
+                    if r.from_symbol == s.qualified_name and r.kind == "WRITES_TO"
+                }
+            )
             param_names = _param_names_from_signature(s.signature)
-            procedures.append({
-                "procedure_name": s.name,
-                "parameters": [{"name": p, "mode": "IN", "type": "VARCHAR"} for p in param_names],
-                "tables_read": reads,
-                "tables_written": writes,
-                "file_path": s.file_path,
-                "start_line": s.line_start,
-                "end_line": s.line_end,
-            })
+            procedures.append(
+                {
+                    "procedure_name": s.name,
+                    "parameters": [{"name": p, "mode": "IN", "type": "VARCHAR"} for p in param_names],
+                    "tables_read": reads,
+                    "tables_written": writes,
+                    "file_path": s.file_path,
+                    "start_line": s.line_start,
+                    "end_line": s.line_end,
+                }
+            )
 
         return {"procedures": procedures}
 

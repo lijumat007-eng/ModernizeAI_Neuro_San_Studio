@@ -18,11 +18,15 @@ field types where possible), `new` instantiation, and embedded SQL
 uses constantly).
 """
 
-from typing import Dict, List, Optional
+from typing import Dict
+from typing import List
+from typing import Optional
 
 from coded_tools.modernize.parsers import embedded_sql
 from coded_tools.modernize.parsers.base import TreeSitterParser
-from coded_tools.modernize.parsers.ir import ParseResult, Reference, Symbol
+from coded_tools.modernize.parsers.ir import ParseResult
+from coded_tools.modernize.parsers.ir import Reference
+from coded_tools.modernize.parsers.ir import Symbol
 
 _TYPE_DECL_KINDS = {"class_specifier": "CLASS", "struct_specifier": "STRUCT"}
 _POINTER_LIKE_DECLARATORS = ("pointer_declarator", "reference_declarator", "array_declarator")
@@ -51,8 +55,12 @@ class CppFamilyParser(TreeSitterParser):
         for inc in self._find_includes(root, source_bytes):
             result.references.append(
                 Reference(
-                    from_symbol=file_path, target_name=inc, kind="INCLUDES",
-                    file_path=file_path, line=1, evidence=f"#include {inc}",
+                    from_symbol=file_path,
+                    target_name=inc,
+                    kind="INCLUDES",
+                    file_path=file_path,
+                    line=1,
+                    evidence=f"#include {inc}",
                 )
             )
         self._walk_scope(root, source_bytes, file_path, result, namespace_stack=[])
@@ -68,14 +76,16 @@ class CppFamilyParser(TreeSitterParser):
                 path_node = node.child_by_field_name("path")
                 if path_node is not None:
                     raw = self.text(path_node, source_bytes)
-                    includes.append(raw.strip("<>\""))
+                    includes.append(raw.strip('<>"'))
         return includes
 
     # ------------------------------------------------------------------ #
     # Top-level / namespace-scope declarations
     # ------------------------------------------------------------------ #
 
-    def _walk_scope(self, node, source_bytes: bytes, file_path: str, result: ParseResult, namespace_stack: List[str]) -> None:
+    def _walk_scope(
+        self, node, source_bytes: bytes, file_path: str, result: ParseResult, namespace_stack: List[str]
+    ) -> None:
         for child in node.children:
             if child.type == "namespace_definition":
                 name_node = child.child_by_field_name("name")
@@ -89,7 +99,9 @@ class CppFamilyParser(TreeSitterParser):
                 if body is not None:
                     self._walk_scope(body, source_bytes, file_path, result, namespace_stack)
             elif child.type in _TYPE_DECL_KINDS:
-                self._handle_type_decl(child, _TYPE_DECL_KINDS[child.type], source_bytes, file_path, result, namespace_stack)
+                self._handle_type_decl(
+                    child, _TYPE_DECL_KINDS[child.type], source_bytes, file_path, result, namespace_stack
+                )
             elif child.type == "function_definition":
                 self._handle_function_definition(child, source_bytes, file_path, result, namespace_stack)
             elif child.type == "template_declaration":
@@ -97,14 +109,22 @@ class CppFamilyParser(TreeSitterParser):
                 if inner is not None and inner.type == "function_definition":
                     self._handle_function_definition(inner, source_bytes, file_path, result, namespace_stack)
                 elif inner is not None and inner.type in _TYPE_DECL_KINDS:
-                    self._handle_type_decl(inner, _TYPE_DECL_KINDS[inner.type], source_bytes, file_path, result, namespace_stack)
+                    self._handle_type_decl(
+                        inner, _TYPE_DECL_KINDS[inner.type], source_bytes, file_path, result, namespace_stack
+                    )
 
     # ------------------------------------------------------------------ #
     # class / struct declarations (incl. nested)
     # ------------------------------------------------------------------ #
 
     def _handle_type_decl(
-        self, node, kind: str, source_bytes: bytes, file_path: str, result: ParseResult, namespace_stack: List[str],
+        self,
+        node,
+        kind: str,
+        source_bytes: bytes,
+        file_path: str,
+        result: ParseResult,
+        namespace_stack: List[str],
     ) -> None:
         name_node = node.child_by_field_name("name")
         name = self.text(name_node, source_bytes) if name_node is not None else ""
@@ -121,16 +141,26 @@ class CppFamilyParser(TreeSitterParser):
                     base_types.append(base_name)
                     result.references.append(
                         Reference(
-                            from_symbol=qname, target_name=simple_type_name(base_name), kind="INHERITS",
-                            file_path=file_path, line=self.line_start(node), evidence=f"{name} : {base_name}",
+                            from_symbol=qname,
+                            target_name=simple_type_name(base_name),
+                            kind="INHERITS",
+                            file_path=file_path,
+                            line=self.line_start(node),
+                            evidence=f"{name} : {base_name}",
                         )
                     )
 
         result.symbols.append(
             Symbol(
-                kind=kind, name=name, qualified_name=qname, language=self.language, file_path=file_path,
-                line_start=self.line_start(node), line_end=self.line_end(node),
-                parent="::".join(namespace_stack) if namespace_stack else None, base_types=base_types,
+                kind=kind,
+                name=name,
+                qualified_name=qname,
+                language=self.language,
+                file_path=file_path,
+                line_start=self.line_start(node),
+                line_end=self.line_end(node),
+                parent="::".join(namespace_stack) if namespace_stack else None,
+                base_types=base_types,
             )
         )
 
@@ -145,13 +175,19 @@ class CppFamilyParser(TreeSitterParser):
             if member.type == "field_declaration":
                 self._handle_field_or_method_decl(member, qname, source_bytes, file_path, result, field_types)
             elif member.type == "function_definition":
-                self._handle_function_definition(member, source_bytes, file_path, result, namespace_stack, owner_qname=qname)
+                self._handle_function_definition(
+                    member, source_bytes, file_path, result, namespace_stack, owner_qname=qname
+                )
             elif member.type == "template_declaration":
                 inner = member.children[-1] if member.children else None
                 if inner is not None and inner.type == "function_definition":
-                    self._handle_function_definition(inner, source_bytes, file_path, result, namespace_stack, owner_qname=qname)
+                    self._handle_function_definition(
+                        inner, source_bytes, file_path, result, namespace_stack, owner_qname=qname
+                    )
             elif member.type in _TYPE_DECL_KINDS:
-                self._handle_type_decl(member, _TYPE_DECL_KINDS[member.type], source_bytes, file_path, result, namespace_stack + [name])
+                self._handle_type_decl(
+                    member, _TYPE_DECL_KINDS[member.type], source_bytes, file_path, result, namespace_stack + [name]
+                )
 
     @staticmethod
     def _first_child_of_type(node, type_name: str):
@@ -171,8 +207,13 @@ class CppFamilyParser(TreeSitterParser):
         return None
 
     def _handle_field_or_method_decl(
-        self, node, class_qname: str, source_bytes: bytes, file_path: str,
-        result: ParseResult, field_types: Dict[str, str],
+        self,
+        node,
+        class_qname: str,
+        source_bytes: bytes,
+        file_path: str,
+        result: ParseResult,
+        field_types: Dict[str, str],
     ) -> None:
         type_node = node.child_by_field_name("type")
         type_text = self.text(type_node, source_bytes) if type_node is not None else ""
@@ -190,9 +231,16 @@ class CppFamilyParser(TreeSitterParser):
             qname = f"{class_qname}::{m_name}({','.join(param_types.values())})"
             result.symbols.append(
                 Symbol(
-                    kind="METHOD", name=m_name, qualified_name=qname, language=self.language, file_path=file_path,
-                    line_start=self.line_start(node), line_end=self.line_end(node), parent=class_qname,
-                    signature=f"{m_name}({', '.join(sig_parts)})", return_type=type_text,
+                    kind="METHOD",
+                    name=m_name,
+                    qualified_name=qname,
+                    language=self.language,
+                    file_path=file_path,
+                    line_start=self.line_start(node),
+                    line_end=self.line_end(node),
+                    parent=class_qname,
+                    signature=f"{m_name}({', '.join(sig_parts)})",
+                    return_type=type_text,
                 )
             )
             return
@@ -204,9 +252,15 @@ class CppFamilyParser(TreeSitterParser):
         field_types[f_name] = simple_type_name(type_text)
         result.symbols.append(
             Symbol(
-                kind="FIELD", name=f_name, qualified_name=f"{class_qname}::{f_name}", language=self.language,
-                file_path=file_path, line_start=self.line_start(node), line_end=self.line_end(node),
-                parent=class_qname, return_type=type_text,
+                kind="FIELD",
+                name=f_name,
+                qualified_name=f"{class_qname}::{f_name}",
+                language=self.language,
+                file_path=file_path,
+                line_start=self.line_start(node),
+                line_end=self.line_end(node),
+                parent=class_qname,
+                return_type=type_text,
             )
         )
 
@@ -233,8 +287,13 @@ class CppFamilyParser(TreeSitterParser):
         return param_types, sig_parts
 
     def _handle_function_definition(
-        self, node, source_bytes: bytes, file_path: str, result: ParseResult,
-        namespace_stack: List[str], owner_qname: Optional[str] = None,
+        self,
+        node,
+        source_bytes: bytes,
+        file_path: str,
+        result: ParseResult,
+        namespace_stack: List[str],
+        owner_qname: Optional[str] = None,
     ) -> None:
         declarator = node.child_by_field_name("declarator")
         if declarator is None or declarator.type != "function_declarator":
@@ -263,14 +322,24 @@ class CppFamilyParser(TreeSitterParser):
 
         parent = owner_qname if owner_qname else ("::".join(namespace_stack) if namespace_stack else None)
         qname_prefix = owner_qname if owner_qname else parent
-        qname = f"{qname_prefix}::{m_name}({','.join(param_types.values())})" if qname_prefix else f"{m_name}({','.join(param_types.values())})"
+        qname = (
+            f"{qname_prefix}::{m_name}({','.join(param_types.values())})"
+            if qname_prefix
+            else f"{m_name}({','.join(param_types.values())})"
+        )
 
         result.symbols.append(
             Symbol(
-                kind="METHOD" if owner_qname else "FUNCTION", name=m_name, qualified_name=qname,
-                language=self.language, file_path=file_path, line_start=self.line_start(node),
-                line_end=self.line_end(node), parent=parent,
-                signature=f"{m_name}({', '.join(sig_parts)})", return_type=return_type,
+                kind="METHOD" if owner_qname else "FUNCTION",
+                name=m_name,
+                qualified_name=qname,
+                language=self.language,
+                file_path=file_path,
+                line_start=self.line_start(node),
+                line_end=self.line_end(node),
+                parent=parent,
+                signature=f"{m_name}({', '.join(sig_parts)})",
+                return_type=return_type,
             )
         )
 
@@ -288,8 +357,14 @@ class CppFamilyParser(TreeSitterParser):
     # ------------------------------------------------------------------ #
 
     def _walk_body(
-        self, body, source_bytes: bytes, file_path: str, result: ParseResult,
-        owner_qname: str, field_types: Dict[str, str], param_types: Dict[str, str],
+        self,
+        body,
+        source_bytes: bytes,
+        file_path: str,
+        result: ParseResult,
+        owner_qname: str,
+        field_types: Dict[str, str],
+        param_types: Dict[str, str],
     ) -> None:
         local_types: Dict[str, str] = {}
         consumed: set = set()
@@ -313,27 +388,41 @@ class CppFamilyParser(TreeSitterParser):
                 if type_text:
                     result.references.append(
                         Reference(
-                            from_symbol=owner_qname, target_name=simple_type_name(type_text),
-                            kind="INSTANTIATES", file_path=file_path, line=self.line_start(node),
+                            from_symbol=owner_qname,
+                            target_name=simple_type_name(type_text),
+                            kind="INSTANTIATES",
+                            file_path=file_path,
+                            line=self.line_start(node),
                             evidence=self.text(node, source_bytes)[:120],
                         )
                     )
 
             elif node.type == "call_expression":
-                self._handle_call(node, source_bytes, file_path, result, owner_qname, field_types, param_types, local_types)
+                self._handle_call(
+                    node, source_bytes, file_path, result, owner_qname, field_types, param_types, local_types
+                )
 
             elif node.type in ("string_literal", "binary_expression", "concatenated_string"):
                 sql_text = embedded_sql.join_string_concat(node, source_bytes)
                 if sql_text and embedded_sql.looks_like_sql(sql_text):
                     result.sql_accesses.append(
-                        embedded_sql.build_sql_access(sql_text, file_path, self.line_start(node), owner_symbol=owner_qname)
+                        embedded_sql.build_sql_access(
+                            sql_text, file_path, self.line_start(node), owner_symbol=owner_qname
+                        )
                     )
                 for d in self.walk(node):
                     consumed.add(id(d))
 
     def _handle_call(
-        self, node, source_bytes: bytes, file_path: str, result: ParseResult, owner_qname: str,
-        field_types: Dict[str, str], param_types: Dict[str, str], local_types: Dict[str, str],
+        self,
+        node,
+        source_bytes: bytes,
+        file_path: str,
+        result: ParseResult,
+        owner_qname: str,
+        field_types: Dict[str, str],
+        param_types: Dict[str, str],
+        local_types: Dict[str, str],
     ) -> None:
         function_node = node.child_by_field_name("function")
         if function_node is None:
@@ -354,9 +443,7 @@ class CppFamilyParser(TreeSitterParser):
             return
 
         receiver_type = (
-            local_types.get(receiver_text)
-            or param_types.get(receiver_text)
-            or field_types.get(receiver_text)
+            local_types.get(receiver_text) or param_types.get(receiver_text) or field_types.get(receiver_text)
         )
         if receiver_type is None:
             if receiver_text[0].isupper():
@@ -366,8 +453,12 @@ class CppFamilyParser(TreeSitterParser):
 
         result.references.append(
             Reference(
-                from_symbol=owner_qname, target_name=receiver_type, kind="CALLS",
-                file_path=file_path, line=self.line_start(node), evidence=self.text(node, source_bytes)[:120],
+                from_symbol=owner_qname,
+                target_name=receiver_type,
+                kind="CALLS",
+                file_path=file_path,
+                line=self.line_start(node),
+                evidence=self.text(node, source_bytes)[:120],
             )
         )
 

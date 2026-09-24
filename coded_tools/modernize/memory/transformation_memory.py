@@ -4,7 +4,10 @@ Tier 5: Transformation Memory Engine.
 Stores modernization metrics, 6R classifications, complexity scores, and target microservice schemas.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
 
 
 class TransformationMemory:
@@ -47,9 +50,9 @@ class TransformationMemory:
     ):
         self.recommendations[component_name] = {
             "component": component_name,
-            "strategy_6r": strategy_6r, # Rehost, Replatform, Refactor, Retire, Repurchase, Retain
-            "target_pattern": target_pattern, # e.g. Event-Driven Microservice, Serverless Function, ACL
-            "priority": priority, # High, Medium, Low, Phase 1, Phase 2
+            "strategy_6r": strategy_6r,  # Rehost, Replatform, Refactor, Retire, Repurchase, Retain
+            "target_pattern": target_pattern,  # e.g. Event-Driven Microservice, Serverless Function, ACL
+            "priority": priority,  # High, Medium, Low, Phase 1, Phase 2
             "rationale": rationale,
             "risks": risks,
         }
@@ -62,13 +65,15 @@ class TransformationMemory:
         business_rules: List[str],
         rationale: str,
     ):
-        self.candidate_microservices.append({
-            "domain_name": domain_name,
-            "components": components,
-            "tables": tables,
-            "business_rules": business_rules,
-            "rationale": rationale,
-        })
+        self.candidate_microservices.append(
+            {
+                "domain_name": domain_name,
+                "components": components,
+                "tables": tables,
+                "business_rules": business_rules,
+                "rationale": rationale,
+            }
+        )
 
     def get_component_scorecard(self, component_name: str) -> Optional[Dict[str, Any]]:
         metric = self.metrics.get(component_name, {})

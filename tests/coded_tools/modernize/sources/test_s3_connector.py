@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.abspath("."))
 try:
     import boto3
     from moto import mock_aws
+
     _BOTO_AVAILABLE = True
 except ImportError:
     _BOTO_AVAILABLE = False
@@ -23,7 +24,6 @@ from coded_tools.modernize.sources.s3 import S3Connector
 
 @unittest.skipUnless(_BOTO_AVAILABLE, "boto3/moto not installed")
 class TestS3Connector(unittest.TestCase):
-
     def setUp(self):
         self.mock = mock_aws()
         self.mock.start()

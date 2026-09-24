@@ -10,11 +10,12 @@ import unittest
 
 sys.path.insert(0, os.path.abspath("."))
 
-from coded_tools.modernize.sources.models import Project, ProjectStore, Source
+from coded_tools.modernize.sources.models import Project
+from coded_tools.modernize.sources.models import ProjectStore
+from coded_tools.modernize.sources.models import Source
 
 
 class TestProjectModel(unittest.TestCase):
-
     def setUp(self):
         self.tmp_dir = tempfile.mkdtemp(prefix="modernize_projects_")
         self.store = ProjectStore(root_dir=self.tmp_dir)
@@ -24,7 +25,9 @@ class TestProjectModel(unittest.TestCase):
 
     def test_create_and_load_round_trip(self):
         project = self.store.create("claimcore")
-        project.add_source(Source(source_id="repo1", type="git", config={"url": "https://x/y.git"}, credential_ref="GITHUB_TOKEN"))
+        project.add_source(
+            Source(source_id="repo1", type="git", config={"url": "https://x/y.git"}, credential_ref="GITHUB_TOKEN")
+        )
         self.store.save(project)
 
         reloaded = self.store.load("claimcore")
@@ -35,9 +38,14 @@ class TestProjectModel(unittest.TestCase):
 
     def test_credential_ref_is_a_name_never_a_secret_value(self):
         project = self.store.create("secure_proj")
-        project.add_source(Source(
-            source_id="db1", type="database", config={"host": "db.internal"}, credential_ref="ORACLE_PROD",
-        ))
+        project.add_source(
+            Source(
+                source_id="db1",
+                type="database",
+                config={"host": "db.internal"},
+                credential_ref="ORACLE_PROD",
+            )
+        )
         self.store.save(project)
 
         with open(self.store._project_path("secure_proj"), encoding="utf-8") as f:

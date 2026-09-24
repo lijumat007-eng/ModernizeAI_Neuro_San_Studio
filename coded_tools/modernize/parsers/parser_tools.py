@@ -6,12 +6,14 @@ CodedTools for Intel Agents:
 - DocIntelTool (Markdown and SME document chunker)
 """
 
-from coded_tools.modernize.tool_base import CodedTool
+from typing import Any
+from typing import Dict
 
 from coded_tools.modernize.memory.memory_manager_tool import get_memory_fabric
 from coded_tools.modernize.parsers.ddl_parser import DdlParser
 from coded_tools.modernize.parsers.doc_parser import DocParser
 from coded_tools.modernize.parsers.java_parser import JavaParser
+from coded_tools.modernize.tool_base import CodedTool
 
 
 class CodeIntelTool(CodedTool):

@@ -14,7 +14,10 @@ import json
 import os
 import re
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
 
 _PROJECTS_ROOT_DEFAULT = "projects"
 _NAME_RE = re.compile(r"^[A-Za-z0-9_.-]+$")
@@ -110,8 +113,7 @@ class ProjectStore:
         if not os.path.isdir(self.root_dir):
             return []
         return sorted(
-            d for d in os.listdir(self.root_dir)
-            if os.path.exists(os.path.join(self.root_dir, d, "project.json"))
+            d for d in os.listdir(self.root_dir) if os.path.exists(os.path.join(self.root_dir, d, "project.json"))
         )
 
     def load(self, name: str) -> Project:

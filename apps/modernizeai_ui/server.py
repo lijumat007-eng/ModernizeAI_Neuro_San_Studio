@@ -4,15 +4,22 @@ ModernizeAI Interactive Web UI Server.
 FastAPI backend powering the interactive agent pipeline, Graph-RAG explorer, and artifacts review center.
 """
 
+# ruff: noqa: E402
 import os
+import shutil
+import subprocess
 import sys
-from typing import Any, Dict, Optional
-from fastapi import FastAPI, Request
+from typing import Any
+from typing import Dict
+from typing import Optional
+
+import uvicorn
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-import uvicorn
 
 # Ensure workspace root and coded_tools are on python path regardless of CWD
 WORKSPACE_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -24,12 +31,15 @@ for p in (WORKSPACE_ROOT, CODED_TOOLS_DIR):
 
 from coded_tools.modernize.advisor.modernization_scoring import ModernizationScoring
 from coded_tools.modernize.graph.algorithms import GraphAlgorithms
-from coded_tools.modernize.graph.knowledge_graph_tool import KnowledgeGraphTool, get_knowledge_graph
+from coded_tools.modernize.graph.knowledge_graph_tool import KnowledgeGraphTool
+from coded_tools.modernize.graph.knowledge_graph_tool import get_knowledge_graph
 from coded_tools.modernize.graph.store import SqliteGraphStore
-from coded_tools.modernize.memory.memory_manager_tool import MemoryManagerTool, get_memory_fabric
+from coded_tools.modernize.memory.memory_manager_tool import MemoryManagerTool
+from coded_tools.modernize.memory.memory_manager_tool import get_memory_fabric
 from coded_tools.modernize.qa.provenance_validator import ProvenanceValidator
 from coded_tools.modernize.reports.report_generator import ReportGenerator
-from coded_tools.modernize.sources.models import Project, ProjectStore, Source
+from coded_tools.modernize.sources.models import ProjectStore
+from coded_tools.modernize.sources.models import Source
 from coded_tools.modernize.sources.registry import supported_types
 from coded_tools.modernize.sources.scanner import ProjectScanner
 from coded_tools.modernize.swarm_coordinator import ModernizeSwarmCoordinator
@@ -68,9 +78,6 @@ project_store = ProjectStore(root_dir=PROJECTS_ROOT)
 graph_store = SqliteGraphStore(root_dir=PROJECTS_ROOT)
 project_scanner = ProjectScanner(project_store=project_store, graph_store=graph_store)
 
-
-import subprocess
-import shutil
 
 class ScanRequest(BaseModel):
     source_type: Optional[str] = "local"  # "local", "git", "s3"
@@ -135,12 +142,14 @@ def _force_remove_dir(path: str):
     if not os.path.exists(path):
         return
     import stat
+
     def on_rm_error(func, p, exc_info):
         try:
             os.chmod(p, stat.S_IWRITE)
             func(p)
         except Exception:
             pass
+
     shutil.rmtree(path, onerror=on_rm_error)
 
 
@@ -157,11 +166,11 @@ async def run_scan(req: ScanRequest):
             workspaces_dir = os.path.join(WORKSPACE_ROOT, "data", "_workspaces")
             target_dir = os.path.join(workspaces_dir, repo_name)
             os.makedirs(workspaces_dir, exist_ok=True)
-            
+
             log_messages.append(f"Cloning Git repository: {req.git_url}...")
             if os.path.exists(target_dir):
                 _force_remove_dir(target_dir)
-            
+
             try:
                 # Try specified branch if not main/master, or clone default branch directly
                 cmd = ["git", "clone", "--depth", "1"]
@@ -181,7 +190,9 @@ async def run_scan(req: ScanRequest):
                         repo_path = os.path.relpath(target_dir, WORKSPACE_ROOT)
                         log_messages.append(f"Successfully cloned default branch to {repo_path}")
                     else:
-                        log_messages.append(f"Git clone notice: {retry_res.stderr.strip() or 'Falling back to workspace'}")
+                        log_messages.append(
+                            f"Git clone notice: {retry_res.stderr.strip() or 'Falling back to workspace'}"
+                        )
             except Exception as e:
                 log_messages.append(f"Git clone error: {e}. Falling back to default repository.")
 
@@ -194,8 +205,8 @@ async def run_scan(req: ScanRequest):
             log_messages.append("Sync verified with Tier 1 Raw Memory.")
 
         sly_data: Dict[str, Any] = {}
-        from coded_tools.modernize.memory.memory_manager_tool import _GLOBAL_MEMORY
         from coded_tools.modernize.graph.knowledge_graph_tool import _GLOBAL_KG
+        from coded_tools.modernize.memory.memory_manager_tool import _GLOBAL_MEMORY
 
         # Reset memory and graph for fresh ingestion
         _GLOBAL_MEMORY.raw._files.clear()
@@ -227,12 +238,15 @@ async def run_scan(req: ScanRequest):
         proj_json = os.path.join(project_artifacts_dir, "modernize_kg.json")
         proj_graphml = os.path.join(project_artifacts_dir, "modernize_kg.graphml")
 
-        kg_tool.invoke({
-            "action": "export_artifacts",
-            "html_path": proj_html,
-            "json_path": proj_json,
-            "graphml_path": proj_graphml,
-        }, sly_data)
+        kg_tool.invoke(
+            {
+                "action": "export_artifacts",
+                "html_path": proj_html,
+                "json_path": proj_json,
+                "graphml_path": proj_graphml,
+            },
+            sly_data,
+        )
 
         # Mirror active project deliverables to root artifacts for live UI canvas & downloads
         shutil.copy2(proj_html, os.path.join(root_artifacts_dir, "modernize_graph.html"))
@@ -266,6 +280,7 @@ async def run_scan(req: ScanRequest):
         }
     except Exception as e:
         import traceback
+
         err_msg = str(e) or "Ingestion pipeline error"
         log_messages.append(f"Ingestion error: {err_msg}")
         traceback.print_exc()
@@ -277,7 +292,7 @@ async def run_scan(req: ScanRequest):
                 "logs": log_messages,
                 "source_type": source_type,
                 "repo_path": repo_path,
-            }
+            },
         )
 
 
@@ -290,7 +305,7 @@ async def get_node_details(node_id: str):
         return JSONResponse({"error": f"Node '{node_id}' not found in Knowledge Graph"}, status_code=404)
 
     node_data = dict(kg.graph.nodes[node_id])
-    
+
     # Inbound edges (who calls/reads/depends on this node)
     inbound = []
     for u, _, data in kg.graph.in_edges(node_id, data=True):
@@ -306,7 +321,7 @@ async def get_node_details(node_id: str):
     src_file = node_data.get("source_file", "")
     line_start = node_data.get("line_start", 1)
     line_end = node_data.get("line_end", line_start)
-    
+
     if src_file:
         file_rec = fabric.raw.get(src_file)
         if file_rec:
@@ -356,6 +371,7 @@ async def get_readiness():
 @app.get("/api/rules")
 async def get_rules():
     from coded_tools.modernize.tools.business_rules_tool import BusinessRulesTool
+
     rules_tool = BusinessRulesTool()
     res = rules_tool.invoke({"action": "extract_rules"}, {})
     fabric = get_memory_fabric()
@@ -441,10 +457,15 @@ async def add_source(project_name: str, req: AddSourceRequest):
     except FileNotFoundError:
         return JSONResponse({"error": f"Project '{project_name}' not found"}, status_code=404)
     try:
-        project.add_source(Source(
-            source_id=req.source_id, type=req.type, config=req.config,
-            credential_ref=req.credential_ref, db_alias=req.db_alias,
-        ))
+        project.add_source(
+            Source(
+                source_id=req.source_id,
+                type=req.type,
+                config=req.config,
+                credential_ref=req.credential_ref,
+                db_alias=req.db_alias,
+            )
+        )
     except ValueError as e:
         return JSONResponse({"error": str(e)}, status_code=409)
     project_store.save(project)
@@ -516,6 +537,7 @@ def run_server(port: int = 8000):
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser(description="ModernizeAI Web UI Server")
     parser.add_argument("--port", type=int, default=8000, help="Port to run ModernizeAI UI (default: 8000)")
     args = parser.parse_args()

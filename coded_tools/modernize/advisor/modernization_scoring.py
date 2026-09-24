@@ -5,8 +5,10 @@ Evaluates Martin coupling metrics, provenance completeness, and architectural ri
 using an evenly weighted mathematical formulation. Populates Tier 5 Transformation Memory.
 """
 
-from typing import Any, Dict, List, Optional
-import networkx as nx
+from typing import Any
+from typing import Dict
+from typing import List
+
 from coded_tools.modernize.graph.algorithms import GraphAlgorithms
 from coded_tools.modernize.graph.graph_engine import KnowledgeGraphEngine
 from coded_tools.modernize.memory.memory_manager_tool import MemoryFabric
@@ -77,8 +79,7 @@ class ModernizationScoring:
         risk_nodes = [n for n, d in graph.nodes(data=True) if d.get("node_type") == "Risk"]
         # Tables with high incoming dependency count (gravity wells)
         gravity_wells = [
-            n for n, d in graph.nodes(data=True)
-            if d.get("node_type") == "DatabaseTable" and graph.in_degree(n) >= 3
+            n for n, d in graph.nodes(data=True) if d.get("node_type") == "DatabaseTable" and graph.in_degree(n) >= 3
         ]
 
         raw_penalty = (len(risk_nodes) * 8.0) + (len(gravity_wells) * 10.0)
@@ -149,7 +150,10 @@ class ModernizationScoring:
                         "strategy_6r": "Retain / ACL",
                         "target_pattern": "Anti-Corruption Layer + Debezium CDC Event Stream",
                         "priority": "Phase 3",
-                        "rationale": f"High Afferent Coupling (Ca={in_deg}). Direct table access represents an architectural gravity well.",
+                        "rationale": (
+                            f"High Afferent Coupling (Ca={in_deg}). "
+                            "Direct table access represents an architectural gravity well."
+                        ),
                         "risks": ["Shared table writes", "Locking during batch windows"],
                     }
                 else:
@@ -170,7 +174,10 @@ class ModernizationScoring:
                     "strategy_6r": "Retire",
                     "target_pattern": "Distributed Asynchronous Saga / Outbox Orchestrator",
                     "priority": "Phase 2",
-                    "rationale": "Procedural database code contains row-level table locks (SELECT FOR UPDATE) causing concurrency contention.",
+                    "rationale": (
+                        "Procedural database code contains row-level table locks "
+                        "(SELECT FOR UPDATE) causing concurrency contention."
+                    ),
                     "risks": ["Loss of transactional rollback", "Race conditions if not handled via saga"],
                 }
 
@@ -182,7 +189,10 @@ class ModernizationScoring:
                         "strategy_6r": "Refactor",
                         "target_pattern": "Stateless Event-Driven Cloud Function / Lambda",
                         "priority": "Phase 1",
-                        "rationale": f"High Instability (I={instability}) with pure business validation logic; ideal for serverless extraction.",
+                        "rationale": (
+                            f"High Instability (I={instability}) with pure business validation logic; "
+                            "ideal for serverless extraction."
+                        ),
                         "risks": ["Cold start latency", "Configuration drift"],
                     }
                 else:
@@ -192,7 +202,9 @@ class ModernizationScoring:
                         "strategy_6r": "Replatform",
                         "target_pattern": "Cloud-Native Container Microservice (Spring Boot / .NET 8)",
                         "priority": "Phase 2",
-                        "rationale": "Core orchestrator coordinating domain workflows; migrate via Strangler-Fig facade.",
+                        "rationale": (
+                            "Core orchestrator coordinating domain workflows; migrate via Strangler-Fig facade."
+                        ),
                         "risks": ["Inter-service network latency", "Downstream schema coupling"],
                     }
 
@@ -223,7 +235,10 @@ class ModernizationScoring:
                 components=c_nodes,
                 tables=tables,
                 business_rules=rules,
-                rationale=f"Bounded context identified by Louvain modularity clustering with {c['size']} tightly coupled nodes.",
+                rationale=(
+                    f"Bounded context identified by Louvain modularity clustering "
+                    f"with {c['size']} tightly coupled nodes."
+                ),
             )
 
         return strategies

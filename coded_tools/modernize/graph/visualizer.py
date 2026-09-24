@@ -8,7 +8,10 @@ edge label decluttering, test-class filtering, and postMessage integration for p
 
 import json
 import os
-from typing import Dict, Optional, Any, List
+from typing import Any
+from typing import Dict
+from typing import List
+
 import networkx as nx
 
 
@@ -18,17 +21,17 @@ class GraphVisualizer:
     """
 
     COLOR_PALETTE = {
-        "Application": "#3b82f6",        # Royal Blue
-        "Service": "#10b981",            # Emerald
-        "Module": "#06b6d4",             # Cyan
-        "APIEndpoint": "#8b5cf6",        # Purple
-        "DatabaseTable": "#f59e0b",      # Amber / Gold
-        "Column": "#a855f7",             # Violet
-        "StoredProcedure": "#14b8a6",    # Teal
-        "BusinessRule": "#ec4899",       # Pink / Magenta
-        "RequirementDocument": "#f97316",# Orange
-        "SMEInsight": "#f43f5e",         # Rose
-        "Risk": "#ef4444",               # Crimson Red
+        "Application": "#3b82f6",  # Royal Blue
+        "Service": "#10b981",  # Emerald
+        "Module": "#06b6d4",  # Cyan
+        "APIEndpoint": "#8b5cf6",  # Purple
+        "DatabaseTable": "#f59e0b",  # Amber / Gold
+        "Column": "#a855f7",  # Violet
+        "StoredProcedure": "#14b8a6",  # Teal
+        "BusinessRule": "#ec4899",  # Pink / Magenta
+        "RequirementDocument": "#f97316",  # Orange
+        "SMEInsight": "#f43f5e",  # Rose
+        "Risk": "#ef4444",  # Crimson Red
     }
 
     EDGE_COLORS = {
@@ -79,7 +82,9 @@ class GraphVisualizer:
         abs_out = os.path.abspath(output_path)
 
         # Detect application root node to soften hub edges
-        app_nodes = {n for n, d in graph.nodes(data=True) if d.get("node_type") == "Application" or "application" in n.lower()}
+        app_nodes = {
+            n for n, d in graph.nodes(data=True) if d.get("node_type") == "Application" or "application" in n.lower()
+        }
 
         nodes_list: List[Dict[str, Any]] = []
         for node_id, data in graph.nodes(data=True):
@@ -88,7 +93,7 @@ class GraphVisualizer:
             src = data.get("source_file", "N/A")
             l_start = data.get("line_start", 1)
             l_end = data.get("line_end", 1)
-            snippet = str(data.get("evidence_snippet", "")).replace('"', '&quot;').replace("'", "&#39;")
+            snippet = str(data.get("evidence_snippet", "")).replace('"', "&quot;").replace("'", "&#39;")
             tooltip = f"[{node_type}] {node_id}\nFile: {src}:{l_start}-{l_end}\n\nSnippet: {snippet[:150]}..."
 
             is_test = cls.is_test_node(node_id, data)
@@ -100,34 +105,38 @@ class GraphVisualizer:
             # Shorten label for clean canvas presentation
             clean_label = label.replace("Class: ", "").replace("Table: ", "").replace("Procedure: ", "")
 
-            nodes_list.append({
-                "id": node_id,
-                "label": clean_label,
-                "title": tooltip,
-                "color": {
-                    "background": base_color,
-                    "border": "#ffffff" if node_type == "Application" else base_color,
-                    "highlight": {
+            nodes_list.append(
+                {
+                    "id": node_id,
+                    "label": clean_label,
+                    "title": tooltip,
+                    "color": {
                         "background": base_color,
-                        "border": "#38bdf8",
+                        "border": "#ffffff" if node_type == "Application" else base_color,
+                        "highlight": {
+                            "background": base_color,
+                            "border": "#38bdf8",
+                        },
                     },
-                },
-                "shape": "dot" if node_type not in ("DatabaseTable", "Application") else ("database" if node_type == "DatabaseTable" else "hexagon"),
-                "size": size,
-                "node_type": node_type,
-                "source_file": src,
-                "line_start": l_start,
-                "line_end": l_end,
-                "is_test": is_test,
-                "level": level,
-                "original_color": base_color,
-                "original_size": size,
-                "font": {
-                    "color": "#f8fafc",
-                    "size": 12,
-                    "face": "Inter, system-ui, sans-serif",
-                },
-            })
+                    "shape": "dot"
+                    if node_type not in ("DatabaseTable", "Application")
+                    else ("database" if node_type == "DatabaseTable" else "hexagon"),
+                    "size": size,
+                    "node_type": node_type,
+                    "source_file": src,
+                    "line_start": l_start,
+                    "line_end": l_end,
+                    "is_test": is_test,
+                    "level": level,
+                    "original_color": base_color,
+                    "original_size": size,
+                    "font": {
+                        "color": "#f8fafc",
+                        "size": 12,
+                        "face": "Inter, system-ui, sans-serif",
+                    },
+                }
+            )
 
         edges_list: List[Dict[str, Any]] = []
         edge_id_counter = 0
@@ -141,41 +150,43 @@ class GraphVisualizer:
                 edge_title += f"\nFile: {src_file}:{data.get('line_start', 1)}"
 
             # Detect star-spoke hub edge from root app node
-            is_hub = (u in app_nodes)
+            is_hub = u in app_nodes
 
-            edges_list.append({
-                "id": f"e_{edge_id_counter}",
-                "from": u,
-                "to": v,
-                "edgeType": edge_type,
-                "title": edge_title,
-                # Edges do not display static labels by default to prevent visual collisions!
-                "label": "",
-                "color": {
-                    "color": "rgba(100, 116, 139, 0.22)" if is_hub else base_color,
-                    "highlight": "#38bdf8",
-                    "hover": "#38bdf8",
-                    "opacity": 0.3 if is_hub else 0.85,
-                },
-                "arrows": {
-                    "to": {
-                        "enabled": not is_hub,
-                        "scaleFactor": 0.75,
-                    }
-                },
-                "dashes": is_hub,
-                "width": 0.8 if is_hub else (2.2 if edge_type in ("WRITES_TO", "CALLS") else 1.4),
-                # Hub edges have physics=False so they don't drag all nodes into a tight black hole
-                "physics": not is_hub,
-                "is_hub": is_hub,
-                "original_color": base_color,
-                "font": {
-                    "color": "#f8fafc",
-                    "size": 10,
-                    "align": "middle",
-                    "background": "#0f172a",
-                },
-            })
+            edges_list.append(
+                {
+                    "id": f"e_{edge_id_counter}",
+                    "from": u,
+                    "to": v,
+                    "edgeType": edge_type,
+                    "title": edge_title,
+                    # Edges do not display static labels by default to prevent visual collisions!
+                    "label": "",
+                    "color": {
+                        "color": "rgba(100, 116, 139, 0.22)" if is_hub else base_color,
+                        "highlight": "#38bdf8",
+                        "hover": "#38bdf8",
+                        "opacity": 0.3 if is_hub else 0.85,
+                    },
+                    "arrows": {
+                        "to": {
+                            "enabled": not is_hub,
+                            "scaleFactor": 0.75,
+                        }
+                    },
+                    "dashes": is_hub,
+                    "width": 0.8 if is_hub else (2.2 if edge_type in ("WRITES_TO", "CALLS") else 1.4),
+                    # Hub edges have physics=False so they don't drag all nodes into a tight black hole
+                    "physics": not is_hub,
+                    "is_hub": is_hub,
+                    "original_color": base_color,
+                    "font": {
+                        "color": "#f8fafc",
+                        "size": 10,
+                        "align": "middle",
+                        "background": "#0f172a",
+                    },
+                }
+            )
 
         html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -185,8 +196,9 @@ class GraphVisualizer:
   <title>ModernizeAI Knowledge Fabric Explorer</title>
   <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <style>
     * {{
       box-sizing: border-box;
@@ -368,7 +380,8 @@ class GraphVisualizer:
       <!-- Search Input -->
       <div class="search-wrapper">
         <span class="search-icon">🔍</span>
-        <input type="text" id="search-input" class="search-input" placeholder="Search class or table..." autocomplete="off" />
+        <input type="text" id="search-input" class="search-input"
+               placeholder="Search class or table..." autocomplete="off" />
         <div id="search-dropdown" class="search-dropdown"></div>
       </div>
 
@@ -633,7 +646,8 @@ class GraphVisualizer:
         searchDropdown.innerHTML = '<div class="search-item" style="color: #64748b;">No matching components</div>';
       }} else {{
         searchDropdown.innerHTML = matches.map(function (m) {{
-          return '<div class="search-item" data-id="' + m.id + '"><span>' + m.label + '</span><span class="search-badge">' + (m.node_type || '') + '</span></div>';
+          return '<div class="search-item" data-id="' + m.id + '">' +
+            '<span>' + m.label + '</span><span class="search-badge">' + (m.node_type || '') + '</span></div>';
         }}).join("");
       }}
       searchDropdown.classList.add("active");

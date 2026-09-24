@@ -10,16 +10,16 @@ Credentials follow the standard AWS resolution chain (environment variables,
 env-var prefix for an explicit access key pair.
 """
 
-from typing import List, Optional, Tuple
+from typing import List
+from typing import Optional
+from typing import Tuple
 from urllib.parse import urlsplit
 
 from coded_tools.modernize.parsers.registry import get_default_registry
-from coded_tools.modernize.sources.base import (
-    ConnectionTestResult,
-    SourceConnector,
-    SourceDocument,
-    resolve_credential_pair,
-)
+from coded_tools.modernize.sources.base import ConnectionTestResult
+from coded_tools.modernize.sources.base import SourceConnector
+from coded_tools.modernize.sources.base import SourceDocument
+from coded_tools.modernize.sources.base import resolve_credential_pair
 
 _DOC_EXTENSIONS = (".md", ".txt", ".rst")
 _MAX_OBJECT_BYTES = 5 * 1024 * 1024
@@ -56,7 +56,10 @@ class S3Connector(SourceConnector):
         access_key, secret_key = resolve_credential_pair(self.credential_ref)
         if access_key and secret_key:
             return boto3.client(
-                "s3", region_name=region, aws_access_key_id=access_key, aws_secret_access_key=secret_key,
+                "s3",
+                region_name=region,
+                aws_access_key_id=access_key,
+                aws_secret_access_key=secret_key,
             )
         return boto3.client("s3", region_name=region)
 
@@ -74,7 +77,9 @@ class S3Connector(SourceConnector):
         except Exception as e:  # botocore.exceptions.* / RuntimeError from missing boto3
             return ConnectionTestResult(ok=False, message=f"S3 error: {e}")
         count = resp.get("KeyCount", 0)
-        return ConnectionTestResult(ok=True, message=f"Bucket reachable ({'objects found' if count else 'prefix is empty'}).")
+        return ConnectionTestResult(
+            ok=True, message=f"Bucket reachable ({'objects found' if count else 'prefix is empty'})."
+        )
 
     def fetch(self, since_fingerprint: Optional[str] = None) -> Tuple[List[SourceDocument], str]:
         s3_uri = self.config.get("s3_uri")
@@ -108,15 +113,18 @@ class S3Connector(SourceConnector):
                 except UnicodeDecodeError:
                     content = body.decode("utf-8", errors="replace")
 
-                rel_path = key[len(prefix):].lstrip("/") if prefix else key
-                documents.append(SourceDocument(
-                    path=rel_path,
-                    content=content,
-                    kind="doc" if ext in _DOC_EXTENSIONS else "file",
-                    uri=f"https://{bucket}.s3.amazonaws.com/{key}",
-                    metadata={"etag": etag, "size": obj.get("Size", 0)},
-                ))
+                rel_path = key[len(prefix) :].lstrip("/") if prefix else key
+                documents.append(
+                    SourceDocument(
+                        path=rel_path,
+                        content=content,
+                        kind="doc" if ext in _DOC_EXTENSIONS else "file",
+                        uri=f"https://{bucket}.s3.amazonaws.com/{key}",
+                        metadata={"etag": etag, "size": obj.get("Size", 0)},
+                    )
+                )
 
         import hashlib
+
         fingerprint = hashlib.sha256("\n".join(sorted(fingerprint_parts)).encode("utf-8")).hexdigest()
         return documents, fingerprint

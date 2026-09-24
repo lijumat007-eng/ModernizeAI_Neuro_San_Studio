@@ -9,8 +9,8 @@ All metrics, rules, and 6R strategies are computed dynamically from the Knowledg
 """
 
 import os
-from typing import Any, Dict, List
-import networkx as nx
+from typing import Any
+from typing import Dict
 
 from coded_tools.modernize.advisor.modernization_scoring import ModernizationScoring
 from coded_tools.modernize.graph.algorithms import GraphAlgorithms
@@ -76,13 +76,16 @@ class ReportGenerator:
         comm_sections = []
         for c in communities:
             c_nodes = ", ".join([f"`{n['id']}`" for n in c["nodes"]])
-            comm_sections.append(f"### Domain: {c['community_id']} ({c['size']} Components)\n- **Components Included**: {c_nodes}\n")
+            comm_sections.append(
+                f"### Domain: {c['community_id']} ({c['size']} Components)\n- **Components Included**: {c_nodes}\n"
+            )
 
         # Dynamic 6R table rows
         strat_rows = []
         for s in strategies:
             strat_rows.append(
-                f"| **{s['component']}** | **{s['strategy_6r']}** | {s['target_pattern']} | **{s['priority']}** | {s['rationale']} |"
+                f"| **{s['component']}** | **{s['strategy_6r']}** | {s['target_pattern']} | "
+                f"**{s['priority']}** | {s['rationale']} |"
             )
 
         content = f"""# ModernizeAI: Modernization Readiness & Cloud Architecture Report
@@ -90,8 +93,10 @@ class ReportGenerator:
 ## Executive Summary
 - **Analyzed Codebase**: Enterprise Legacy Repository (`data/insurance_claims_app`)
 - **Knowledge Fabric Metrics**: {total_nodes} Verified Nodes, {total_edges} Structural & Semantic Relationships.
-- **Overall Modernization Readiness Score**: **{score_data['overall_readiness_score']}/100** ({score_data['grade']}).
-- **Modularity Factor**: {score_data['modularity_score']}/100 | **Provenance Factor**: {score_data['provenance_score']}/100 | **Risk Health Factor**: {score_data['risk_health_score']}/100.
+- **Overall Modernization Readiness Score**: **{score_data["overall_readiness_score"]}/100** ({score_data["grade"]}).
+- **Modularity Factor**: {score_data["modularity_score"]}/100 | \
+**Provenance Factor**: {score_data["provenance_score"]}/100 | \
+**Risk Health Factor**: {score_data["risk_health_score"]}/100.
 
 ---
 
@@ -102,7 +107,8 @@ class ReportGenerator:
 {chr(10).join(metrics_rows)}
 
 > [!NOTE]
-> High Afferent Coupling ($C_a$) on core database tables indicates architectural gravity wells. Direct table access across microservice domains should be encapsulated via an Anti-Corruption Layer (ACL).
+> High Afferent Coupling ($C_a$) on core database tables indicates architectural gravity wells.
+> Direct table access across microservice domains should be encapsulated via an Anti-Corruption Layer (ACL).
 
 ---
 
@@ -128,14 +134,22 @@ class ReportGenerator:
     def generate_blast_radius_matrix(cls, kg: KnowledgeGraphEngine, output_path: str):
         # Calculate blast radius on all key database tables and services dynamically
         scenarios = []
-        candidates = [n for n, d in kg.graph.nodes(data=True) if d.get("node_type") in ("DatabaseTable", "Service")][:4]
+        candidates = [n for n, d in kg.graph.nodes(data=True) if d.get("node_type") in ("DatabaseTable", "Service")][
+            :4
+        ]
 
         def format_impact_table(br: Dict[str, Any]) -> str:
             rows = []
             for item in br.get("upstream_impact", []):
-                rows.append(f"| `{item['node_id']}` | Upstream (Caller/Reader) | {item['hop_distance']} | `{item['edge_type']}` | `{item['source_file']}:{item['line_start']}` |")
+                rows.append(
+                    f"| `{item['node_id']}` | Upstream (Caller/Reader) | {item['hop_distance']} | "
+                    f"`{item['edge_type']}` | `{item['source_file']}:{item['line_start']}` |"
+                )
             for item in br.get("downstream_impact", []):
-                rows.append(f"| `{item['node_id']}` | Downstream (Dependency) | {item['hop_distance']} | `{item['edge_type']}` | `{item['source_file']}:{item['line_start']}` |")
+                rows.append(
+                    f"| `{item['node_id']}` | Downstream (Dependency) | {item['hop_distance']} | "
+                    f"`{item['edge_type']}` | `{item['source_file']}:{item['line_start']}` |"
+                )
             return "\n".join(rows) if rows else "| None | - | - | - | - |"
 
         for cand in candidates:
@@ -143,8 +157,9 @@ class ReportGenerator:
             br = GraphAlgorithms.calculate_blast_radius(kg.graph, cand, max_depth=2)
             section = f"""## Scenario: Modifications to `{cand}` ({node_type})
 - **Target Entity**: `{cand}` ({node_type})
-- **Risk Classification**: **{br.get('risk_level', 'MEDIUM RISK')}**
-- **Direct & Transitive Blast Radius**: {br.get('total_affected_count', 0)} components ({br.get('upstream_count', 0)} Upstream, {br.get('downstream_count', 0)} Downstream).
+- **Risk Classification**: **{br.get("risk_level", "MEDIUM RISK")}**
+- **Direct & Transitive Blast Radius**: {br.get("total_affected_count", 0)} components \
+({br.get("upstream_count", 0)} Upstream, {br.get("downstream_count", 0)} Downstream).
 
 | Impacted Component | Direction | Hop Distance | Relationship | Source Code Citation |
 | :--- | :--- | :---: | :--- | :--- |
@@ -154,7 +169,8 @@ class ReportGenerator:
 
         content = f"""# ModernizeAI: Impact & Blast-Radius Matrix
 
-This matrix provides quantitative impact assessments for critical proposed change scenarios across the legacy architecture.
+This matrix provides quantitative impact assessments for critical proposed change scenarios
+across the legacy architecture.
 
 {chr(10).join(scenarios)}
 
@@ -198,7 +214,8 @@ This matrix provides quantitative impact assessments for critical proposed chang
 
         content = f"""# ModernizeAI: Business Rules Catalog & Traceability Matrix
 
-Every business rule extracted by the multi-agent swarm is formalized, numbered, and directly tied to verifiable source code lines and database structures (80% deterministic extraction).
+Every business rule extracted by the multi-agent swarm is formalized, numbered, and directly tied
+to verifiable source code lines and database structures (80% deterministic extraction).
 
 | Rule ID | Rule Name | Description | Source File Citation | Implementation Method |
 | :---: | :--- | :--- | :--- | :--- |

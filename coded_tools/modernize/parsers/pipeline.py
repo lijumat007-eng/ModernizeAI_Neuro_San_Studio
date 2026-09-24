@@ -6,12 +6,17 @@ Replaces the old pattern of every CodedTool calling JavaParser/DdlParser
 directly and re-implementing ingestion/registration itself.
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from dataclasses import dataclass
+from dataclasses import field
+from typing import Any
+from typing import Dict
+from typing import List
 
-from coded_tools.modernize.parsers.ir import ParseResult, Reference
+from coded_tools.modernize.parsers.ir import ParseResult
+from coded_tools.modernize.parsers.ir import Reference
 from coded_tools.modernize.parsers.linker import Linker
-from coded_tools.modernize.parsers.registry import ParserRegistry, get_default_registry
+from coded_tools.modernize.parsers.registry import ParserRegistry
+from coded_tools.modernize.parsers.registry import get_default_registry
 
 _SQL_VERB_TO_EDGE_KIND = {
     "SELECT": "READS_FROM",
@@ -37,11 +42,18 @@ def _sql_accesses_to_references(result: ParseResult) -> List[Reference]:
         if edge_kind is None or not access.owner_symbol:
             continue
         for table in access.tables:
-            derived.append(Reference(
-                from_symbol=access.owner_symbol, target_name=table, kind=edge_kind,
-                file_path=access.file_path, line=access.line, evidence=access.snippet,
-                confidence=access.confidence, resolved_target=table,  # a bare table name IS its own canonical id
-            ))
+            derived.append(
+                Reference(
+                    from_symbol=access.owner_symbol,
+                    target_name=table,
+                    kind=edge_kind,
+                    file_path=access.file_path,
+                    line=access.line,
+                    evidence=access.snippet,
+                    confidence=access.confidence,
+                    resolved_target=table,  # a bare table name IS its own canonical id
+                )
+            )
     return derived
 
 
@@ -71,7 +83,8 @@ class ParseReport:
             "resolved_references": self.resolved_references,
             "external_references": self.external_references,
             "resolution_rate": round(self.resolved_references / self.total_references, 4)
-            if self.total_references else 1.0,
+            if self.total_references
+            else 1.0,
             "diagnostics": self.diagnostics,
         }
 

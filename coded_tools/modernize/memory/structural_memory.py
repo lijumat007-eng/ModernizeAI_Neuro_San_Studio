@@ -4,7 +4,10 @@ Tier 2: Structural Memory Engine.
 Maintains deterministic symbol tables, AST hierarchies, and schema dictionaries.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
 
 
 class StructuralMemory:

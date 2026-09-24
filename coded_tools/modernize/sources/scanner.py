@@ -11,14 +11,19 @@ entire global graph on every scan; see apps/modernizeai_ui/server.py).
 
 import time
 import traceback
-from dataclasses import dataclass, field
-from typing import Any, Dict, Optional
+from dataclasses import dataclass
+from dataclasses import field
+from typing import Any
+from typing import Dict
+from typing import Optional
 
-from coded_tools.modernize.graph.graph_builder import GraphBuilder, remove_source_nodes
-from coded_tools.modernize.graph.store import GraphStore, get_default_store
+from coded_tools.modernize.graph.graph_builder import GraphBuilder
+from coded_tools.modernize.graph.graph_builder import remove_source_nodes
+from coded_tools.modernize.graph.store import GraphStore
+from coded_tools.modernize.graph.store import get_default_store
 from coded_tools.modernize.parsers.pipeline import parse_repository
 from coded_tools.modernize.sources.base import ConnectionTestResult
-from coded_tools.modernize.sources.models import Project, ProjectStore
+from coded_tools.modernize.sources.models import ProjectStore
 from coded_tools.modernize.sources.registry import build_connector
 
 
@@ -33,9 +38,12 @@ class SourceScanResult:
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "source_id": self.source_id, "status": self.status,
-            "documents_ingested": self.documents_ingested, "message": self.message,
-            "parse_report": self.parse_report, "graph_stats": self.graph_stats,
+            "source_id": self.source_id,
+            "status": self.status,
+            "documents_ingested": self.documents_ingested,
+            "message": self.message,
+            "parse_report": self.parse_report,
+            "graph_stats": self.graph_stats,
         }
 
 
@@ -102,8 +110,12 @@ class ProjectScanner:
         self.project_store.save(project)
 
         return SourceScanResult(
-            source_id=source_id, status="scanned", documents_ingested=len(documents),
-            message=source.last_scan_message, parse_report=report.to_dict(), graph_stats=graph_stats,
+            source_id=source_id,
+            status="scanned",
+            documents_ingested=len(documents),
+            message=source.last_scan_message,
+            parse_report=report.to_dict(),
+            graph_stats=graph_stats,
         )
 
     def scan_all(self, project_name: str, force_full: bool = False) -> Dict[str, SourceScanResult]:

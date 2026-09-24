@@ -7,23 +7,51 @@ GraphBuilder, RulesExtractor) only has to know one shape regardless of the
 source language.
 """
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
-
+from dataclasses import dataclass
+from dataclasses import field
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
 
 # Symbol kinds shared across all languages. Not every language uses every kind
 # (COBOL has no CLASS, Java has no PROGRAM), but the vocabulary is shared so
 # downstream code does not need per-language branching.
 SYMBOL_KINDS = {
-    "CLASS", "INTERFACE", "STRUCT", "ENUM", "RECORD",
-    "METHOD", "FUNCTION", "PARAGRAPH", "FIELD", "PROPERTY",
-    "NAMESPACE", "PACKAGE", "PROGRAM", "COPYBOOK", "JOB", "JOBSTEP",
-    "TABLE", "VIEW", "PROCEDURE", "TRIGGER", "COLUMN",
+    "CLASS",
+    "INTERFACE",
+    "STRUCT",
+    "ENUM",
+    "RECORD",
+    "METHOD",
+    "FUNCTION",
+    "PARAGRAPH",
+    "FIELD",
+    "PROPERTY",
+    "NAMESPACE",
+    "PACKAGE",
+    "PROGRAM",
+    "COPYBOOK",
+    "JOB",
+    "JOBSTEP",
+    "TABLE",
+    "VIEW",
+    "PROCEDURE",
+    "TRIGGER",
+    "COLUMN",
 }
 
 REFERENCE_KINDS = {
-    "CALLS", "INSTANTIATES", "INHERITS", "IMPLEMENTS",
-    "IMPORTS", "INCLUDES", "READS_FROM", "WRITES_TO", "EXECUTES", "PERFORMS",
+    "CALLS",
+    "INSTANTIATES",
+    "INHERITS",
+    "IMPLEMENTS",
+    "IMPORTS",
+    "INCLUDES",
+    "READS_FROM",
+    "WRITES_TO",
+    "EXECUTES",
+    "PERFORMS",
 }
 
 

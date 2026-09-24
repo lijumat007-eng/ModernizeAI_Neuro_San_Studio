@@ -8,10 +8,12 @@ Base classes shared by every language-specific parser:
   instead of a silent guess.
 """
 
-from abc import ABC, abstractmethod
-from typing import List, Optional
+from abc import ABC
+from abc import abstractmethod
+from typing import List
 
-from coded_tools.modernize.parsers.ir import ParseDiagnostic, ParseResult
+from coded_tools.modernize.parsers.ir import ParseDiagnostic
+from coded_tools.modernize.parsers.ir import ParseResult
 
 
 class LanguageParser(ABC):

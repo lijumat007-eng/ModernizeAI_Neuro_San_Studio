@@ -14,7 +14,8 @@ import unittest
 
 sys.path.insert(0, os.path.abspath("."))
 
-from coded_tools.modernize.sources.git import GitConnector, _inject_token
+from coded_tools.modernize.sources.git import GitConnector
+from coded_tools.modernize.sources.git import _inject_token
 
 
 def _run(cmd, cwd):
@@ -25,7 +26,6 @@ def _run(cmd, cwd):
 
 
 class TestGitConnector(unittest.TestCase):
-
     def setUp(self):
         self.tmp_dir = tempfile.mkdtemp(prefix="modernize_git_")
         self.origin_dir = os.path.join(self.tmp_dir, "origin")
@@ -44,9 +44,14 @@ class TestGitConnector(unittest.TestCase):
         shutil.rmtree(self.tmp_dir, ignore_errors=True)
 
     def _connector(self) -> GitConnector:
-        return GitConnector("repo1", {
-            "url": self.origin_dir, "branch": "main", "workspace_root": self.workspace_root,
-        })
+        return GitConnector(
+            "repo1",
+            {
+                "url": self.origin_dir,
+                "branch": "main",
+                "workspace_root": self.workspace_root,
+            },
+        )
 
     def test_clones_and_fetches_files(self):
         connector = self._connector()
@@ -82,15 +87,18 @@ class TestGitConnector(unittest.TestCase):
         self.assertTrue(result.ok)
 
     def test_test_connection_fails_for_unreachable_url(self):
-        connector = GitConnector("repo1", {
-            "url": os.path.join(self.tmp_dir, "does_not_exist"), "workspace_root": self.workspace_root,
-        })
+        connector = GitConnector(
+            "repo1",
+            {
+                "url": os.path.join(self.tmp_dir, "does_not_exist"),
+                "workspace_root": self.workspace_root,
+            },
+        )
         result = connector.test_connection()
         self.assertFalse(result.ok)
 
 
 class TestTokenInjection(unittest.TestCase):
-
     def test_https_token_injected(self):
         url = _inject_token("https://github.com/org/repo.git", "SECRETTOKEN")
         self.assertIn("oauth2:SECRETTOKEN@", url)

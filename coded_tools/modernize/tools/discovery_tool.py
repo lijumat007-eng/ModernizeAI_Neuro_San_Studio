@@ -5,8 +5,12 @@ Dynamically scans repository directories, catalogs legacy code, database schemas
 and specifications, and registers them into Tier 1 Raw Memory.
 """
 
-from coded_tools.modernize.tool_base import CodedTool
+from typing import Any
+from typing import Dict
+from typing import List
+
 from coded_tools.modernize.memory.memory_manager_tool import get_memory_fabric
+from coded_tools.modernize.tool_base import CodedTool
 
 
 class DiscoveryTool(CodedTool):
@@ -21,7 +25,7 @@ class DiscoveryTool(CodedTool):
 
         if action in ("scan_repository", "ingest_repo", "catalog"):
             records = fabric.raw.ingest_directory(repo_path)
-            
+
             catalog: Dict[str, List[Dict[str, Any]]] = {
                 "java_source_files": [],
                 "sql_database_files": [],

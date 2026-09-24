@@ -7,16 +7,17 @@ RawMemory.ingest_directory and the pipeline don't hardcode extension lists.
 """
 
 import re
-from typing import Dict, List, Optional
+from typing import Dict
+from typing import List
+from typing import Optional
 
 from coded_tools.modernize.parsers.base import LanguageParser
-from coded_tools.modernize.parsers.ir import ParseDiagnostic, ParseResult
+from coded_tools.modernize.parsers.ir import ParseDiagnostic
+from coded_tools.modernize.parsers.ir import ParseResult
 
 # A `.h` file is ambiguous between C and C++. These tokens only appear in
 # valid C++ (none is legal C), so any hit means "parse this as C++".
-_CPP_ONLY_HINTS = re.compile(
-    r"\bclass\s+\w+|\bnamespace\s+\w+|\btemplate\s*<|\bpublic\s*:|\bprivate\s*:|::\w|\bstd::"
-)
+_CPP_ONLY_HINTS = re.compile(r"\bclass\s+\w+|\bnamespace\s+\w+|\btemplate\s*<|\bpublic\s*:|\bprivate\s*:|::\w|\bstd::")
 
 
 class ParserRegistry:
@@ -40,7 +41,8 @@ class ParserRegistry:
             pass
 
         try:
-            from coded_tools.modernize.parsers.lang.cpp import CParser, CppParser
+            from coded_tools.modernize.parsers.lang.cpp import CParser
+            from coded_tools.modernize.parsers.lang.cpp import CppParser
 
             self._c_parser = CParser()
             self._cpp_parser = CppParser()
@@ -85,10 +87,13 @@ class ParserRegistry:
         try:
             return parser.parse(file_path, content)
         except Exception as exc:  # noqa: BLE001 - one bad file must not abort the repo scan
-            result = ParseResult(file_path=file_path.replace("\\", "/"), language=getattr(parser, "language", "unknown"))
+            result = ParseResult(
+                file_path=file_path.replace("\\", "/"), language=getattr(parser, "language", "unknown")
+            )
             result.diagnostics.append(
                 ParseDiagnostic(
-                    file_path=file_path, severity="ERROR",
+                    file_path=file_path,
+                    severity="ERROR",
                     message=f"Parser raised an unhandled exception: {exc}",
                 )
             )

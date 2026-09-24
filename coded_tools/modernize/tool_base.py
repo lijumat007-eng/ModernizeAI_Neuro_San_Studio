@@ -5,11 +5,13 @@ Inherits from neuro_san.interfaces.coded_tool.CodedTool when neuro-san is instal
 or falls back to an equivalent base class when running offline/standalone.
 """
 
-from typing import Any, Dict
+from typing import Any
+from typing import Dict
 
 try:
     from neuro_san.interfaces.coded_tool import CodedTool
 except ImportError:
+
     class CodedTool:
         """Fallback base class when neuro_san host package is not in the environment."""
 

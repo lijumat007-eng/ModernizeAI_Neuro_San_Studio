@@ -7,7 +7,11 @@ No external vector databases required.
 
 import math
 import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+
 import numpy as np
 
 
@@ -172,18 +176,20 @@ class SemanticMemory:
             score = float(hybrid_scores[idx])
             if score > 0.01:
                 chunk = self.chunks[idx]
-                results.append({
-                    "chunk_id": chunk.chunk_id,
-                    "score": round(score, 4),
-                    "bm25_score": round(float(norm_bm25[idx]), 4),
-                    "cosine_score": round(float(cosine_scores[idx]), 4),
-                    "content": chunk.content,
-                    "source_file": chunk.source_file,
-                    "start_line": chunk.start_line,
-                    "end_line": chunk.end_line,
-                    "chunk_type": chunk.chunk_type,
-                    "metadata": chunk.metadata,
-                })
+                results.append(
+                    {
+                        "chunk_id": chunk.chunk_id,
+                        "score": round(score, 4),
+                        "bm25_score": round(float(norm_bm25[idx]), 4),
+                        "cosine_score": round(float(cosine_scores[idx]), 4),
+                        "content": chunk.content,
+                        "source_file": chunk.source_file,
+                        "start_line": chunk.start_line,
+                        "end_line": chunk.end_line,
+                        "chunk_type": chunk.chunk_type,
+                        "metadata": chunk.metadata,
+                    }
+                )
 
         return results
 

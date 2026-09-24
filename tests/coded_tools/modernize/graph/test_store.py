@@ -15,7 +15,8 @@ import unittest
 
 sys.path.insert(0, os.path.abspath("."))
 
-from coded_tools.modernize.graph.graph_builder import GraphBuilder, remove_source_nodes
+from coded_tools.modernize.graph.graph_builder import GraphBuilder
+from coded_tools.modernize.graph.graph_builder import remove_source_nodes
 from coded_tools.modernize.graph.graph_engine import KnowledgeGraphEngine
 from coded_tools.modernize.graph.store import SqliteGraphStore
 from coded_tools.modernize.memory.memory_manager_tool import MemoryFabric
@@ -34,7 +35,6 @@ def _fabric(files: dict) -> MemoryFabric:
 
 
 class TestSqliteGraphStore(unittest.TestCase):
-
     def setUp(self):
         self.tmp_dir = tempfile.mkdtemp(prefix="modernize_graphstore_")
 
@@ -100,7 +100,6 @@ class TestSqliteGraphStore(unittest.TestCase):
 
 
 class TestRemoveSourceNodes(unittest.TestCase):
-
     def test_removes_only_the_given_sources_own_nodes(self):
         kg = KnowledgeGraphEngine()
         fabric_a = _fabric({"Foo.java": JAVA_A})

@@ -10,11 +10,17 @@ would miss).
 """
 
 import re
-from typing import Dict, List, Optional, Tuple
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
 
 from coded_tools.modernize.parsers import embedded_sql
 from coded_tools.modernize.parsers.base import TreeSitterParser
-from coded_tools.modernize.parsers.ir import Endpoint, ParseResult, Reference, Symbol
+from coded_tools.modernize.parsers.ir import Endpoint
+from coded_tools.modernize.parsers.ir import ParseResult
+from coded_tools.modernize.parsers.ir import Reference
+from coded_tools.modernize.parsers.ir import Symbol
 
 _TYPE_DECL_KINDS = {
     "class_declaration": "CLASS",
@@ -69,8 +75,14 @@ class JavaParser(TreeSitterParser):
         for child in root.children:
             if child.type in _TYPE_DECL_KINDS:
                 self._handle_type_decl(
-                    child, _TYPE_DECL_KINDS[child.type], source_bytes, file_path, result,
-                    package=package, parent_qname=None, imports=imports,
+                    child,
+                    _TYPE_DECL_KINDS[child.type],
+                    source_bytes,
+                    file_path,
+                    result,
+                    package=package,
+                    parent_qname=None,
+                    imports=imports,
                 )
 
     # ------------------------------------------------------------------ #
@@ -99,8 +111,15 @@ class JavaParser(TreeSitterParser):
     # ------------------------------------------------------------------ #
 
     def _handle_type_decl(
-        self, node, kind: str, source_bytes: bytes, file_path: str, result: ParseResult,
-        package: str, parent_qname: Optional[str], imports: List[str],
+        self,
+        node,
+        kind: str,
+        source_bytes: bytes,
+        file_path: str,
+        result: ParseResult,
+        package: str,
+        parent_qname: Optional[str],
+        imports: List[str],
     ) -> None:
         name_node = node.child_by_field_name("name")
         name = self.text(name_node, source_bytes)
@@ -119,8 +138,11 @@ class JavaParser(TreeSitterParser):
                 base_types.append(base_name)
                 result.references.append(
                     Reference(
-                        from_symbol=qname, target_name=simple_type_name(base_name), kind="INHERITS",
-                        file_path=file_path, line=self.line_start(node),
+                        from_symbol=qname,
+                        target_name=simple_type_name(base_name),
+                        kind="INHERITS",
+                        file_path=file_path,
+                        line=self.line_start(node),
                         evidence=f"{name} extends {base_name}",
                     )
                 )
@@ -131,16 +153,27 @@ class JavaParser(TreeSitterParser):
                 base_types.append(base_name)
                 result.references.append(
                     Reference(
-                        from_symbol=qname, target_name=simple_type_name(base_name), kind="IMPLEMENTS",
-                        file_path=file_path, line=self.line_start(node),
+                        from_symbol=qname,
+                        target_name=simple_type_name(base_name),
+                        kind="IMPLEMENTS",
+                        file_path=file_path,
+                        line=self.line_start(node),
                         evidence=f"{name} implements {base_name}",
                     )
                 )
 
         symbol = Symbol(
-            kind=kind, name=name, qualified_name=qname, language="java", file_path=file_path,
-            line_start=self.line_start(node), line_end=self.line_end(node), parent=parent_qname,
-            modifiers=modifiers, annotations=annotations, base_types=base_types,
+            kind=kind,
+            name=name,
+            qualified_name=qname,
+            language="java",
+            file_path=file_path,
+            line_start=self.line_start(node),
+            line_end=self.line_end(node),
+            parent=parent_qname,
+            modifiers=modifiers,
+            annotations=annotations,
+            base_types=base_types,
         )
         result.symbols.append(symbol)
 
@@ -161,14 +194,26 @@ class JavaParser(TreeSitterParser):
         for member in body.children:
             if member.type in _TYPE_DECL_KINDS:
                 self._handle_type_decl(
-                    member, _TYPE_DECL_KINDS[member.type], source_bytes, file_path, result,
-                    package=package, parent_qname=qname, imports=imports,
+                    member,
+                    _TYPE_DECL_KINDS[member.type],
+                    source_bytes,
+                    file_path,
+                    result,
+                    package=package,
+                    parent_qname=qname,
+                    imports=imports,
                 )
             elif member.type == "field_declaration":
                 self._handle_field(member, qname, source_bytes, file_path, result, field_types)
             elif member.type in ("method_declaration", "constructor_declaration"):
                 self._handle_method(
-                    member, qname, source_bytes, file_path, result, field_types, class_base_path,
+                    member,
+                    qname,
+                    source_bytes,
+                    file_path,
+                    result,
+                    field_types,
+                    class_base_path,
                 )
 
     @staticmethod
@@ -205,8 +250,13 @@ class JavaParser(TreeSitterParser):
     # ------------------------------------------------------------------ #
 
     def _handle_field(
-        self, node, class_qname: str, source_bytes: bytes, file_path: str,
-        result: ParseResult, field_types: Dict[str, str],
+        self,
+        node,
+        class_qname: str,
+        source_bytes: bytes,
+        file_path: str,
+        result: ParseResult,
+        field_types: Dict[str, str],
     ) -> None:
         type_node = node.child_by_field_name("type")
         type_text = self.text(type_node, source_bytes) if type_node is not None else ""
@@ -223,10 +273,17 @@ class JavaParser(TreeSitterParser):
             field_types[f_name] = simple_type_name(type_text)
             result.symbols.append(
                 Symbol(
-                    kind="FIELD", name=f_name, qualified_name=f"{class_qname}.{f_name}",
-                    language="java", file_path=file_path, line_start=self.line_start(node),
-                    line_end=self.line_end(node), parent=class_qname, modifiers=modifiers,
-                    annotations=annotations, return_type=type_text,
+                    kind="FIELD",
+                    name=f_name,
+                    qualified_name=f"{class_qname}.{f_name}",
+                    language="java",
+                    file_path=file_path,
+                    line_start=self.line_start(node),
+                    line_end=self.line_end(node),
+                    parent=class_qname,
+                    modifiers=modifiers,
+                    annotations=annotations,
+                    return_type=type_text,
                 )
             )
 
@@ -235,8 +292,14 @@ class JavaParser(TreeSitterParser):
     # ------------------------------------------------------------------ #
 
     def _handle_method(
-        self, node, class_qname: str, source_bytes: bytes, file_path: str, result: ParseResult,
-        field_types: Dict[str, str], class_base_path: str,
+        self,
+        node,
+        class_qname: str,
+        source_bytes: bytes,
+        file_path: str,
+        result: ParseResult,
+        field_types: Dict[str, str],
+        class_base_path: str,
     ) -> None:
         name_node = node.child_by_field_name("name")
         m_name = self.text(name_node, source_bytes) if name_node is not None else "<init>"
@@ -266,9 +329,18 @@ class JavaParser(TreeSitterParser):
 
         result.symbols.append(
             Symbol(
-                kind="METHOD", name=m_name, qualified_name=qname, language="java", file_path=file_path,
-                line_start=self.line_start(node), line_end=self.line_end(node), parent=class_qname,
-                modifiers=modifiers, annotations=annotations, signature=signature, return_type=return_type,
+                kind="METHOD",
+                name=m_name,
+                qualified_name=qname,
+                language="java",
+                file_path=file_path,
+                line_start=self.line_start(node),
+                line_end=self.line_end(node),
+                parent=class_qname,
+                modifiers=modifiers,
+                annotations=annotations,
+                signature=signature,
+                return_type=return_type,
             )
         )
 
@@ -281,8 +353,12 @@ class JavaParser(TreeSitterParser):
                     full_route = (class_base_path.rstrip("/") + "/" + path.lstrip("/")).replace("//", "/")
                     result.endpoints.append(
                         Endpoint(
-                            route=full_route or path, http_method=http_method, owner_symbol=qname,
-                            file_path=file_path, line=self.line_start(node), protocol="REST",
+                            route=full_route or path,
+                            http_method=http_method,
+                            owner_symbol=qname,
+                            file_path=file_path,
+                            line=self.line_start(node),
+                            protocol="REST",
                         )
                     )
 
@@ -294,8 +370,15 @@ class JavaParser(TreeSitterParser):
         self._walk_body(body, source_bytes, file_path, result, qname, field_types, param_types, local_types)
 
     def _walk_body(
-        self, body, source_bytes: bytes, file_path: str, result: ParseResult, method_qname: str,
-        field_types: Dict[str, str], param_types: Dict[str, str], local_types: Dict[str, str],
+        self,
+        body,
+        source_bytes: bytes,
+        file_path: str,
+        result: ParseResult,
+        method_qname: str,
+        field_types: Dict[str, str],
+        param_types: Dict[str, str],
+        local_types: Dict[str, str],
     ) -> None:
         consumed: set = set()
 
@@ -318,16 +401,25 @@ class JavaParser(TreeSitterParser):
                 if type_text:
                     result.references.append(
                         Reference(
-                            from_symbol=method_qname, target_name=simple_type_name(type_text),
-                            kind="INSTANTIATES", file_path=file_path, line=self.line_start(node),
+                            from_symbol=method_qname,
+                            target_name=simple_type_name(type_text),
+                            kind="INSTANTIATES",
+                            file_path=file_path,
+                            line=self.line_start(node),
                             evidence=self.text(node, source_bytes)[:120],
                         )
                     )
 
             elif node.type == "method_invocation":
                 self._handle_call(
-                    node, source_bytes, file_path, result, method_qname,
-                    field_types, param_types, local_types,
+                    node,
+                    source_bytes,
+                    file_path,
+                    result,
+                    method_qname,
+                    field_types,
+                    param_types,
+                    local_types,
                 )
 
             elif node.type in ("string_literal", "binary_expression"):
@@ -335,15 +427,25 @@ class JavaParser(TreeSitterParser):
                 if sql_text and embedded_sql.looks_like_sql(sql_text):
                     result.sql_accesses.append(
                         embedded_sql.build_sql_access(
-                            sql_text, file_path, self.line_start(node), owner_symbol=method_qname,
+                            sql_text,
+                            file_path,
+                            self.line_start(node),
+                            owner_symbol=method_qname,
                         )
                     )
                 for d in self.walk(node):
                     consumed.add(id(d))
 
     def _handle_call(
-        self, node, source_bytes: bytes, file_path: str, result: ParseResult, method_qname: str,
-        field_types: Dict[str, str], param_types: Dict[str, str], local_types: Dict[str, str],
+        self,
+        node,
+        source_bytes: bytes,
+        file_path: str,
+        result: ParseResult,
+        method_qname: str,
+        field_types: Dict[str, str],
+        param_types: Dict[str, str],
+        local_types: Dict[str, str],
     ) -> None:
         name_node = node.child_by_field_name("name")
         called_name = self.text(name_node, source_bytes) if name_node is not None else ""
@@ -365,9 +467,7 @@ class JavaParser(TreeSitterParser):
             return
 
         receiver_type = (
-            local_types.get(receiver_text)
-            or param_types.get(receiver_text)
-            or field_types.get(receiver_text)
+            local_types.get(receiver_text) or param_types.get(receiver_text) or field_types.get(receiver_text)
         )
         if receiver_type is None:
             # Could be a static call on a class name (Type.method()), or an unresolved
@@ -379,8 +479,11 @@ class JavaParser(TreeSitterParser):
 
         result.references.append(
             Reference(
-                from_symbol=method_qname, target_name=receiver_type, kind="CALLS",
-                file_path=file_path, line=self.line_start(node),
+                from_symbol=method_qname,
+                target_name=receiver_type,
+                kind="CALLS",
+                file_path=file_path,
+                line=self.line_start(node),
                 evidence=f"{receiver_text}.{called_name}(...)",
             )
         )

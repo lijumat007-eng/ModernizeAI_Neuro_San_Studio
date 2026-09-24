@@ -13,16 +13,12 @@ sys.path.insert(0, os.path.abspath("coded_tools"))
 sys.path.insert(0, os.path.abspath("."))
 
 from coded_tools.modernize.advisor.modernization_scoring import ModernizationScoring
-from coded_tools.modernize.graph.algorithms import GraphAlgorithms
-from coded_tools.modernize.graph.graph_engine import KnowledgeGraphEngine
 from coded_tools.modernize.graph.knowledge_graph_tool import KnowledgeGraphTool
-from coded_tools.modernize.memory.memory_manager_tool import MemoryFabric, MemoryManagerTool
+from coded_tools.modernize.memory.memory_manager_tool import MemoryFabric
 from coded_tools.modernize.parsers.ddl_parser import DdlParser
-from coded_tools.modernize.parsers.doc_parser import DocParser
 from coded_tools.modernize.parsers.java_parser import JavaParser
 from coded_tools.modernize.parsers.rules_extractor import RulesExtractor
 from coded_tools.modernize.qa.provenance_validator import ProvenanceValidator
-from coded_tools.modernize.reports.report_generator import ReportGenerator
 from coded_tools.modernize.swarm_coordinator import ModernizeSwarmCoordinator
 from coded_tools.modernize.tools.business_rules_tool import BusinessRulesTool
 from coded_tools.modernize.tools.discovery_tool import DiscoveryTool
@@ -31,7 +27,6 @@ from coded_tools.modernize.tools.validation_tool import ValidationTool
 
 
 class TestModernizeFabric(unittest.TestCase):
-
     def setUp(self):
         self.fabric = MemoryFabric()
         self.fabric.raw.ingest_directory("data/insurance_claims_app")
@@ -235,12 +230,16 @@ class TestModernizeFabric(unittest.TestCase):
         self.assertGreater(len(comm_res["candidate_domains"]), 0)
 
         # Hybrid Graph RAG
-        rag_res = kg_tool.invoke({"action": "hybrid_graph_rag", "query": "What rules check policy status and dates?"}, sly_data)
+        rag_res = kg_tool.invoke(
+            {"action": "hybrid_graph_rag", "query": "What rules check policy status and dates?"}, sly_data
+        )
         self.assertEqual(rag_res["status"], "success")
         self.assertGreater(len(rag_res["fused_evidence"]), 0)
 
         # Artifact Export
-        export_res = kg_tool.invoke({"action": "export_artifacts", "html_path": "artifacts/modernize_graph.html"}, sly_data)
+        export_res = kg_tool.invoke(
+            {"action": "export_artifacts", "html_path": "artifacts/modernize_graph.html"}, sly_data
+        )
         self.assertTrue(os.path.exists(export_res["artifacts"]["html_visualization"]))
         self.assertTrue(os.path.exists(export_res["artifacts"]["json_knowledge_graph"]))
 

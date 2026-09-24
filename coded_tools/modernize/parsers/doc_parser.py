@@ -5,7 +5,8 @@ Extracts sections, business rule references, entity mentions, and requirements.
 """
 
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any
+from typing import Dict
 
 
 class DocParser:
@@ -26,29 +27,33 @@ class DocParser:
             title = match.group(2).strip()
             start_pos = match.end()
             start_line = content[: match.start()].count("\n") + 1
-            
+
             end_pos = heading_matches[i + 1].start() if i + 1 < len(heading_matches) else len(content)
             end_line = content[:end_pos].count("\n") + 1
             body = content[start_pos:end_pos].strip()
 
-            sections.append({
-                "title": title,
-                "level": level,
-                "body": body,
-                "start_line": start_line,
-                "end_line": end_line,
-            })
+            sections.append(
+                {
+                    "title": title,
+                    "level": level,
+                    "body": body,
+                    "start_line": start_line,
+                    "end_line": end_line,
+                }
+            )
 
         # 2. Extract Business Rule tags (e.g. BR-01, Rule 1)
         rule_mentions = []
         rule_pattern = re.compile(r"(BR-[0-9]{2}|Rule\s+[0-9]+|SLA-[0-9]+)", re.IGNORECASE)
         for idx, line in enumerate(lines, start=1):
             for match in rule_pattern.finditer(line):
-                rule_mentions.append({
-                    "rule_tag": match.group(1).upper(),
-                    "line": idx,
-                    "snippet": line.strip(),
-                })
+                rule_mentions.append(
+                    {
+                        "rule_tag": match.group(1).upper(),
+                        "line": idx,
+                        "snippet": line.strip(),
+                    }
+                )
 
         # 3. Extract Table Mentions (e.g., POLICY_MASTER, CLAIMS_RECORD)
         table_pattern = re.compile(r"\b([A-Z][A-Z0-9_]{3,}_(?:MASTER|RECORD|ACCOUNT|LOG|ITEMS|TABLE))\b")

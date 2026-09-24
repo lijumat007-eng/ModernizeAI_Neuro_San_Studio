@@ -6,11 +6,11 @@ dynamically from Java AST code, database stored procedures, and specification do
 """
 
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any
+from typing import Dict
+from typing import List
+
 from coded_tools.modernize.memory.memory_manager_tool import MemoryFabric
-from coded_tools.modernize.parsers.ddl_parser import DdlParser
-from coded_tools.modernize.parsers.doc_parser import DocParser
-from coded_tools.modernize.parsers.java_parser import JavaParser
 
 
 class RulesExtractor:
@@ -24,7 +24,6 @@ class RulesExtractor:
         Dynamically analyzes Java source code for validation logic, thresholds, and business checks.
         """
         rules = []
-        lines = content.splitlines()
 
         # Method pattern with body detection
         method_pattern = re.compile(
@@ -75,19 +74,21 @@ class RulesExtractor:
             # Derive condition summary
             condition_desc = " AND ".join(clean_conditions[:2]) if clean_conditions else "Enforces business condition."
 
-            rules.append({
-                "rule_name": readable_name,
-                "method_name": m_name,
-                "return_type": ret_type,
-                "source_file": file_path.replace("\\", "/"),
-                "line_start": start_line,
-                "line_end": end_line,
-                "conditions": clean_conditions,
-                "thresholds": thresholds,
-                "specification": f"Method {m_name}() validates: {condition_desc}",
-                "confidence": 0.95,
-                "extractor": "java_ast_condition_analyzer",
-            })
+            rules.append(
+                {
+                    "rule_name": readable_name,
+                    "method_name": m_name,
+                    "return_type": ret_type,
+                    "source_file": file_path.replace("\\", "/"),
+                    "line_start": start_line,
+                    "line_end": end_line,
+                    "conditions": clean_conditions,
+                    "thresholds": thresholds,
+                    "specification": f"Method {m_name}() validates: {condition_desc}",
+                    "confidence": 0.95,
+                    "extractor": "java_ast_condition_analyzer",
+                }
+            )
 
         return rules
 
@@ -106,19 +107,21 @@ class RulesExtractor:
             start_line = content[: m.start()].count("\n") + 1
             end_line = content[: m.end()].count("\n") + 1
 
-            rules.append({
-                "rule_name": f"Stored Procedure Constraint #{idx}",
-                "method_name": "SP_PROCESS_CLAIM",
-                "return_type": "SQL_EXCEPTION",
-                "source_file": rel_path,
-                "line_start": start_line,
-                "line_end": end_line,
-                "conditions": [condition],
-                "thresholds": re.findall(r"\b\d+(?:\.\d+)?\b", condition),
-                "specification": f"Stored procedure validates: IF {condition}",
-                "confidence": 0.90,
-                "extractor": "sql_sp_analyzer",
-            })
+            rules.append(
+                {
+                    "rule_name": f"Stored Procedure Constraint #{idx}",
+                    "method_name": "SP_PROCESS_CLAIM",
+                    "return_type": "SQL_EXCEPTION",
+                    "source_file": rel_path,
+                    "line_start": start_line,
+                    "line_end": end_line,
+                    "conditions": [condition],
+                    "thresholds": re.findall(r"\b\d+(?:\.\d+)?\b", condition),
+                    "specification": f"Stored procedure validates: IF {condition}",
+                    "confidence": 0.90,
+                    "extractor": "sql_sp_analyzer",
+                }
+            )
 
         return rules
 
@@ -137,12 +140,14 @@ class RulesExtractor:
             if match:
                 tag = match.group(1).upper()
                 desc = match.group(2).strip()
-                doc_rules.append({
-                    "rule_tag": tag,
-                    "description": desc,
-                    "source_file": rel_path,
-                    "line_number": idx,
-                })
+                doc_rules.append(
+                    {
+                        "rule_tag": tag,
+                        "description": desc,
+                        "source_file": rel_path,
+                        "line_number": idx,
+                    }
+                )
 
         return doc_rules
 
@@ -157,7 +162,12 @@ class RulesExtractor:
         # 1. Extract from Java files
         for path, rec in fabric.raw._files.items():
             norm_path = path.replace("\\", "/").lower()
-            if path.endswith(".java") and "/test/" not in norm_path and not norm_path.endswith("test.java") and not norm_path.endswith("tests.java"):
+            if (
+                path.endswith(".java")
+                and "/test/" not in norm_path
+                and not norm_path.endswith("test.java")
+                and not norm_path.endswith("tests.java")
+            ):
                 content = rec.get_lines(1, rec.line_count)
                 extracted = cls.extract_from_java(path, content)
                 all_rules.extend(extracted)
@@ -185,7 +195,11 @@ class RulesExtractor:
             r["rule_id"] = r_id
             # Correlate with any doc mentions
             matched_doc = next(
-                (d for d in doc_mentions if any(w in d["description"].lower() for w in r["rule_name"].lower().split())),
+                (
+                    d
+                    for d in doc_mentions
+                    if any(w in d["description"].lower() for w in r["rule_name"].lower().split())
+                ),
                 None,
             )
             if matched_doc:

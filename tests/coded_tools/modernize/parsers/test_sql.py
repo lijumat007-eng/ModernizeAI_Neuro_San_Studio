@@ -16,7 +16,8 @@ import unittest
 
 sys.path.insert(0, os.path.abspath("."))
 
-from coded_tools.modernize.parsers.lang.sql import SqlParser, split_statements
+from coded_tools.modernize.parsers.lang.sql import SqlParser
+from coded_tools.modernize.parsers.lang.sql import split_statements
 
 TABLE_DDL = """
 CREATE TABLE CUSTOMER_ACCOUNT (
@@ -64,7 +65,8 @@ ORACLE_SP = """CREATE OR REPLACE PROCEDURE SP_PROCESS_CLAIM (
     v_deductible NUMBER;
 BEGIN
     SELECT deductible INTO v_deductible FROM POLICY_MASTER WHERE policy_number = p_policy_number FOR UPDATE;
-    UPDATE POLICY_MASTER SET remaining_coverage = remaining_coverage - v_deductible WHERE policy_number = p_policy_number;
+    UPDATE POLICY_MASTER SET remaining_coverage = remaining_coverage - v_deductible
+        WHERE policy_number = p_policy_number;
     INSERT INTO CLAIM_AUDIT_LOG (claim_id) VALUES (p_claim_id);
 END SP_PROCESS_CLAIM;
 /
@@ -110,7 +112,6 @@ END claims_pkg;
 
 
 class TestTableDdl(unittest.TestCase):
-
     def setUp(self):
         self.result = SqlParser().parse("schema.ddl", TABLE_DDL)
 
@@ -118,7 +119,9 @@ class TestTableDdl(unittest.TestCase):
         self.assertEqual(self.result.parse_coverage, 1.0)
 
     def test_tables_and_columns_extracted(self):
-        tables = {s.qualified_name: s for s in self.result.symbols if s.kind == "TABLE" and not s.properties.get("is_index")}
+        tables = {
+            s.qualified_name: s for s in self.result.symbols if s.kind == "TABLE" and not s.properties.get("is_index")
+        }
         self.assertEqual(set(tables), {"CUSTOMER_ACCOUNT", "POLICY_MASTER"})
         columns = {s.name for s in self.result.symbols if s.kind == "COLUMN" and s.parent == "POLICY_MASTER"}
         self.assertEqual(columns, {"policy_number", "customer_id"})
@@ -138,7 +141,6 @@ class TestTableDdl(unittest.TestCase):
 
 
 class TestPostgresProcedure(unittest.TestCase):
-
     def setUp(self):
         self.result = SqlParser().parse("sp.sql", POSTGRES_SP)
 
@@ -203,7 +205,6 @@ class TestTsqlProcedure(unittest.TestCase):
 
 
 class TestTrigger(unittest.TestCase):
-
     def setUp(self):
         self.result = SqlParser().parse("trigger.sql", TRIGGER_SQL)
 
@@ -245,7 +246,6 @@ class TestPackage(unittest.TestCase):
 
 
 class TestSplitStatements(unittest.TestCase):
-
     def test_semicolon_inside_parens_does_not_split(self):
         stmts = split_statements("INSERT INTO t (a, b) VALUES (1, 2); SELECT 1")
         self.assertEqual(len(stmts), 2)

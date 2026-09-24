@@ -4,9 +4,10 @@ MemoryManagerTool: CodedTool interface for Neuro SAN Studio.
 Exposes the 5-tier memory fabric (Raw, Structural, Semantic, Procedural, Transformation).
 """
 
-import json
 import os
-from coded_tools.modernize.tool_base import CodedTool
+from typing import Any
+from typing import Dict
+from typing import Optional
 
 from coded_tools.modernize.memory.procedural_memory import ProceduralMemory
 from coded_tools.modernize.memory.raw_memory import RawMemory
@@ -15,6 +16,7 @@ from coded_tools.modernize.memory.structural_memory import StructuralMemory
 from coded_tools.modernize.memory.transformation_memory import TransformationMemory
 from coded_tools.modernize.parsers.ddl_parser import DdlParser
 from coded_tools.modernize.parsers.java_parser import JavaParser
+from coded_tools.modernize.tool_base import CodedTool
 
 
 class MemoryFabric:
@@ -130,7 +132,9 @@ class MemoryManagerTool(CodedTool):
         self._ensure_ingested(fabric, repo_path)
 
         if action == "ingest_repo":
-            records = fabric.raw.ingest_directory(repo_path if os.path.exists(repo_path) else "data/insurance_claims_app")
+            records = fabric.raw.ingest_directory(
+                repo_path if os.path.exists(repo_path) else "data/insurance_claims_app"
+            )
             # Ingest docs into semantic memory
             for rec in records:
                 if rec.rel_path.endswith((".md", ".txt")):
@@ -176,7 +180,10 @@ class MemoryManagerTool(CodedTool):
                 "doc_files": doc_files,
                 "all_files": raw_files,
                 "message": (
-                    f"Raw memory contains {len(raw_files)} files ({len(java_files)} Java files: {', '.join(java_files)})."
+                    (
+                        f"Raw memory contains {len(raw_files)} files "
+                        f"({len(java_files)} Java files: {', '.join(java_files)})."
+                    )
                     if java_files
                     else f"Raw memory contains {len(raw_files)} files, no Java files found."
                 ),
@@ -242,10 +249,19 @@ class MemoryManagerTool(CodedTool):
 
         return {
             "error": f"Unknown memory action: {action}",
-            "available_actions": ["ingest_repo", "get_raw", "list_files", "get_evidence", "get_structural", "semantic_search", "get_transformation", "status"],
+            "available_actions": [
+                "ingest_repo",
+                "get_raw",
+                "list_files",
+                "get_evidence",
+                "get_structural",
+                "semantic_search",
+                "get_transformation",
+                "status",
+            ],
             "raw_files_count": len(fabric.raw._files),
-            "java_files_count": len([f for f in fabric.raw._files if f.endswith('.java')]),
-            "java_files": [f for f in fabric.raw._files if f.endswith('.java')],
+            "java_files_count": len([f for f in fabric.raw._files if f.endswith(".java")]),
+            "java_files": [f for f in fabric.raw._files if f.endswith(".java")],
         }
 
     async def async_invoke(self, args: Dict[str, Any], sly_data: Dict[str, Any]) -> Any:

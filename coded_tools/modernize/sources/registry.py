@@ -5,7 +5,8 @@ Database/SSH/Confluence connectors register here in later phases; a missing
 optional dependency (e.g. boto3 not installed) only disables that one type.
 """
 
-from typing import Dict, Type
+from typing import Dict
+from typing import Type
 
 from coded_tools.modernize.sources.base import SourceConnector
 from coded_tools.modernize.sources.models import Source

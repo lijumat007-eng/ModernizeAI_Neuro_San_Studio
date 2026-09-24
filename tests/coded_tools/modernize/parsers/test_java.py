@@ -14,10 +14,11 @@ import unittest
 sys.path.insert(0, os.path.abspath("."))
 
 from coded_tools.modernize.parsers.ir import ParseResult
-from coded_tools.modernize.parsers.lang.java import JavaParser, simple_type_name
+from coded_tools.modernize.parsers.lang.java import JavaParser
+from coded_tools.modernize.parsers.lang.java import simple_type_name
 from coded_tools.modernize.parsers.linker import Linker
 
-TRICKY_SOURCE = '''package com.acme;
+TRICKY_SOURCE = """package com.acme;
 
 import com.acme.gateway.PaymentGateway;
 import com.acme.repo.OrderRepository;
@@ -51,11 +52,10 @@ public class OrderService extends BaseService implements Auditable {
         return jdbc.query("SELECT * FROM " + table + " WHERE cust = ?", c);
     }
 }
-'''
+"""
 
 
 class TestJavaParser(unittest.TestCase):
-
     def setUp(self):
         self.parser = JavaParser()
         self.result: ParseResult = self.parser.parse("OrderService.java", TRICKY_SOURCE)
@@ -71,12 +71,10 @@ class TestJavaParser(unittest.TestCase):
 
     def test_nested_class_method_is_not_mistaken_for_outer_method(self):
         outer_methods = {
-            s.name for s in self.result.symbols
-            if s.kind == "METHOD" and s.parent == "com.acme.OrderService"
+            s.name for s in self.result.symbols if s.kind == "METHOD" and s.parent == "com.acme.OrderService"
         }
         nested_methods = {
-            s.name for s in self.result.symbols
-            if s.kind == "METHOD" and s.parent == "com.acme.OrderService.Builder"
+            s.name for s in self.result.symbols if s.kind == "METHOD" and s.parent == "com.acme.OrderService.Builder"
         }
         self.assertIn("findOrder", outer_methods)
         self.assertIn("byCustomer", outer_methods)
@@ -88,10 +86,7 @@ class TestJavaParser(unittest.TestCase):
         self.assertIn("Map", field.return_type)
 
     def test_multiline_signature_method_found(self):
-        method = next(
-            s for s in self.result.symbols
-            if s.kind == "METHOD" and s.name == "findOrder"
-        )
+        method = next(s for s in self.result.symbols if s.kind == "METHOD" and s.name == "findOrder")
         self.assertIn("id", method.signature)
         self.assertIn("includeLines", method.signature)
 
@@ -141,7 +136,6 @@ class TestJavaParser(unittest.TestCase):
 
 
 class TestLinker(unittest.TestCase):
-
     def test_import_based_resolution_is_exact(self):
         parser = JavaParser()
         gateway_src = "package com.acme.gateway;\npublic class PaymentGateway { public void charge(Object o) {} }\n"
@@ -158,7 +152,9 @@ class TestLinker(unittest.TestCase):
 
     def test_unresolvable_reference_is_marked_external(self):
         parser = JavaParser()
-        result = parser.parse("Solo.java", "package com.acme;\nclass Solo { void m() { HashMap x = new HashMap(); } }\n")
+        result = parser.parse(
+            "Solo.java", "package com.acme;\nclass Solo { void m() { HashMap x = new HashMap(); } }\n"
+        )
         Linker().link([result])
         instantiate = next(r for r in result.references if r.kind == "INSTANTIATES")
         self.assertTrue(instantiate.external)

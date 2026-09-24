@@ -4,7 +4,10 @@ Tier 4: Procedural Memory Engine.
 Stores reusable extraction heuristics, regex patterns, analysis workflows, and validation rules.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
 
 
 class ProceduralMemory:
@@ -22,10 +25,10 @@ class ProceduralMemory:
             recipe_id="java_sql_extraction",
             description="Regex and AST pattern to extract embedded SQL statements from Java source code.",
             patterns=[
-                r'SELECT\s+.*?\s+FROM\s+[A-Za-z0-9_]+',
-                r'INSERT\s+INTO\s+[A-Za-z0-9_]+',
-                r'UPDATE\s+[A-Za-z0-9_]+\s+SET',
-                r'\{call\s+([A-Za-z0-9_]+)\(',
+                r"SELECT\s+.*?\s+FROM\s+[A-Za-z0-9_]+",
+                r"INSERT\s+INTO\s+[A-Za-z0-9_]+",
+                r"UPDATE\s+[A-Za-z0-9_]+\s+SET",
+                r"\{call\s+([A-Za-z0-9_]+)\(",
             ],
             target="Java",
         )
@@ -33,8 +36,8 @@ class ProceduralMemory:
             recipe_id="ddl_table_extraction",
             description="Extracts CREATE TABLE definitions and foreign key constraints.",
             patterns=[
-                r'CREATE\s+TABLE\s+([A-Za-z0-9_]+)\s*\((.*?)\);',
-                r'CONSTRAINT\s+([A-Za-z0-9_]+)\s+FOREIGN\s+KEY\s*\(([A-Za-z0-9_]+)\)\s+REFERENCES\s+([A-Za-z0-9_]+)\(([A-Za-z0-9_]+)\)',
+                r"CREATE\s+TABLE\s+([A-Za-z0-9_]+)\s*\((.*?)\);",
+                r"CONSTRAINT\s+([A-Za-z0-9_]+)\s+FOREIGN\s+KEY\s*\(([A-Za-z0-9_]+)\)\s+REFERENCES\s+([A-Za-z0-9_]+)\(([A-Za-z0-9_]+)\)",
             ],
             target="SQL",
         )
@@ -42,8 +45,8 @@ class ProceduralMemory:
             recipe_id="business_rule_extraction",
             description="Identifies formalized business rule statements and validation logic.",
             patterns=[
-                r'(?i)Rule\s+(BR-[0-9]+):\s*(.*?)(?=\n\s*(?:Rule|\*|#|$))',
-                r'(?i)validate[A-Z][a-zA-Z0-9]*',
+                r"(?i)Rule\s+(BR-[0-9]+):\s*(.*?)(?=\n\s*(?:Rule|\*|#|$))",
+                r"(?i)validate[A-Z][a-zA-Z0-9]*",
             ],
             target="CodeAndDoc",
         )

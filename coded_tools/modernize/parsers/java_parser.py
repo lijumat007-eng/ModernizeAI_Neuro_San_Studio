@@ -16,7 +16,8 @@ rewrite of every call site in one step.
 """
 
 import os
-from typing import Any, Dict
+from typing import Any
+from typing import Dict
 
 from coded_tools.modernize.parsers.lang.java import JavaParser as _TreeSitterJavaParser
 
@@ -31,8 +32,14 @@ class JavaParser:
         result = _PARSER.parse(file_path, content)
         rel_path = file_path.replace("\\", "/")
 
-        top_level = [s for s in result.symbols if s.parent is None and s.kind in ("CLASS", "INTERFACE", "ENUM", "RECORD")]
-        package = top_level[0].qualified_name.rsplit("." + top_level[0].name, 1)[0] if top_level and "." in top_level[0].qualified_name else ""
+        top_level = [
+            s for s in result.symbols if s.parent is None and s.kind in ("CLASS", "INTERFACE", "ENUM", "RECORD")
+        ]
+        package = (
+            top_level[0].qualified_name.rsplit("." + top_level[0].name, 1)[0]
+            if top_level and "." in top_level[0].qualified_name
+            else ""
+        )
         main_class = top_level[0] if top_level else None
         class_name = main_class.name if main_class else os.path.basename(file_path).replace(".java", "")
         class_qname = main_class.qualified_name if main_class else class_name

@@ -5,11 +5,14 @@ Calculates mathematical readiness scores, formulates 6R cloud migration strategi
 and generates deliverable markdown reports.
 """
 
-from coded_tools.modernize.tool_base import CodedTool
+from typing import Any
+from typing import Dict
+
 from coded_tools.modernize.advisor.modernization_scoring import ModernizationScoring
 from coded_tools.modernize.graph.knowledge_graph_tool import get_knowledge_graph
 from coded_tools.modernize.memory.memory_manager_tool import get_memory_fabric
 from coded_tools.modernize.reports.report_generator import ReportGenerator
+from coded_tools.modernize.tool_base import CodedTool
 
 
 class ModernizationAdvisorTool(CodedTool):
@@ -28,6 +31,7 @@ class ModernizationAdvisorTool(CodedTool):
             fabric.raw.ingest_directory(repo_path)
         if kg.graph.number_of_nodes() == 0:
             from coded_tools.modernize.graph.knowledge_graph_tool import KnowledgeGraphTool
+
             KnowledgeGraphTool().invoke({"action": "build_graph", "repo_path": repo_path}, sly_data)
 
         if action in ("calculate_readiness_score", "readiness"):
@@ -35,7 +39,10 @@ class ModernizationAdvisorTool(CodedTool):
             return {
                 "status": "success",
                 "readiness": score_data,
-                "summary": f"Calculated Modernization Readiness Score: {score_data['overall_readiness_score']}/100 ({score_data['grade']})",
+                "summary": (
+                    f"Calculated Modernization Readiness Score: "
+                    f"{score_data['overall_readiness_score']}/100 ({score_data['grade']})"
+                ),
             }
 
         elif action in ("generate_6r_strategy", "recommend_strategies"):
@@ -63,7 +70,10 @@ class ModernizationAdvisorTool(CodedTool):
 
         return {
             "status": "error",
-            "message": f"Unknown action: {action}. Supported actions: calculate_readiness_score, generate_6r_strategy, generate_reports",
+            "message": (
+                f"Unknown action: {action}. Supported actions: "
+                "calculate_readiness_score, generate_6r_strategy, generate_reports"
+            ),
         }
 
     async def async_invoke(self, args: Dict[str, Any], sly_data: Dict[str, Any]) -> Any:

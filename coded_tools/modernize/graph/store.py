@@ -12,9 +12,10 @@ doesn't require deserializing the whole graph first.
 import json
 import os
 import sqlite3
-from abc import ABC, abstractmethod
+from abc import ABC
+from abc import abstractmethod
 from contextlib import closing
-from typing import Any, Optional
+from typing import Optional
 
 from coded_tools.modernize.graph.graph_engine import KnowledgeGraphEngine
 

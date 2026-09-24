@@ -8,19 +8,16 @@ fragment (common with `?`/`:param` placeholders it doesn't expect).
 """
 
 import re
-from typing import List, Optional
+from typing import List
+from typing import Optional
 
 import sqlglot
 from sqlglot import exp
 
 from coded_tools.modernize.parsers.ir import SqlAccess
 
-_SQL_VERB_RE = re.compile(
-    r"^\s*(SELECT|INSERT|UPDATE|DELETE|MERGE|CALL|EXEC|\{\s*call)\b", re.IGNORECASE
-)
-_FALLBACK_TABLE_RE = re.compile(
-    r"(?:FROM|INTO|UPDATE|CALL|JOIN)\s+([A-Za-z0-9_\.]+)", re.IGNORECASE
-)
+_SQL_VERB_RE = re.compile(r"^\s*(SELECT|INSERT|UPDATE|DELETE|MERGE|CALL|EXEC|\{\s*call)\b", re.IGNORECASE)
+_FALLBACK_TABLE_RE = re.compile(r"(?:FROM|INTO|UPDATE|CALL|JOIN)\s+([A-Za-z0-9_\.]+)", re.IGNORECASE)
 
 
 def looks_like_sql(text: str) -> bool:

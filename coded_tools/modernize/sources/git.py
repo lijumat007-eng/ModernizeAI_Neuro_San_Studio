@@ -13,15 +13,16 @@ import re
 import shutil
 import stat
 import subprocess
-from typing import List, Optional, Tuple
-from urllib.parse import urlsplit, urlunsplit
+from typing import List
+from typing import Optional
+from typing import Tuple
+from urllib.parse import urlsplit
+from urllib.parse import urlunsplit
 
-from coded_tools.modernize.sources.base import (
-    ConnectionTestResult,
-    SourceConnector,
-    SourceDocument,
-    resolve_secret,
-)
+from coded_tools.modernize.sources.base import ConnectionTestResult
+from coded_tools.modernize.sources.base import SourceConnector
+from coded_tools.modernize.sources.base import SourceDocument
+from coded_tools.modernize.sources.base import resolve_secret
 from coded_tools.modernize.sources.local import LocalConnector
 
 _GIT_TIMEOUT_SECONDS = 180
@@ -53,7 +54,11 @@ def _force_remove_dir(path: str) -> None:
 
 def _run_git(args: List[str], cwd: Optional[str] = None) -> subprocess.CompletedProcess:
     return subprocess.run(
-        ["git"] + args, capture_output=True, text=True, timeout=_GIT_TIMEOUT_SECONDS, cwd=cwd,
+        ["git"] + args,
+        capture_output=True,
+        text=True,
+        timeout=_GIT_TIMEOUT_SECONDS,
+        cwd=cwd,
     )
 
 
@@ -95,7 +100,7 @@ class GitConnector(SourceConnector):
             return ConnectionTestResult(ok=False, message=f"git error: {e}")
         if res.returncode != 0:
             return ConnectionTestResult(ok=False, message=_redact(res.stderr.strip() or "git ls-remote failed", token))
-        branch_count = len([l for l in res.stdout.splitlines() if l.strip()])
+        branch_count = len([line for line in res.stdout.splitlines() if line.strip()])
         return ConnectionTestResult(ok=True, message=f"Reachable ({branch_count} branch ref(s) found).")
 
     def fetch(self, since_fingerprint: Optional[str] = None) -> Tuple[List[SourceDocument], str]:
@@ -117,7 +122,11 @@ class GitConnector(SourceConnector):
 
         local = LocalConnector(
             self.source_id,
-            {**self.config, "root_path": workspace, "exclude_globs": [".git"] + list(self.config.get("exclude_globs", []))},
+            {
+                **self.config,
+                "root_path": workspace,
+                "exclude_globs": [".git"] + list(self.config.get("exclude_globs", [])),
+            },
         )
         documents, _local_fingerprint = local.fetch()
         for doc in documents:
